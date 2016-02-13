@@ -17,36 +17,33 @@ class DefaultController extends Controller
 
         $activitiesByDates = array();
 
-        for($i = 0; $i < 40; $i++) {
-            $date = new \DateTime(date('Y-m-d 05:00:00'));
-            $date->modify("- ".$i."days");
-            $activities = $repo->findByDate($date);
-            if(count($activities) > 0) {
-                $activitiesByDates[$date->format('Y-m-d')] = $repo->findByDate($date);
+        $dateFrom = new \DateTime();
+        $dateTo = clone $dateFrom;
+        $dateTo->modify('-30 days');
+
+        $activities = $repo->findByDatesInterval($dateFrom, $dateTo);
+
+        foreach($activities as $activity) {
+            $keyDate = $activity->getExecutedAt()->format('Y-m-d');
+            if(!array_key_exists($keyDate, $activitiesByDates)) {
+                $activitiesByDates[$keyDate] = array('activites' => array(), 'tags' => array());
             }
+            $activitiesByDates[$keyDate]['activities'][$activity->getId()] = $activity;
+            foreach($activity->getTags() as $tag) {
+                if(!array_key_exists($tag->getId(), $activitiesByDates[$keyDate]['tags'])) {
+                    $activitiesByDates[$keyDate]['tags'][$tag->getId()] = array('nb' => 0, 'entity' => $tag);
+                }
+                $activitiesByDates[$keyDate]['tags'][$tag->getId()]['nb'] += 1;
+            }
+        }
+
+        foreach($activitiesByDates as $activitiesByDate) {
+            usort($activitiesByDate['tags'], "\AppBundle\Controller\DefaultController::sortTagByNb");
         }
 
         $tags = $em->getRepository('AppBundle:Tag')->findAll();
 
         return $this->render('default/index.html.twig', array('activitiesByDates' => $activitiesByDates, 'tags' => $tags));
-    }
-
-    public function listAction($activities, $title, $readOnly = false) {
-        $tags = array();
-
-        foreach($activities as $activity) {
-            foreach($activity->getTags() as $tag) {
-                if(!isset($tags[$tag->getId()])) {
-                    $tags[$tag->getId()] = array('nb' => 0  );
-                }
-                $tags[$tag->getId()]['nb'] += 1;
-                $tags[$tag->getId()]['entity'] = $tag;
-            }
-        }
-
-        usort($tags, "\AppBundle\Controller\DefaultController::sortTagByNb");
-
-        return $this->render('Activity/list.html.twig', array('activities' => $activities, 'tags' => $tags, 'title' => $title, 'readOnly' => $readOnly));
     }
 
     public static function sortTagByNb($a, $b) {

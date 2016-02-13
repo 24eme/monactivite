@@ -13,21 +13,28 @@ use Doctrine\ORM\Query;
  */
 class ActivityRepository extends EntityRepository
 {
-    public function findByDate($date) {
-        $dateFrom = clone $date;
-        $dateFrom->modify("+1 day");
+    
+    public function findByDatesInterval($dateFrom, $dateTo) {
 
         return $this->getEntityManager()
                      ->createQuery('
-                          SELECT a, at
+                          SELECT a, aa, at
                           FROM AppBundle:Activity a
-                          LEFT JOIN a.attributes at
-                          WHERE a.executedAt >= :date_from AND a.executedAt < :date_to
+                          LEFT JOIN a.attributes aa
+                          LEFT JOIN a.tags at
+                          WHERE a.executedAt >= :date_to AND a.executedAt < :date_from
                           ORDER BY a.executedAt DESC
                       ')
-                      ->setParameter('date_from', $date)
-                      ->setParameter('date_to', $dateFrom)
+                      ->setParameter('date_from', $dateFrom)
+                      ->setParameter('date_to', $dateTo)
                       ->getResult();
+    }
+
+    public function findByDate($date) {
+        $dateTo = clone $date;
+        $dateTo->modify("+1 day");
+
+        return $this->findByDateInterval($date, $dateTo);
     }
 
     public function findByFilter($filter) {
