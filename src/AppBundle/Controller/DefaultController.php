@@ -19,7 +19,7 @@ class DefaultController extends Controller
 
         $dateFrom = new \DateTime();
         $dateTo = clone $dateFrom;
-        $dateTo->modify('-30 days');
+        $dateTo->modify('-7 days');
 
         $activities = $repo->findByDatesInterval($dateFrom, $dateTo);
 

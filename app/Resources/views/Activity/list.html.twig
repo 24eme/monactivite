@@ -13,7 +13,6 @@
             {% for activity in activities %}
                 <div class="ligne" style="{% if(i % 2) %}background-color: #f5f5f5;{% endif %}">
                         <div class="col-xs-2 text-left itemTags">
-                            
                             <div class="btn-group">
                                 {% if not readOnly %}
                                     {% for j in 0..(3 - activity.tags | length) %}
@@ -24,7 +23,6 @@
                                     {% include 'Tag/button_small.html.twig' with {'tag': tag, url: ''} %}
                                 {% endfor %}
                             </div>
-                            
                         </div>
                         <div class="col-xs-2 itemAttribute">
                             <span style="padding-right: 4px; font-size: 14px; opacity: 0.7;">{{ activity.executedAt | date('H:i') }}</span>&nbsp;
@@ -33,9 +31,9 @@
                                     <button data-toggle="tooltip" data-placement="auto" title="{{ attribute.value }}&nbsp;<small>({{ attribute.name }})</small>" data-html="true" data-container="body" class="btn btn-sm btn-default text-left btn-attribute-small"><span class="text-muted text-left">{{ attribute.value | replace({ "." : "", "-": "", "@": "" }) | slice(0, 5) | upper  }}</span></button>
                                 {% endfor %}
                                 {% if activity.attributes | length < 3 %}
-                                {% for j in 0..(2 - (activity.attributes | length)) %}
-                                <button style="width: 46px; border: 0; font-size: 11px; opacity: 0.9; padding-top:6px; padding-bottom: 8px; background: transparent;" class="btn btn-sm btn-default text-left">&nbsp;</button>
-                                {% endfor %}
+                                    {% for j in 0..(2 - (activity.attributes | length)) %}
+                                        <button class="btn btn-sm btn-default btn-attribute-small-empty text-left">&nbsp;</button>
+                                    {% endfor %}
                                 {% endif %}
                             </div>
                         </div>

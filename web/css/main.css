@@ -1,3 +1,8 @@
+#main {
+    padding-top: 70px;
+    padding-bottom: 35px;
+}
+
 .popover {
     width: 500px;
     opacity: 0.9 !important;
@@ -50,6 +55,16 @@
    padding-top:6px; 
    padding-bottom: 8px; 
    background: transparent;
+}
+
+.btn-attribute-small-empty {
+    width: 46px; 
+    border: 0; 
+    font-size: 11px; 
+    opacity: 0.9; 
+    padding-top:6px; 
+    padding-bottom: 8px; 
+    background: transparent;
 }
 
 .ligneContainer {
