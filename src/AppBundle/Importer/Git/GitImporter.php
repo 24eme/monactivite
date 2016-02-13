@@ -48,11 +48,12 @@ class GitImporter extends Importer
 
                 $this->am->addFromEntity($activity);
 
+                $this->em->persist($type);
+                $this->em->persist($repository);
+                $this->em->persist($author);
+                $this->em->persist($activity);
+
                 if(!$dryrun) {
-                    $this->em->persist($type);
-                    $this->em->persist($repository);
-                    $this->em->persist($author);
-                    $this->em->persist($activity);
                     $this->em->flush($activity);
                 }
 

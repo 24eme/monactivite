@@ -69,14 +69,15 @@ class FeedImporter extends Importer
             try {
                 $this->am->addFromEntity($activity);
 
+                if(isset($name)) {
+                    $this->em->persist($name);
+                }
+                if(isset($author)) {
+                    $this->em->persist($author);
+                }
+                $this->em->persist($activity);
+                    
                 if(!$dryrun) {
-                    if(isset($name)) {
-                        $this->em->persist($name);
-                    }
-                    if(isset($author)) {
-                        $this->em->persist($author);
-                    }
-                    $this->em->persist($activity);
                     $this->em->flush($activity);
                 }
 

@@ -67,6 +67,7 @@ class Activity
     public function __construct()
     {
         $this->attributes = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->tags = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**

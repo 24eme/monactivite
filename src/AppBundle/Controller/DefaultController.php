@@ -31,7 +31,7 @@ class DefaultController extends Controller
         return $this->render('default/index.html.twig', array('activitiesByDates' => $activitiesByDates, 'tags' => $tags));
     }
 
-    public function listAction($activities, $title) {
+    public function listAction($activities, $title, $readOnly = false) {
         $tags = array();
 
         foreach($activities as $activity) {
@@ -46,7 +46,7 @@ class DefaultController extends Controller
 
         usort($tags, "\AppBundle\Controller\DefaultController::sortTagByNb");
 
-        return $this->render('Activity/list.html.twig', array('activities' => $activities, 'tags' => $tags, 'title' => $title));
+        return $this->render('Activity/list.html.twig', array('activities' => $activities, 'tags' => $tags, 'title' => $title, 'readOnly' => $readOnly));
     }
 
     public static function sortTagByNb($a, $b) {

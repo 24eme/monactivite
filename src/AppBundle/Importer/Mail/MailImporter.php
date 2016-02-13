@@ -120,15 +120,16 @@ class MailImporter extends Importer
         try {
             $this->am->addFromEntity($activity);
 
+            $this->em->persist($type);
+            if(isset($sender)) {
+                $this->em->persist($sender);
+            }
+            if(isset($recipient)) {
+                $this->em->persist($recipient);
+            }
+            $this->em->persist($activity);
+
             if(!$dryrun) {
-                $this->em->persist($type);
-                if(isset($sender)) {
-                    $this->em->persist($sender);
-                }
-                if(isset($recipient)) {
-                    $this->em->persist($recipient);
-                }
-                $this->em->persist($activity);
                 $this->em->flush($activity);
             }
             if($output->isVerbose()) {
@@ -162,7 +163,7 @@ class MailImporter extends Importer
         for($i=1; $i<20; $i++) { $line .= fgets($handle); }
         fclose($handle);
 
-        if(strpos($line, "Message-ID") === false) {
+        if(!preg_match("/Message-ID/i", $line)) {
            throw new \Exception(sprintf("This file is not a mail file : %s", $source)); 
         }
     }

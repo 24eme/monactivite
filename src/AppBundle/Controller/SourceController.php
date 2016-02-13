@@ -248,4 +248,42 @@ class SourceController extends Controller
             ->getForm()
         ;
     }
+
+    /**
+     * @Route("/{id}/execute", name="source_execute")
+     * @Method("GET")
+     * @Template("Source/execute.html.twig")
+     */
+    public function executeAction(Request $request, $id) {
+        $em = $this->getDoctrine()->getManager();
+
+        $entity = $em->getRepository('AppBundle:Source')->find($id);
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Source entity.');
+        }
+
+        $form = $this->createCreateForm($entity);
+
+        $this->get('app.manager.main')->executeSource($entity, new \Symfony\Component\Console\Output\ConsoleOutput(), true);
+
+        $this->get('doctrine.orm.entity_manager')->getUnitOfWork()->computeChangeSets();
+
+        $entities = $this->get('doctrine.orm.entity_manager')->getUnitOfWork()->getScheduledEntityInsertions();
+
+        $activities = array();
+        foreach($entities as $activity) {
+            if(!$activity instanceof \AppBundle\Entity\Activity) {
+                continue;
+            }
+            $activities[] = $activity;
+        }
+
+        return array(
+            'entity' => $entity,
+            'form' => $form->createView(),
+            'entities' => $activities,
+        );
+    }
+
 }

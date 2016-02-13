@@ -233,6 +233,23 @@ class FilterController extends Controller
     }
 
     /**
+     * Creates a form to delete a Filter entity by id.
+     *
+     * @param mixed $id The entity id
+     *
+     * @return \Symfony\Component\Form\Form The form
+     */
+    private function createDeleteForm($id)
+    {
+        return $this->createFormBuilder()
+            ->setAction($this->generateUrl('filter_delete', array('id' => $id)))
+            ->setMethod('DELETE')
+            ->add('submit', 'submit', array('label' => 'Delete'))
+            ->getForm()
+        ;
+    }
+
+    /**
      * @Route("/{id}/execute", name="filter_execute")
      * @Method("GET")
      * @Template("Filter/execute.html.twig")
@@ -259,22 +276,5 @@ class FilterController extends Controller
             'form' => $form->createView(),
             'entities' => $entities,
         );
-    }
-
-    /**
-     * Creates a form to delete a Filter entity by id.
-     *
-     * @param mixed $id The entity id
-     *
-     * @return \Symfony\Component\Form\Form The form
-     */
-    private function createDeleteForm($id)
-    {
-        return $this->createFormBuilder()
-            ->setAction($this->generateUrl('filter_delete', array('id' => $id)))
-            ->setMethod('DELETE')
-            ->add('submit', 'submit', array('label' => 'Delete'))
-            ->getForm()
-        ;
     }
 }
