@@ -6,6 +6,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use AppBundle\Importer\Importer;
 use AppBundle\Entity\Activity;
 use AppBundle\Entity\ActivityAttribute;
+use AppBundle\Entity\Source;
 
 class MailImporter extends Importer
 {
@@ -23,18 +24,18 @@ class MailImporter extends Importer
         $this->mailParser = $mailParser;
     }
 
-    public function run($source, $sourceName = null, OutputInterface $output, $dryrun = false) {
-        $output->writeln(sprintf("<comment>Started import mails in %s</comment>", $source));
+    public function run(Source $source, OutputInterface $output, $dryrun = false) {
+        $output->writeln(sprintf("<comment>Started import mails in %s</comment>", $source->getSource()));
 
         $mail = null;
         $start = false;
         $nb = 0;
-        $handle = fopen($source, "r");
+        $handle = fopen($source->getSource(), "r");
 
         while (($line = fgets($handle)) !== false) {
             if(preg_match('/^(From .?$|From - )/', $line)) {
                 if($mail && $start) {
-                    if($this->importMail($mail, $source, $sourceName, $output, $dryrun)) { $nb++; }
+                    if($this->importMail($mail, $source, $output, $dryrun)) { $nb++; }
                 }
                 $mail = null;
                 $start = true;
@@ -45,7 +46,7 @@ class MailImporter extends Importer
         }
 
         if($mail && $start) {
-            if($this->importMail($mail, $source, $sourceName, $output, $dryrun)) { $nb++; }
+            if($this->importMail($mail, $source, $output, $dryrun)) { $nb++; }
         }
 
         fclose($handle);
@@ -53,7 +54,7 @@ class MailImporter extends Importer
         $output->writeln(sprintf("<info>%s new activity imported</info>", $nb));
     }
 
-    protected function importMail($mail, $source, $sourceName, OutputInterface $output, $dryrun = false) {
+    protected function importMail($mail, Source $source, OutputInterface $output, $dryrun = false) {
         try {
             $parsedMail = @$this->mailParser->parse($mail);
         } catch(\Exception $e) {
@@ -151,20 +152,20 @@ class MailImporter extends Importer
         return dirname(__FILE__);
     }
 
-    public function check($source) {
+    public function check(Source $source) {
         parent::check($source);
 
-        if(!file_exists($source)) {
-            throw new \Exception(sprintf("File %s doesn't exist", $source));
+        if(!file_exists($source->getSource())) {
+            throw new \Exception(sprintf("File %s doesn't exist", $source->getSource()));
         }
 
         $line = "";
-        $handle = fopen($source, "r");
+        $handle = fopen($source->getSource(), "r");
         for($i=1; $i<20; $i++) { $line .= fgets($handle); }
         fclose($handle);
 
         if(!preg_match("/Message-ID/i", $line)) {
-           throw new \Exception(sprintf("This file is not a mail file : %s", $source)); 
+           throw new \Exception(sprintf("This file is not a mail file : %s", $source->getSource())); 
         }
     }
 

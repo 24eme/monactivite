@@ -6,6 +6,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use AppBundle\Importer\Importer;
 use AppBundle\Entity\Activity;
 use AppBundle\Entity\ActivityAttribute;
+use AppBundle\Entity\Source;
 
 class FeedImporter extends Importer
 {
@@ -23,10 +24,10 @@ class FeedImporter extends Importer
         $this->feedParser = $feedParser;
     }
 
-    public function run($source, $sourceName = null, OutputInterface $output, $dryrun = false) {
-        $output->writeln(sprintf("<comment>Started import feed %s</comment>", $source));
+    public function run(Source $source, OutputInterface $output, $dryrun = false) {
+        $output->writeln(sprintf("<comment>Started import feed %s</comment>", $source->getSource()));
 
-        $resource = $this->feedParser->download($source);
+        $resource = $this->feedParser->download($source->getSource());
 
         $parser = $this->feedParser->getParser(
             $resource->getUrl(),
@@ -46,10 +47,10 @@ class FeedImporter extends Importer
             $activity->setTitle($item->getTitle());
             $activity->setContent($item->getContent());
 
-            if($sourceName) {
+            if($source->getName()) {
                 $name = new ActivityAttribute();
                 $name->setName("Name");
-                $name->setValue($sourceName);
+                $name->setValue($source->getName());
             }
 
             if($item->getAuthor()) {
@@ -103,15 +104,15 @@ class FeedImporter extends Importer
         return dirname(__FILE__);
     }
 
-    public function check($source) {
+    public function check(Source $source) {
         parent::check($source);
 
         try {
-            $resource = $this->feedParser->download($source);
+            $resource = $this->feedParser->download($source->getSource());
             $parser = $this->feedParser->getParser($resource->getUrl(), $resource->getContent(), $resource->getEncoding());
         } catch(\Exception $e) {
 
-            throw new \Exception(sprintf("Feed Url %s isn't valid : %s", $source, $e->getMessage()));
+            throw new \Exception(sprintf("Feed Url %s isn't valid : %s", $source->getSource(), $e->getMessage()));
         }
     }
 

@@ -21,7 +21,7 @@ class SourceManager
 
     public function executeOne(Source $source, OutputInterface $output, $dryRun = false) {
 
-        return $this->im->execute($source->getImporter(), $source->getSource(), $source->getName(), $output, $dryRun);
+        return $this->im->execute($source, $output, $dryRun);
     }
 
     public function executeAll(OutputInterface $output, $dryRun = false) {

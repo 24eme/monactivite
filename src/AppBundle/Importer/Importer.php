@@ -3,6 +3,7 @@
 namespace AppBundle\Importer;
 
 use Symfony\Component\Console\Output\OutputInterface;
+use AppBundle\Entity\Source;
 
 abstract class Importer
 {
@@ -15,9 +16,9 @@ abstract class Importer
         $this->em = $em;
     }
 
-    public abstract function run($source, $sourceName = null, OutputInterface $output, $dryrun = false);
+    public abstract function run(Source $source, OutputInterface $output, $dryrun = false);
 
-    public function check($source) {
+    public function check(Source $source) {
         if(!file_exists($this->getVarDir())) {
             mkdir($this->getVarDir());
         }

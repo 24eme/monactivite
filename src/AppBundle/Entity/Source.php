@@ -42,6 +42,12 @@ class Source
      */
     private $name;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="update_param", type="json_array")
+     */
+    private $updateParam;
 
     /**
      * Get id
@@ -120,5 +126,28 @@ class Source
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Set updateParam
+     *
+     * @param array $updateParam
+     * @return Source
+     */
+    public function setUpdateParam($updateParam)
+    {
+        $this->updateParam = $updateParam;
+
+        return $this;
+    }
+
+    /**
+     * Get updateParam
+     *
+     * @return array 
+     */
+    public function getUpdateParam()
+    {
+        return $this->updateParam;
     }
 }

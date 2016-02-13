@@ -6,6 +6,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use AppBundle\Importer\Importer;
 use AppBundle\Entity\Activity;
 use AppBundle\Entity\ActivityAttribute;
+use AppBundle\Entity\Source;
 
 class GitImporter extends Importer
 {
@@ -14,8 +15,8 @@ class GitImporter extends Importer
         return 'Git';
     }
 
-    public function run($source, $sourceName = null, OutputInterface $output, $dryrun = false) {
-        $output->writeln(sprintf("<comment>Started import git commit in %s</comment>", $source));
+    public function run(Source $source, OutputInterface $output, $dryrun = false) {
+        $output->writeln(sprintf("<comment>Started import git commit in %s</comment>", $source->getSource()));
 
         $storeFile = $this->storeCsv($source);
 
@@ -36,7 +37,7 @@ class GitImporter extends Importer
 
                 $repository = new ActivityAttribute();
                 $repository->setName("Repository");
-                $repository->setValue($sourceName);
+                $repository->setValue($source->getName());
 
                 $author = new ActivityAttribute();
                 $author->setName("Author");
@@ -79,22 +80,22 @@ class GitImporter extends Importer
         return dirname(__FILE__);
     }
 
-    public function check($source) {
+    public function check(Source $source) {
         parent::check($source);
 
-        if(!file_exists($source)) {
-            throw new \Exception(sprintf("Folder %s doesn't exist", $source));
+        if(!file_exists($source->getSource())) {
+            throw new \Exception(sprintf("Folder %s doesn't exist", $source->getSource()));
         }
 
-        if(!file_exists($source."/.git")) {
-            throw new \Exception(sprintf("This folder isn't a git repository", $source));
+        if(!file_exists($source->getSource()."/.git")) {
+            throw new \Exception(sprintf("This folder isn't a git repository", $source->getSource()));
         }
     }
 
-    protected function storeCsv($file) {
+    protected function storeCsv(Source $source) {
         $storeFile = sprintf("%s/var/commits_%s_%s.csv", dirname(__FILE__), date("YmdHis"), uniqid());
         
-        shell_exec(sprintf("%s/bin/git2csv.sh %s > %s", dirname(__FILE__), $file, $storeFile));
+        shell_exec(sprintf("%s/bin/git2csv.sh %s > %s", dirname(__FILE__), $source->getSource(), $storeFile));
     
         return $storeFile;
     }

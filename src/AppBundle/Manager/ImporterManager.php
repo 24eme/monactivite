@@ -16,11 +16,11 @@ class ImporterManager
         }
     }
 
-    public function execute($importerName, $source, $sourceName, OutputInterface $output, $dryRun = false) {
-        $importer = $this->get($importerName);
+    public function execute(Source $source, OutputInterface $output, $dryRun = false) {
+        $importer = $this->get($source->getImporter());
 
         $importer->check($source);
-        $importer->run($source, $sourceName, $output, $dryRun);
+        $importer->run($source, $output, $dryRun);
     }
 
     public function get($name) {
