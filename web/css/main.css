@@ -25,7 +25,63 @@
     visibility: visible;
 }
 
+.btn-tag {
+    border: 0;
+}
+
+.btn-tag .badge {
+    font-size: 11px; 
+    font-weight: bold;
+}
+
+.btn-tag-small {
+    padding-left: 2px; 
+    padding-right: 2px;
+    width: 32px;
+    border: none; 
+    background: transparent;
+}
+
+.btn-attribute-small {
+   width: 46px; 
+   border: 0; 
+   font-size: 11px; 
+   opacity: 0.9; 
+   padding-top:6px; 
+   padding-bottom: 8px; 
+   background: transparent;
+}
+
+.ligneContainer {
+    border-top: 1px solid #e8e8e8;
+}
+
 .ligne {
     height: 28px;
     overflow: hidden;
+    border-bottom: 1px solid #e8e8e8;
+    padding-top: 0; 
+    padding-bottom: 0;
+}
+
+.itemTags {
+    padding-left: 0; 
+    padding-right: 0px; 
+    width: 132px;
+}
+
+.itemAttribute {
+    padding-right: 0; 
+    padding-top: 0;  
+    padding-left: 0; 
+    padding-bottom: 0; 
+    width: 198px; 
+    line-height: 24px;
+}
+
+.itemContent {
+    padding-top: 2px; 
+    padding-left: 0; 
+    padding-right: 0px; 
+    width: 800px;
 }
