@@ -70,6 +70,9 @@ class GitImporter extends Importer
             }
         }
 
+        $this->em->persist($source);
+        $this->em->flush();
+
         unlink($storeFile);
 
         $output->writeln(sprintf("<info>%s new activity imported</info>", $nb));
@@ -93,9 +96,17 @@ class GitImporter extends Importer
     }
 
     protected function storeCsv(Source $source) {
+        $fromDate = "1990-01-01";
+
+        if(isset($source->getUpdateParam()['date'])) {
+            $fromDate = (new \DateTime($source->getUpdateParam()['date']))->modify('-7 days')->format('Y-m-d');
+        }
+
         $storeFile = sprintf("%s/var/commits_%s_%s.csv", dirname(__FILE__), date("YmdHis"), uniqid());
         
-        shell_exec(sprintf("%s/bin/git2csv.sh %s > %s", dirname(__FILE__), $source->getSource(), $storeFile));
+        shell_exec(sprintf("%s/bin/git2csv.sh %s \"\" %s > %s", dirname(__FILE__), $source->getSource(), $fromDate, $storeFile));
+
+        $source->setUpdateParam(array('date' => date('Y-m-d')));
     
         return $storeFile;
     }
