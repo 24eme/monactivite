@@ -32,7 +32,17 @@ class MailImporter extends Importer
         $nb = 0;
         $handle = fopen($source->getSource(), "r");
 
+        $nbLigne = 0;
+        $lineToStart = 0;
+        if(isset($source->getUpdateParam()['line'])) {
+            $lineToStart = $source->getUpdateParam()['line'];
+        }
+
         while (($line = fgets($handle)) !== false) {
+            $nbLigne++;
+            if($nbLigne <= $lineToStart) {
+                continue;
+            }
             if(preg_match('/^(From .?$|From - )/', $line)) {
                 if($mail && $start) {
                     if($this->importMail($mail, $source, $output, $dryrun)) { $nb++; }
@@ -50,6 +60,10 @@ class MailImporter extends Importer
         }
 
         fclose($handle);
+
+        $source->setUpdateParam(array('line' => $nbLigne));
+        $this->em->persist($source);
+        $this->em->flush();
 
         $output->writeln(sprintf("<info>%s new activity imported</info>", $nb));
     }

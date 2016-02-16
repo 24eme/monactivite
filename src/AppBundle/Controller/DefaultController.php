@@ -46,6 +46,15 @@ class DefaultController extends Controller
         return $this->render('default/index.html.twig', array('activitiesByDates' => $activitiesByDates, 'tags' => $tags));
     }
 
+    /**
+     * @Route("/update", name="update")
+     */
+    public function updateAction()
+    {
+
+        return $this->render('default/update.html.twig');
+    }
+
     public static function sortTagByNb($a, $b) {
 
         return $a['nb'] < $b['nb'];
