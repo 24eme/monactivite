@@ -85,7 +85,15 @@ class MailImporter extends Importer
             $subject = null;
         }
 
-        $date = $parsedMail->getMail()->getHeaderField("Date");
+        try {
+            $date = $parsedMail->getMail()->getHeaderField("Date");
+        } catch(\Exception $e) {
+            if($output->isVerbose()) {
+                $output->writeln("<error>Error ".$e->getMessage()."</error>");
+            }
+            
+            return false;
+        }
 
         $from = null;
         foreach($parsedMail->getAllEmailAddresses(array('from')) as $address) {
