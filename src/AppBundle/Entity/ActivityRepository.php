@@ -14,20 +14,21 @@ use Doctrine\ORM\Query;
 class ActivityRepository extends EntityRepository
 {
     
-    public function findByDatesInterval($dateFrom, $dateTo) {
+    public function findByDatesInterval($dateFrom, $dateTo, $name = "%") {
 
         return $this->getEntityManager()
-                     ->createQuery('
+                    ->createQuery('
                           SELECT a, aa, at
                           FROM AppBundle:Activity a
                           LEFT JOIN a.attributes aa
                           LEFT JOIN a.tags at
-                          WHERE a.executedAt >= :date_to AND a.executedAt < :date_from
+                          WHERE a.executedAt >= :date_to AND a.executedAt <= :date_from AND a IN(SELECT asub FROM AppBundle:Activity asub JOIN asub.tags tsub WITH tsub.name LIKE :name)
                           ORDER BY a.executedAt DESC
                       ')
-                      ->setParameter('date_from', $dateFrom)
-                      ->setParameter('date_to', $dateTo)
-                      ->getResult();
+                    ->setParameter('date_from', $dateFrom)
+                    ->setParameter('date_to', $dateTo)
+                    ->setParameter('name', $name)
+                    ->getResult();
     }
 
     public function findByDate($date) {
@@ -35,6 +36,11 @@ class ActivityRepository extends EntityRepository
         $dateTo->modify("+1 day");
 
         return $this->findByDateInterval($date, $dateTo);
+    }
+
+    public function getQueryFromSearch($query) {
+
+        
     }
 
     public function findByFilter($filter) {
@@ -47,10 +53,10 @@ class ActivityRepository extends EntityRepository
                           JOIN a.attributes at WITH at.name = :name AND at.value = :value
                           WHERE a NOT IN (SELECT asub FROM AppBundle:Activity asub JOIN asub.tags tsub WITH tsub = :tag)
                           ORDER BY a.executedAt DESC
-                    ')
-                   ->setParameter('name', trim($query[0]))
-                   ->setParameter('value', trim($query[1]))
-                   ->setParameter('tag', $filter->getTag())
-                   ->getResult();
+                     ')
+                    ->setParameter('name', trim($query[0]))
+                    ->setParameter('value', trim($query[1]))
+                    ->setParameter('tag', $filter->getTag())
+                    ->getResult();
     }
 }

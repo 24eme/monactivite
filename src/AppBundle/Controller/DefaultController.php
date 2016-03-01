@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
@@ -10,21 +11,33 @@ class DefaultController extends Controller
     /**
      * @Route("/", name="timeline")
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository('AppBundle:Activity');
 
         $activitiesByDates = array();
 
-        $dateFrom = new \DateTime();
-        $dateTo = clone $dateFrom;
-        $dateTo->modify('-7 days');
 
-        $activities = $repo->findByDatesInterval($dateFrom, $dateTo);
+        $dateFrom = new \DateTime();
+        
+        if($request->get('date')) {
+            $dateFrom = new \DateTime($request->get('date'). ' 00:00:00');
+            $dateFrom->modify('+1 day + 4 hours');    
+        }
+        
+        $dateTo = clone $dateFrom;
+        $dateTo->modify('-30 days');
+
+        $tag = "%";
+        if($request->get('tag')) {
+            $tag = $request->get('tag');
+        }
+
+        $activities = $repo->findByDatesInterval($dateFrom, $dateTo, $tag);
 
         foreach($activities as $activity) {
-            $keyDate = $activity->getExecutedAt()->format('Y-m-d');
+            $keyDate = $activity->getKeyDate();
             if(!array_key_exists($keyDate, $activitiesByDates)) {
                 $activitiesByDates[$keyDate] = array('activites' => array(), 'tags' => array());
             }
@@ -37,8 +50,8 @@ class DefaultController extends Controller
             }
         }
 
-        foreach($activitiesByDates as $activitiesByDate) {
-            usort($activitiesByDate['tags'], "\AppBundle\Controller\DefaultController::sortTagByNb");
+        foreach($activitiesByDates as $key => $activitiesByDate) {
+            usort($activitiesByDates[$key]['tags'], "\AppBundle\Controller\DefaultController::sortTagByNb");
         }
 
         $tags = $em->getRepository('AppBundle:Tag')->findAll();

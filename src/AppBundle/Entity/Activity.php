@@ -263,4 +263,10 @@ class Activity
 
         return $this->getTitle();
     }
+
+    public function getKeyDate() {
+        $date = clone $this->getExecutedAt();
+
+        return $date->modify('-4 hours')->format('Y-m-d');
+    }
 }
