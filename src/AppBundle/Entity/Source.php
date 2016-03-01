@@ -45,7 +45,7 @@ class Source
     /**
      * @var string
      *
-     * @ORM\Column(name="update_param", type="json_array")
+     * @ORM\Column(name="update_param", type="json_array", nullable=true)
      */
     private $updateParam;
 
