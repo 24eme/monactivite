@@ -87,6 +87,7 @@ class MailImporter extends Importer
 
         try {
             $date = $parsedMail->getMail()->getHeaderField("Date");
+            $date = new \DateTime($date);
         } catch(\Exception $e) {
             if($output->isVerbose()) {
                 $output->writeln("<error>Error ".$e->getMessage()."</error>");
@@ -110,7 +111,7 @@ class MailImporter extends Importer
         $body = $parsedMail->getPrimaryContent();
 
         $activity = new Activity();
-        $activity->setExecutedAt(new \DateTime($date));
+        $activity->setExecutedAt($date);
         $activity->setTitle($subject);
         $activity->setContent($body);
 
