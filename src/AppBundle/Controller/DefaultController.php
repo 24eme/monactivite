@@ -18,7 +18,6 @@ class DefaultController extends Controller
 
         $activitiesByDates = array();
 
-
         $dateFrom = new \DateTime();
         
         if($request->get('date')) {
@@ -29,12 +28,7 @@ class DefaultController extends Controller
         $dateTo = clone $dateFrom;
         $dateTo->modify('-30 days');
 
-        $tag = "%";
-        if($request->get('tag')) {
-            $tag = $request->get('tag');
-        }
-
-        $activities = $repo->findByDatesInterval($dateFrom, $dateTo, $tag);
+        $activities = $repo->findByDatesInterval($dateFrom, $dateTo, $request->get('q'));
 
         foreach($activities as $activity) {
             $keyDate = $activity->getKeyDate();
@@ -56,7 +50,7 @@ class DefaultController extends Controller
 
         $tags = $em->getRepository('AppBundle:Tag')->findAll();
 
-        return $this->render('default/index.html.twig', array('activitiesByDates' => $activitiesByDates, 'tags' => $tags));
+        return $this->render('default/index.html.twig', array('activitiesByDates' => $activitiesByDates, 'tags' => $tags, 'query' => $request->get('q')));
     }
 
     /**

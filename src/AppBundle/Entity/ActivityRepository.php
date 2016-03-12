@@ -3,7 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Query;
+use Doctrine\ORM\Query; 
 
 /**
  * ActivityRepository
@@ -14,33 +14,81 @@ use Doctrine\ORM\Query;
 class ActivityRepository extends EntityRepository
 {
     
-    public function findByDatesInterval($dateFrom, $dateTo, $name = "%") {
+    public function findByDatesInterval($dateFrom, $dateTo, $queryString = null) {
+        $querySearchDQL = null;
+        $querySearch = null;
+        if($queryString) {
+            $querySearch = $this->searchQueryToQueryDoctrine($queryString);
+            $querySearchDQL = ' AND a IN('.$querySearch->getDQL().')';
+        }
 
-        return $this->getEntityManager()
+        $query = $this->getEntityManager()
                     ->createQuery('
                           SELECT a, aa, at
                           FROM AppBundle:Activity a
                           LEFT JOIN a.attributes aa
                           LEFT JOIN a.tags at
-                          WHERE a.executedAt >= :date_to AND a.executedAt <= :date_from AND a IN(SELECT asub FROM AppBundle:Activity asub JOIN asub.tags tsub WITH tsub.name LIKE :name)
+                          WHERE a.executedAt >= :date_to AND a.executedAt <= :date_from'.$querySearchDQL.'
                           ORDER BY a.executedAt DESC
                       ')
                     ->setParameter('date_from', $dateFrom)
-                    ->setParameter('date_to', $dateTo)
-                    ->setParameter('name', $name)
-                    ->getResult();
+                    ->setParameter('date_to', $dateTo);
+
+        if($querySearch) {
+          foreach($querySearch->getParameters() as $p) {
+              $query->setParameter($p->getName(), $p->getValue());
+          }
+        }
+
+        return $query->getResult();
     }
+
+    public function searchQueryToQueryDoctrine($searchQuery) {
+        $terms = explode(" ", $searchQuery);
+        $params = array();
+        foreach($terms as $term) {
+            $param = explode(":", $term);
+            if(count($param) < 2) {
+              $param[1] = $param[0];
+              $param[0] = 'title';
+            }
+            array_push($params, $param);
+        }
+
+        $query = $this->getEntityManager()->createQueryBuilder()
+                                 ->select('aq')
+                                 ->from('AppBundle:Activity', 'aq');
+                                 
+
+        foreach($params as $key => $param) {
+            $name = $param[0];
+            $value = str_replace('*', '%', $param[1]);
+
+            if($name == 'title' || $name == 'content') {
+              $query->andwhere('aq.'.$name.' LIKE :q'.$key.'value')
+                    ->setParameter('q'.$key.'value', $value);
+            } elseif($name == 'tag') {
+              $query->leftJoin('aq.tags', 'aqt'.$key)
+                  ->andWhere('aqt'.$key.'.name LIKE :q'.$key.'value') 
+                  ->setParameter('q'.$key.'value', $value);
+            } else {
+                $query->leftJoin('aq.attributes', 'aqa'.$key)
+                  ->andwhere('aqa'.$key.'.value LIKE :q'.$key.'value')
+                  ->andWhere('aqa'.$key.'.name LIKE :q'.$key.'name')
+                  ->setParameter('q'.$key.'name', $name)
+                  ->setParameter('q'.$key.'value', $value);
+            }
+        }
+                                 
+        
+        return $query;
+    } 
 
     public function findByDate($date) {
         $dateTo = clone $date;
         $dateTo->modify("+1 day");
 
         return $this->findByDateInterval($date, $dateTo);
-    }
-
-    public function getQueryFromSearch($query) {
-
-        
     }
 
     public function findByFilter($filter) {

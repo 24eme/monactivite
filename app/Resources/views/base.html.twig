@@ -25,7 +25,11 @@
               </button>
               <a class="navbar-brand" href="{{ path('timeline') }}">Mon Activité</a>
             </div>
-
+            <form action="" method="get" class="navbar-form navbar-left" role="search">
+                <div class="form-group">
+                  <input type="text" name="q" value="{{ query }}" class="form-control" style="width: 600px;" placeholder="Rechercher...">
+                </div>
+            </form>
             <div class="collapse navbar-collapse" id="nav-main-element">
                 <ul class="nav navbar-nav navbar-right">
                     <li><a data-toggle="tooltip" title="Tags" href="{{ path('tag') }}"><span class="glyphicon glyphicon-tags"></span></a></li>
