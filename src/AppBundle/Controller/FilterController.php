@@ -25,13 +25,16 @@ class FilterController extends Controller
      * @Method("GET")
      * @Template("Filter/index.html.twig")
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
 
         $entities = $em->getRepository('AppBundle:Filter')->findAll();
 
         $entity = new Filter();
+        if($request->get('q')) {
+            $entity->setQuery($request->get('q'));
+        }
         $form = $this->createCreateForm($entity);
 
         return array(

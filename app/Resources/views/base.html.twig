@@ -31,7 +31,9 @@
                         <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
                         <input type="text" name="q" value="{{ query | default(null) }}" class="form-control" style="width: 500px;" placeholder="Rechercher...">
                         {% if(query | default(null)) %}
-                        <span class="input-group-btn"><a href="{{ path('timeline') }}" class="btn btn-default" type="button"><span class="glyphicon glyphicon-remove"></span></a></span>
+                        <span class="input-group-btn">
+                        <a href="{{ path('filter', {'q': query}) }}" class="btn btn-default" type="button"><span class="glyphicon glyphicon-filter"></span></a>
+                            <a href="{{ path('timeline') }}" class="btn btn-default" type="button"><span class="glyphicon glyphicon-remove"></span></a></span>
                         {% endif %}
                     </div>
                     <button class="btn btn-default"><span class="glyphicon glyphicon-time"></span> 6 derniers mois</button>
