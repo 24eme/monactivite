@@ -2,7 +2,7 @@
     <span class="pull-right">{{ title }}</span> 
     <div class="btn-group">
         {% for tag in tags %}
-            {% include 'Tag/button.html.twig' with {'tag': tag.entity, url: '', 'badge': tag.nb} %}
+            {% include 'Tag/button.html.twig' with {'tag': tag.entity, url: path('timeline', { 'q': (query~' tag:'~tag.entity.name) | trim }), 'badge': tag.nb} %}
         {% endfor %}
     </div>
 </h3>
@@ -16,7 +16,7 @@
                             <div class="btn-group">
                                 {% if not readOnly %}
                                     {% for j in 0..(3 - activity.tags | length) %}
-                                    <button style="width: 32px; opacity: 0.1; border: 0;" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-plus"></span></button>
+                                    <button class="btn btn-sm btn-default btn-tag-empty"><span class="glyphicon glyphicon-plus"></span></button>
                                     {% endfor %}
                                 {% endif %}
                                 {% for tag in activity.getTagsReverse() %}
@@ -28,7 +28,7 @@
                             <span style="padding-right: 4px; font-size: 14px; opacity: 0.7;">{{ activity.executedAt | date('H:i') }}</span>&nbsp;
                             <div class="btn-group">
                                 {% for attribute in activity.attributes %}
-                                    <button data-toggle="tooltip" data-placement="auto" title="{{ attribute.value }}&nbsp;<small>({{ attribute.name }})</small>" data-html="true" data-container="body" class="btn btn-sm btn-default text-left btn-attribute-small"><span class="text-muted text-left">{{ attribute.value | replace({ "." : "", "-": "", "@": "" }) | slice(0, 5) | upper  }}</span></button>
+                                    <a href="{{ path('timeline', { 'q': (query~' '~attribute.name~':'~attribute.value) | trim }) }}" data-toggle="tooltip" data-placement="auto" title="{{ attribute.value }}&nbsp;<small>({{ attribute.name }})</small>" data-html="true" data-container="body" class="btn btn-sm btn-default text-left btn-attribute-small"><span class="text-muted text-left">{{ attribute.value | replace({ "." : "", "-": "", "@": "" }) | slice(0, 5) | upper  }}</span></a>
                                 {% endfor %}
                                 {% if activity.attributes | length < 3 %}
                                     {% for j in 0..(2 - (activity.attributes | length)) %}

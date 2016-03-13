@@ -25,10 +25,10 @@ class DefaultController extends Controller
             $dateFrom->modify('+1 day + 4 hours');    
         }
         
-        $dateTo = clone $dateFrom;
+        $dateTo = new \DateTime();
         $dateTo->modify('-6 month');
 
-        $activities = $repo->findByDatesInterval($dateFrom, $dateTo, 20, $request->get('q'));
+        $activities = $repo->findByDatesInterval($dateFrom, $dateTo, 10, $request->get('q'));
 
         foreach($activities as $activity) {
             $keyDate = $activity->getKeyDate();

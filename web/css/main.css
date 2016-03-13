@@ -55,6 +55,8 @@
    padding-top:6px; 
    padding-bottom: 8px; 
    background: transparent;
+   padding-left: 0;
+   padding-right: 0;
 }
 
 .btn-attribute-small-empty {
@@ -65,6 +67,10 @@
     padding-top:6px; 
     padding-bottom: 8px; 
     background: transparent;
+}
+
+.btn-tag-empty {
+    width: 32px; opacity: 0.1; border: 0;
 }
 
 .ligneContainer {
