@@ -27,7 +27,8 @@
             </div>
             <form action="" method="get" class="navbar-form navbar-left" role="search">
                 <div class="form-group">
-                  <input type="text" name="q" value="{{ query }}" class="form-control" style="width: 600px;" placeholder="Rechercher...">
+                  <input type="text" name="q" value="{{ query | default('') }}" class="form-control" style="width: 600px;" placeholder="Rechercher...">
+                  <button class="btn btn-default"><span class="glyphicon glyphicon-time"></span> 6 derniers mois</button>
                 </div>
             </form>
             <div class="collapse navbar-collapse" id="nav-main-element">

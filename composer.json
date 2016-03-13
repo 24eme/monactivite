@@ -23,7 +23,8 @@
         "lasso/mail-parser-bundle": "dev-master",
         "html2text/html2text": "dev-master",
         "fguillot/picofeed": "0.1.3",
-        "doctrine/doctrine-fixtures-bundle": "^2.2"
+        "doctrine/doctrine-fixtures-bundle": "^2.2",
+        "luxifer/doctrine-functions": "dev-master"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"

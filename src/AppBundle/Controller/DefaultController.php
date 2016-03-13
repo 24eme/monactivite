@@ -26,9 +26,9 @@ class DefaultController extends Controller
         }
         
         $dateTo = clone $dateFrom;
-        $dateTo->modify('-30 days');
+        $dateTo->modify('-6 month');
 
-        $activities = $repo->findByDatesInterval($dateFrom, $dateTo, $request->get('q'));
+        $activities = $repo->findByDatesInterval($dateFrom, $dateTo, 20, $request->get('q'));
 
         foreach($activities as $activity) {
             $keyDate = $activity->getKeyDate();

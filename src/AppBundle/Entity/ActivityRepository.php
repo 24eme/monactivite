@@ -14,13 +14,35 @@ use Doctrine\ORM\Query;
 class ActivityRepository extends EntityRepository
 {
     
-    public function findByDatesInterval($dateFrom, $dateTo, $queryString = null) {
+    public function findByDatesInterval($dateFrom, $dateTo, $nbDaysMax, $queryString = null) {
         $querySearchDQL = null;
         $querySearch = null;
         if($queryString) {
             $querySearch = $this->searchQueryToQueryDoctrine($queryString);
             $querySearchDQL = ' AND a IN('.$querySearch->getDQL().')';
         }
+
+        $query = $this->getEntityManager()
+                    ->createQuery('
+                          SELECT DATE(a.executedAt) as date
+                          FROM AppBundle:Activity a
+                          WHERE a.executedAt >= :date_to AND a.executedAt <= :date_from'.$querySearchDQL.'
+                          GROUP BY date
+                          ORDER BY a.executedAt DESC
+                      ')
+                    ->setParameter('date_from', $dateFrom)
+                    ->setParameter('date_to', $dateTo)
+                    ->setMaxResults($nbDaysMax);
+
+         if($querySearch) {
+          foreach($querySearch->getParameters() as $p) {
+              $query->setParameter($p->getName(), $p->getValue());
+          }
+        }
+
+        $dates = $query->getScalarResult();
+
+        $dateTo = $dates[count($dates) - 1]['date'];
 
         $query = $this->getEntityManager()
                     ->createQuery('
