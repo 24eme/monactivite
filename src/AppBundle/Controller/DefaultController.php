@@ -13,44 +13,8 @@ class DefaultController extends Controller
      */
     public function indexAction(Request $request)
     {
-        $em = $this->getDoctrine()->getManager();
-        $repo = $em->getRepository('AppBundle:Activity');
 
-        $activitiesByDates = array();
-
-        $dateFrom = new \DateTime();
-        
-        if($request->get('date')) {
-            $dateFrom = new \DateTime($request->get('date'). ' 00:00:00');
-            $dateFrom->modify('+1 day + 4 hours');    
-        }
-        
-        $dateTo = new \DateTime();
-        $dateTo->modify('-6 month');
-
-        $activities = $repo->findByDatesInterval($dateFrom, $dateTo, 10, $request->get('q'));
-
-        foreach($activities as $activity) {
-            $keyDate = $activity->getKeyDate();
-            if(!array_key_exists($keyDate, $activitiesByDates)) {
-                $activitiesByDates[$keyDate] = array('activites' => array(), 'tags' => array());
-            }
-            $activitiesByDates[$keyDate]['activities'][$activity->getId()] = $activity;
-            foreach($activity->getTags() as $tag) {
-                if(!array_key_exists($tag->getId(), $activitiesByDates[$keyDate]['tags'])) {
-                    $activitiesByDates[$keyDate]['tags'][$tag->getId()] = array('nb' => 0, 'entity' => $tag);
-                }
-                $activitiesByDates[$keyDate]['tags'][$tag->getId()]['nb'] += 1;
-            }
-        }
-
-        foreach($activitiesByDates as $key => $activitiesByDate) {
-            usort($activitiesByDates[$key]['tags'], "\AppBundle\Controller\DefaultController::sortTagByNb");
-        }
-
-        $tags = $em->getRepository('AppBundle:Tag')->findAll();
-
-        return $this->render('default/index.html.twig', array('activitiesByDates' => $activitiesByDates, 'tags' => $tags, 'query' => $request->get('q')));
+        return $this->render('default/index.html.twig', array('query' => $request->get('q')));
     }
 
     /**
@@ -62,8 +26,4 @@ class DefaultController extends Controller
         return $this->render('default/update.html.twig');
     }
 
-    public static function sortTagByNb($a, $b) {
-
-        return $a['nb'] < $b['nb'];
-    }
 }
