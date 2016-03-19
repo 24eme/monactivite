@@ -2,13 +2,8 @@
 
 {% block body %}
     <div class="row">
-        <div class="col-lg-12">
+        <div id="activities_container" class="col-lg-12">
             {% render path('activity_list', { 'q': query, 'date': dateFrom, 'nb': nbDays}) %}
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-12 text-center">
-            <button class="btn btn-link">Charger plus</button>
         </div>
     </div>
 {% endblock %}

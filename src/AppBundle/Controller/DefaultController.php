@@ -14,7 +14,7 @@ class DefaultController extends Controller
     public function indexAction(Request $request)
     {
         $nbDays = $request->get('nb', 10);
-        $dateFrom = $request->get('date', new \DateTime());
+        $dateFrom = $request->get('date', date('Y-m-d'));
         $query = $request->get('q', null);
 
         return $this->render('default/index.html.twig', array('query' => $request->get('q'), 'dateFrom' => $dateFrom, 'nbDays' => $nbDays));

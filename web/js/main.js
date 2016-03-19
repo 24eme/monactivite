@@ -15,6 +15,16 @@ $(document).ready( function() {
         $($(this).attr('data-form-item-relation')).val(icon);
     });
 
+    $('#activities_container').on('click', '#btn_load_more_activities', function() {
+        var button = $(this);
+        button.button('loading');
+        $.get($(this).attr('data-url'), function(data, status) {
+            if(!status) {
+                button.button('reset');
+                return;
+            }
+            $('#btn_load_more_container').remove();
+            $('#activities_container').html($('#activities_container').html()+"\n"+data);
+        });
+    });
 });
-
-

@@ -1,6 +1,6 @@
 {% for date, activities in activitiesByDates %}
     <h3>
-        <span class="pull-right">{{ date | date('D d M Y') }}</span> 
+        <span class="pull-right">{{ date | date('D d M Y') }}</span>
         <div class="btn-group">
             {% for tag in activities.tags %}
                 {% include 'Tag/button.html.twig' with {'tag': tag.entity, url: path('timeline', { 'q': (query~' tag:'~tag.entity.name) | trim }), 'badge': tag.nb} %}
@@ -47,3 +47,11 @@
         </div>
     </div>
 {% endfor %}
+
+{% if(dateNext) %}
+<div class="row" id="btn_load_more_container" style="margin-top: 10px;">
+    <div class="col-lg-12 text-center">
+        <button data-loading-text="Chargement en cours ..." id="btn_load_more_activities" data-url="{{ path('activity_list', { 'q': query, 'date': dateNext, 'nb': nbDays}) }}" class="btn btn-link">Charger les jours précédents</button>
+    </div>
+</div>
+{% endif %}

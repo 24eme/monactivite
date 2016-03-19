@@ -22,14 +22,12 @@ class ActivityController extends Controller
         $repo = $em->getRepository('AppBundle:Activity');
 
         $nbDays = $request->get('nb', 10);
-        $dateFrom = $request->get('date', new \DateTime());
+        $dateFrom = new \DateTime($request->get('date', date('Y-m-d')));
         $query = $request->get('q', null);
 
         $activitiesByDates = array();
 
-        $dateFrom = new \DateTime();
-
-        $dateTo = new \DateTime();
+        $dateTo = clone $dateFrom;
         $dateTo->modify('-6 month');
 
         $activities = $repo->findByDatesInterval($dateFrom, $dateTo, $nbDays, $query);
@@ -54,7 +52,14 @@ class ActivityController extends Controller
 
         $tags = $em->getRepository('AppBundle:Tag')->findAll();
 
-        return $this->render('Activity/list.html.twig', array('activitiesByDates' => $activitiesByDates, 'tags' => $tags, 'query' => $query));
+        $dateNext = null;
+        if($activity) {
+            $dateNext = new \DateTime($activity->getExecutedAt()->format('Y-m-d'));
+            $dateNext = $dateNext->modify("-1 day")->format('Y-m-d');
+        }
+
+
+        return $this->render('Activity/list.html.twig', array('activitiesByDates' => $activitiesByDates, 'tags' => $tags, 'query' => $query, 'dateNext' => $dateNext, 'nbDays' => $nbDays));
     }
 
     public static function sortTagByNb($a, $b) {
