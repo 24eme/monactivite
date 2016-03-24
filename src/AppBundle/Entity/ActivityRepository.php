@@ -70,6 +70,33 @@ class ActivityRepository extends EntityRepository
         return $query->getResult();
     }
 
+    public function findByDate($date) {
+        $dateTo = clone $date;
+        $dateTo->modify("+1 day");
+
+        return $this->findByDateInterval($date, $dateTo);
+    }
+
+    public function findByFilter($filter) {
+        $querySearch = $this->searchQueryToQueryDoctrine($filter->getQuery());
+
+        $query = $this->getEntityManager()
+                    ->createQuery('
+                          SELECT a
+                          FROM AppBundle:Activity a
+                          WHERE a NOT IN (SELECT asub FROM AppBundle:Activity asub JOIN asub.tags tsub WITH tsub = :tag)
+                            AND a IN('.$querySearch->getDQL().')
+                          ORDER BY a.executedAt DESC
+                     ')
+                    ->setParameter('tag', $filter->getTag());
+
+        foreach($querySearch->getParameters() as $p) {
+            $query->setParameter($p->getName(), $p->getValue());
+        }
+
+        return $query->getResult();
+    }
+
     public function searchQueryToQueryDoctrine($searchQuery) {
         $terms = explode(" ", $searchQuery);
         $params = array();
@@ -109,29 +136,5 @@ class ActivityRepository extends EntityRepository
 
 
         return $query;
-    }
-
-    public function findByDate($date) {
-        $dateTo = clone $date;
-        $dateTo->modify("+1 day");
-
-        return $this->findByDateInterval($date, $dateTo);
-    }
-
-    public function findByFilter($filter) {
-        $query = explode(":", $filter->getQuery());
-
-        return $this->getEntityManager()
-                    ->createQuery('
-                          SELECT a
-                          FROM AppBundle:Activity a
-                          JOIN a.attributes at WITH at.name = :name AND at.value = :value
-                          WHERE a NOT IN (SELECT asub FROM AppBundle:Activity asub JOIN asub.tags tsub WITH tsub = :tag)
-                          ORDER BY a.executedAt DESC
-                     ')
-                    ->setParameter('name', trim($query[0]))
-                    ->setParameter('value', trim($query[1]))
-                    ->setParameter('tag', $filter->getTag())
-                    ->getResult();
     }
 }
