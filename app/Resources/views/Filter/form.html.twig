@@ -2,12 +2,12 @@
     {{ form_errors(form) }}
     <div class="col-xs-8">
         <div class="form-group">
-        {{ form_widget(form.query, { 'attr': {'placeholder': 'Requête' }}) }}
+        {{ form_widget(form.query, { 'attr': {'placeholder': 'Requête de recherche' }}) }}
         </div>
     </div>
-    <div class="col-xs-2">
+    <div class="col-xs-3">
         <div class="form-group">
-        {{ form_widget(form.tag, { 'attr': {'placeholder': 'Tag à appliquer' }}) }}
+        {{ form_widget(form.tag, { 'attr': {'data-placeholder': 'Tag à appliquer', 'class': 'select2' }}) }}
         </div>
     </div>
     <div class="col-xs-1">

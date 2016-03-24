@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Filter
@@ -25,19 +26,22 @@ class Filter
      * @var string
      *
      * @ORM\Column(name="query", type="string", length=255)
+     * @Assert\NotBlank()
      */
     private $query;
 
     /**
      * @ORM\ManyToOne(targetEntity="Tag")
      * @ORM\JoinColumn(name="tag_id", referencedColumnName="id")
-     **/
+     * @Assert\Type(type="AppBundle\Entity\Tag")
+     * @Assert\Valid()
+     */
     private $tag;
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -60,7 +64,7 @@ class Filter
     /**
      * Get query
      *
-     * @return string 
+     * @return string
      */
     public function getQuery()
     {
@@ -83,7 +87,7 @@ class Filter
     /**
      * Get tag
      *
-     * @return \AppBundle\Entity\Tag 
+     * @return \AppBundle\Entity\Tag
      */
     public function getTag()
     {
@@ -93,5 +97,10 @@ class Filter
     public function __toString() {
 
         return $this->getQuery();
+    }
+
+    public function getTags() {
+
+        return null;
     }
 }

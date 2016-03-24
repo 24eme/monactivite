@@ -3,7 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Query; 
+use Doctrine\ORM\Query;
 
 /**
  * ActivityRepository
@@ -13,7 +13,7 @@ use Doctrine\ORM\Query;
  */
 class ActivityRepository extends EntityRepository
 {
-    
+
     public function findByDatesInterval($dateFrom, $dateTo, $nbDaysMax, $queryString = null) {
         $querySearchDQL = null;
         $querySearch = null;
@@ -41,6 +41,11 @@ class ActivityRepository extends EntityRepository
         }
 
         $dates = $query->getScalarResult();
+
+        if(!count($dates)) {
+
+            return array();
+        }
 
         $dateTo = $dates[count($dates) - 1]['date'];
 
@@ -80,7 +85,7 @@ class ActivityRepository extends EntityRepository
         $query = $this->getEntityManager()->createQueryBuilder()
                                  ->select('aq')
                                  ->from('AppBundle:Activity', 'aq');
-                                 
+
 
         foreach($params as $key => $param) {
             $name = $param[0];
@@ -91,7 +96,7 @@ class ActivityRepository extends EntityRepository
                     ->setParameter('q'.$key.'value', $value);
             } elseif($name == 'tag') {
               $query->leftJoin('aq.tags', 'aqt'.$key)
-                  ->andWhere('aqt'.$key.'.name LIKE :q'.$key.'value') 
+                  ->andWhere('aqt'.$key.'.name LIKE :q'.$key.'value')
                   ->setParameter('q'.$key.'value', $value);
             } else {
                 $query->leftJoin('aq.attributes', 'aqa'.$key)
@@ -101,10 +106,10 @@ class ActivityRepository extends EntityRepository
                   ->setParameter('q'.$key.'value', $value);
             }
         }
-                                 
-        
+
+
         return $query;
-    } 
+    }
 
     public function findByDate($date) {
         $dateTo = clone $date;

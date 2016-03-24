@@ -5,9 +5,16 @@ namespace AppBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class FilterType extends AbstractType
 {
+    protected $em;
+
+    // public function __construct($em) {
+    //     $this->em = $em;
+    // }
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -16,10 +23,10 @@ class FilterType extends AbstractType
     {
         $builder
             ->add('query')
-            ->add('tag')
+            ->add('tag');
         ;
     }
-    
+
     /**
      * @param OptionsResolver $resolver
      */

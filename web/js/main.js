@@ -27,4 +27,8 @@ $(document).ready( function() {
             $('#activities_container').html($('#activities_container').html()+"\n"+data);
         });
     });
+
+    $('.select2').select2({
+        theme: 'bootstrap'
+    });
 });

@@ -53,7 +53,7 @@ class ActivityController extends Controller
         $tags = $em->getRepository('AppBundle:Tag')->findAll();
 
         $dateNext = null;
-        if($activity) {
+        if(isset($activity)) {
             $dateNext = new \DateTime($activity->getExecutedAt()->format('Y-m-d'));
             $dateNext = $dateNext->modify("-1 day")->format('Y-m-d');
         }
