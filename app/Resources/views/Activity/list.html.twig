@@ -1,3 +1,6 @@
+{% set query = query | default(null) %}
+{% set dateNext = dateNext | default(null) %}
+
 {% for date, activities in activitiesByDates %}
     <h3>
         <span class="pull-right">{{ date | date('D d M Y') }}</span>
@@ -13,6 +16,7 @@
                 {% set i = 0 %}
                 {% for activity in activities.activities %}
                     <div class="ligne" style="{% if(i % 2) %}background-color: #f5f5f5;{% endif %}">
+                            {% if(not noTags | default(false)) %}
                             <div class="col-xs-2 text-left itemTags">
                                 <div class="btn-group">
                                     {% for j in 0..(3 - activity.tags | length) %}
@@ -23,6 +27,7 @@
                                     {% endfor %}
                                 </div>
                             </div>
+                            {% endif %}
                             <div class="col-xs-2 itemAttribute">
                                 <span style="padding-right: 4px; font-size: 14px; opacity: 0.7;">{{ activity.executedAt | date('H:i') }}</span>&nbsp;
                                 <div class="btn-group">

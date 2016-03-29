@@ -38,7 +38,7 @@ class Source
     /**
      * @var string
      *
-     * @ORM\Column(name="name", type="string", length=255)
+     * @ORM\Column(name="name", type="string", length=255, nullable=true)
      */
     private $name;
 
@@ -52,7 +52,7 @@ class Source
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -75,7 +75,7 @@ class Source
     /**
      * Get importer
      *
-     * @return string 
+     * @return string
      */
     public function getImporter()
     {
@@ -98,7 +98,7 @@ class Source
     /**
      * Get source
      *
-     * @return string 
+     * @return string
      */
     public function getSource()
     {
@@ -121,7 +121,7 @@ class Source
     /**
      * Get name
      *
-     * @return string 
+     * @return string
      */
     public function getName()
     {
@@ -144,7 +144,7 @@ class Source
     /**
      * Get updateParam
      *
-     * @return array 
+     * @return array
      */
     public function getUpdateParam()
     {

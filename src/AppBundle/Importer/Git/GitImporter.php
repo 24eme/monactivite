@@ -15,10 +15,12 @@ class GitImporter extends Importer
         return 'Git';
     }
 
-    public function run(Source $source, OutputInterface $output, $dryrun = false) {
+    public function run(Source $source, OutputInterface $output, $dryrun = false, $checkExist = true, $limit = false) {
         $output->writeln(sprintf("<comment>Started import git commit in %s</comment>", $source->getSource()));
 
         $storeFile = $this->storeCsv($source);
+
+        $repositoryName = basename($source->getSource()).".git";
 
         $nb = 0;
 
@@ -37,7 +39,7 @@ class GitImporter extends Importer
 
                 $repository = new ActivityAttribute();
                 $repository->setName("Repository");
-                $repository->setValue($source->getName());
+                $repository->setValue($repositoryName);
 
                 $author = new ActivityAttribute();
                 $author->setName("Author");
@@ -47,7 +49,7 @@ class GitImporter extends Importer
                 $activity->addAttribute($repository);
                 $activity->addAttribute($author);
 
-                $this->am->addFromEntity($activity);
+                $this->am->addFromEntity($activity, $checkExist);
 
                 $this->em->persist($type);
                 $this->em->persist($repository);
@@ -63,6 +65,10 @@ class GitImporter extends Importer
                 if($output->isVerbose()) {
                     $output->writeln(sprintf("<info>Imported</info> %s", $activity->getTitle()));
                 }
+
+                if($limit && $nb > $limit) {
+                    break;
+                }
             } catch (\Exception $e) {
                 if($output->isVerbose()) {
                     $output->writeln(sprintf("<error>%s</error> %s", $e->getMessage(), $activity->getTitle()));
@@ -70,8 +76,10 @@ class GitImporter extends Importer
             }
         }
 
-        $this->em->persist($source);
-        $this->em->flush();
+        if(!$dryrun) {
+            $this->em->persist($source);
+            $this->em->flush();
+        }
 
         unlink($storeFile);
 
@@ -103,12 +111,12 @@ class GitImporter extends Importer
         }
 
         $storeFile = sprintf("%s/var/commits_%s_%s.csv", dirname(__FILE__), date("YmdHis"), uniqid());
-        
+
         shell_exec(sprintf("%s/bin/git2csv.sh %s \"\" %s > %s", dirname(__FILE__), $source->getSource(), $fromDate, $storeFile));
 
         $source->setUpdateParam(array('date' => date('Y-m-d')));
-    
+
         return $storeFile;
     }
 
-} 
+}

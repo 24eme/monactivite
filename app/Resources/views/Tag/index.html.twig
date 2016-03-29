@@ -1,12 +1,14 @@
 {% extends '::base.html.twig' %}
 
+{% set menu = 'tag' %}
+
 {% form_theme form 'bootstrap_3_layout.html.twig' %}
 
 {% block body %}
 <div class="row">
    <div class="col-xs-12">
         <div class="panel panel-default">
-            <div class="panel-heading">Ajouter un tag</div>
+            <div class="panel-heading"><h3 class="panel-title">Ajouter un tag</h3></div>
             <div class="panel-body">
                 <div class="row">
                 {% include "Tag/form.html.twig" with { 'form': form } %}
@@ -15,7 +17,8 @@
         </div>
     </div>
     <div class="col-xs-12">
-                {% include "Tag/list.html.twig" with { 'entities': entities } %}
+        <h3>Tags existants</h3>
+        {% include "Tag/list.html.twig" with { 'entities': entities } %}
     </div>
 </div>
 {% endblock %}

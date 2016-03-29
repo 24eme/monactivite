@@ -1,12 +1,14 @@
 {% extends '::base.html.twig' %}
 
+{% set menu = 'filter' %}
+
 {% form_theme form 'bootstrap_3_layout.html.twig' %}
 
 {% block body %}
 <div class="row">
     <div class="col-xs-12">
         <div class="panel panel-default">
-            <div class="panel-heading">Ajouter un filtre</div>
+            <div class="panel-heading"><h3 class="panel-title">Ajouter un filtre</h3></div>
             <div class="panel-body">
                 <div class="row">
                     {% include "Filter/form.html.twig" with { 'form': form } %}
@@ -15,25 +17,24 @@
         </div>
     </div>
     <div class="col-xs-12">
-        <h3>Liste des filtres</h3>
+        <h3>Filtres existants</h3>
         <table class="table table-striped table-condensed">
             <thead>
                 <tr>
-                    <th>Requête de recherche</th>
                     <th>Tag à appliquer</th>
+                    <th>Requête de recherche</th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
                 {% for entity in entities %}
                 <tr>
+                    <td>{% include 'Tag/button.html.twig' with {'tag': entity.tag,  'type': 'button' , 'size': 'xs'} %}</td>
                     <td><a href="{{ path('timeline', {'q': entity.query }) }}">{{ entity.query }}</a></td>
-                    <td>{% include 'Tag/button.html.twig' with {'tag': entity.tag,  'type': 'button' , 'size': 'sm'} %}</td>
                     <td class="text-right">
                         <span class="btn-group">
-                            <a class="btn btn-default" href="{{ path('filter_edit', {'id': entity.id }) }}"><span class="glyphicon glyphicon-pencil"></span></a>
-                            <a class="btn btn-default" href=""><span class="glyphicon glyphicon-filter"></span></a>
-                            <a class="btn btn-default" href=""><span class="glyphicon glyphicon-trash"></span></a>
+                            <a class="btn btn-xs btn-default" href="{{ path('filter_edit', {'id': entity.id }) }}"><span class="glyphicon glyphicon-pencil"></span></a>
+                            <a class="btn btn-xs btn-default" href=""><span class="glyphicon glyphicon-trash"></span></a>
                         </span>
                     </td>
                 </tr>

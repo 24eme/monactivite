@@ -16,7 +16,7 @@ abstract class Importer
         $this->em = $em;
     }
 
-    public abstract function run(Source $source, OutputInterface $output, $dryrun = false);
+    public abstract function run(Source $source, OutputInterface $output, $dryrun = false, $checkExist = true, $limit = false);
 
     public function check(Source $source) {
         if(!file_exists($this->getVarDir())) {
@@ -40,4 +40,4 @@ abstract class Importer
 
         return $this->getRootDir()."/var";
     }
-} 
+}

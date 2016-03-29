@@ -1,18 +1,18 @@
 {{ form_start(form) }}
     {{ form_errors(form) }}
-    <div class="col-xs-8">
+    <div class="col-xs-7">
         <div class="form-group">
-        {{ form_widget(form.query, { 'attr': {'placeholder': 'Requête de recherche' }}) }}
+            {{ form_widget(form.query, { 'attr': {'placeholder': 'Requête de recherche', 'class': 'input-lg', 'autofocus': 'autofocus' }}) }}
         </div>
     </div>
     <div class="col-xs-3">
         <div class="form-group">
-        {{ form_widget(form.tag, { 'attr': {'data-placeholder': 'Tag à appliquer', 'class': 'select2' }}) }}
+            {{ form_widget(form.tag, { 'attr': {'data-placeholder': 'Tag à appliquer', 'class': 'select2 input-lg' }}) }}
         </div>
     </div>
     <div class="col-xs-1">
         <div class="form-group">
-            {{ form_widget(form.submit) }}
+            {{ form_widget(form.submit, { 'attr': { 'class': 'btn btn-default btn-lg' }}) }}
         </div>
     </div>
 {{ form_end(form) }}

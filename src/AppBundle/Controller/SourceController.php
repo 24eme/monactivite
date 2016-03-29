@@ -8,7 +8,10 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use AppBundle\Entity\Source;
+use AppBundle\Entity\Activity;
 use AppBundle\Form\SourceType;
+use AppBundle\Form\SourceAddType;
+use Symfony\Component\Console\Output\NullOutput;
 
 /**
  * Source controller.
@@ -22,37 +25,62 @@ class SourceController extends Controller
      * Lists all Source entities.
      *
      * @Route("/", name="source")
-     * @Method("GET")
      * @Template("Source/index.html.twig")
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
 
         $entity = new Source();
-        $form = $this->createCreateForm($entity);
+        $form = $this->createForm(new SourceAddType(), $entity, array(
+            'action' => $this->generateUrl('source'),
+            'method' => 'POST',
+        ));
+
+        $form->add('submit', 'submit', array('label' => 'Tester'));
 
         $entities = $em->getRepository('AppBundle:Source')->findAll();
 
-        return array(
-            'entities' => $entities,
-            'form'   => $form->createView(),
-        );
+        $form->handleRequest($request);
+
+        if (!$form->isSubmitted() || !$form->isValid()) {
+            return array(
+                'entities' => $entities,
+                'form'   => $form->createView(),
+            );
+        }
+
+        return $this->redirectToRoute('source_create', array("source" => $entity->getSource()));
     }
     /**
      * Creates a new Source entity.
      *
-     * @Route("/", name="source_create")
-     * @Method("POST")
-     * @Template("Source/new.html.twig")
+     * @Route("/creation", name="source_create")
+     * @Template("Source/create.html.twig")
      */
     public function createAction(Request $request)
     {
+        $am = $this->get('app.manager.activity');
         $entity = new Source();
+        $entity->setSource($request->get('source', null));
+
+
+
+        $importer = $this->get('app.manager.importer')->search($entity);
+
+        if($importer) {
+            $entity->setImporter($importer->getName());
+        }
+
         $form = $this->createCreateForm($entity);
+
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if(!$importer) {
+            $importer = $this->get('app.manager.importer')->search($entity);
+        }
+
+        if($form->isValid() && $form->getClickedButton()->getName() == 'add') {
             $em = $this->getDoctrine()->getManager();
             $em->persist($entity);
             $em->flush();
@@ -60,9 +88,24 @@ class SourceController extends Controller
             return $this->redirect($this->generateUrl('source_show', array('id' => $entity->getId())));
         }
 
+        if($importer) {
+            $importer->run($entity, new NullOutput(), true, false, 100);
+        }
+
+        $this->get('doctrine.orm.entity_manager')->getUnitOfWork()->computeChangeSets();
+        $activities = array();
+        $insertions = $this->get('doctrine.orm.entity_manager')->getUnitOfWork()->getScheduledEntityInsertions();
+        foreach($insertions as $insertion) {
+            if($insertion instanceof Activity) {
+                $activities[] = $insertion;
+            }
+        }
+
         return array(
             'entity' => $entity,
+            'activitiesByDates' => $am->createView($activities),
             'form'   => $form->createView(),
+            'importer' => $importer
         );
     }
 
@@ -80,7 +123,8 @@ class SourceController extends Controller
             'method' => 'POST',
         ));
 
-        $form->add('submit', 'submit', array('label' => 'Create'));
+        $form->add('submit', 'submit', array('label' => 'Relancer le test'));
+        $form->add('add', 'submit', array('label' => 'Ajouter'));
 
         return $form;
     }

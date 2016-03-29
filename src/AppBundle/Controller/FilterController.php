@@ -29,7 +29,7 @@ class FilterController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entities = $em->getRepository('AppBundle:Filter')->findAll();
+        $entities = $em->getRepository('AppBundle:Filter')->findBy(array(), array('tag' => 'ASC'));
 
         $entity = new Filter();
         if($request->get('q')) {

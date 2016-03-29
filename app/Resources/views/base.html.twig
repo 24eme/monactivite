@@ -34,8 +34,8 @@
                         <input type="text" name="q" value="{{ query | default(null) }}" class="form-control" style="width: 500px;" placeholder="Rechercher...">
                         {% if(query | default(null)) %}
                         <span class="input-group-btn">
-                        <a href="{{ path('filter', {'q': query}) }}" class="btn btn-default" type="button"><span class="glyphicon glyphicon-filter"></span></a>
-                            <a href="{{ path('timeline') }}" class="btn btn-default" type="button"><span class="glyphicon glyphicon-remove"></span></a></span>
+                        <a data-toggle="tooltip" data-placement="bottom" title="Ajouter un filtre" href="{{ path('filter', {'q': query}) }}" class="btn btn-default" type="button"><small><small><small><small><span class="glyphicon glyphicon-plus"></span></small></small></small></small><span class="glyphicon glyphicon-filter"></span></a>
+                        <a data-toggle="tooltip" data-placement="bottom" title="Annuler la recherche" href="{{ path('timeline') }}" class="btn btn-default" type="button"><span class="glyphicon glyphicon-remove"></span></a></span>
                         {% endif %}
                     </div>
                     <button class="btn btn-default"><span class="glyphicon glyphicon-time"></span> 6 derniers mois</button>
@@ -43,10 +43,10 @@
             </form>
             <div class="collapse navbar-collapse" id="nav-main-element">
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a data-toggle="tooltip" title="Tags" href="{{ path('tag') }}"><span class="glyphicon glyphicon-tags"></span></a></li>
-                    <li><a data-toggle="tooltip" title="Filtres" href="{{ path('filter') }}"><span class="glyphicon glyphicon-filter"></span></a></li>
-                    <li><a href="{{ path('source') }}"><span class="glyphicon glyphicon-align-justify"></span></a></li>
-                    <li><a href="{{ path('update') }}"><span class="glyphicon glyphicon-download"></span></a></li>
+                    <li class="{%if (menu | default(null) == 'tag') %}active{% endif %}"><a data-toggle="tooltip" data-placement="bottom" title="Tags" href="{{ path('tag') }}"><span class="glyphicon glyphicon-tags"></span></a></li>
+                    <li class="{%if (menu | default(null) == 'filter') %}active{% endif %}"><a data-toggle="tooltip" data-placement="bottom" title="Filtres" href="{{ path('filter') }}"><span class="glyphicon glyphicon-filter"></span></a></li>
+                    <li class="{%if (menu | default(null) == 'source') %}active{% endif %}"><a data-toggle="tooltip" data-placement="bottom" title="Sources" href="{{ path('source') }}"><span class="glyphicon glyphicon-align-justify"></span></a></li>
+                    <li class="{%if (menu | default(null) == 'update') %}active{% endif %}"><a data-toggle="tooltip" data-placement="bottom" title="Récupération des données" href="{{ path('update') }}"><span class="glyphicon glyphicon-download"></span></a></li>
                 </ul>
             </div>
 

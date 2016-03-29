@@ -24,7 +24,7 @@ class FeedImporter extends Importer
         $this->feedParser = $feedParser;
     }
 
-    public function run(Source $source, OutputInterface $output, $dryrun = false) {
+    public function run(Source $source, OutputInterface $output, $dryrun = false, $checkExist = true, $limit = false) {
         $output->writeln(sprintf("<comment>Started import feed %s</comment>", $source->getSource()));
 
         $resource = $this->feedParser->download($source->getSource());
@@ -36,12 +36,12 @@ class FeedImporter extends Importer
         );
 
         $feed = $parser->execute();
-        
+
         $nb = 0;
-        
+
         foreach($feed->getItems() as $item) {
             $author = $item->getAuthor() ? $item->getAuthor() : null;
-            
+
             $activity = new Activity();
             $activity->setExecutedAt($item->getDate());
             $activity->setTitle($item->getTitle());
@@ -68,7 +68,7 @@ class FeedImporter extends Importer
             }
 
             try {
-                $this->am->addFromEntity($activity);
+                $this->am->addFromEntity($activity, $checkExist);
 
                 if(isset($name)) {
                     $this->em->persist($name);
@@ -77,12 +77,16 @@ class FeedImporter extends Importer
                     $this->em->persist($author);
                 }
                 $this->em->persist($activity);
-                    
+
                 if(!$dryrun) {
                     $this->em->flush($activity);
                 }
 
                 $nb++;
+
+                if($limit && $nb > $limit) {
+                    break;
+                }
 
                 if($output->isVerbose()) {
                     $output->writeln(sprintf("<info>Imported</info>;%s;%s", $item->getDate()->format('c'), $item->getTitle()));
@@ -95,7 +99,7 @@ class FeedImporter extends Importer
             }
 
         }
-        
+
         $output->writeln(sprintf("<info>%s new activity imported</info>", $nb));
     }
 
@@ -116,4 +120,4 @@ class FeedImporter extends Importer
         }
     }
 
-} 
+}

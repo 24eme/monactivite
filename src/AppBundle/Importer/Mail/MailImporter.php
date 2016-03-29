@@ -24,7 +24,7 @@ class MailImporter extends Importer
         $this->mailParser = $mailParser;
     }
 
-    public function run(Source $source, OutputInterface $output, $dryrun = false) {
+    public function run(Source $source, OutputInterface $output, $dryrun = false, $checkExist = true, $limit = false) {
         $output->writeln(sprintf("<comment>Started import mails in %s</comment>", $source->getSource()));
 
         $mail = null;
@@ -45,7 +45,12 @@ class MailImporter extends Importer
             }
             if(preg_match('/^(From .?$|From - )/', $line)) {
                 if($mail && $start) {
-                    if($this->importMail($mail, $source, $output, $dryrun)) { $nb++; }
+                    if($this->importMail($mail, $source, $output, $dryrun, $checkExist)) {
+                        $nb++;
+                        if($limit && $nb > $limit) {
+                            break;
+                        }
+                    }
                 }
                 $mail = null;
                 $start = true;
@@ -56,26 +61,28 @@ class MailImporter extends Importer
         }
 
         if($mail && $start) {
-            if($this->importMail($mail, $source, $output, $dryrun)) { $nb++; }
+            if($this->importMail($mail, $source, $output, $dryrun, $checkExist)) { $nb++; }
         }
 
         fclose($handle);
 
-        $source->setUpdateParam(array('line' => $nbLigne));
-        $this->em->persist($source);
-        $this->em->flush();
+        if(!$dryrun) {
+            $source->setUpdateParam(array('line' => $nbLigne));
+            $this->em->persist($source);
+            $this->em->flush();
+        }
 
         $output->writeln(sprintf("<info>%s new activity imported</info>", $nb));
     }
 
-    protected function importMail($mail, Source $source, OutputInterface $output, $dryrun = false) {
+    protected function importMail($mail, Source $source, OutputInterface $output, $dryrun = false, $checkExist = true) {
         try {
             $parsedMail = @$this->mailParser->parse($mail);
         } catch(\Exception $e) {
             if($output->isVerbose()) {
                 $output->writeln("<error>Error ".$e->getMessage()."</error>");
             }
-            
+
             return false;
         }
 
@@ -92,7 +99,7 @@ class MailImporter extends Importer
             if($output->isVerbose()) {
                 $output->writeln("<error>Error ".$e->getMessage()."</error>");
             }
-            
+
             return false;
         }
 
@@ -142,7 +149,7 @@ class MailImporter extends Importer
         }
 
         try {
-            $this->am->addFromEntity($activity);
+            $this->am->addFromEntity($activity, $checkExist);
 
             $this->em->persist($type);
             if(isset($sender)) {
@@ -188,8 +195,8 @@ class MailImporter extends Importer
         fclose($handle);
 
         if(!preg_match("/Message-ID/i", $line)) {
-           throw new \Exception(sprintf("This file is not a mail file : %s", $source->getSource())); 
+           throw new \Exception(sprintf("This file is not a mail file : %s", $source->getSource()));
         }
     }
 
-} 
+}

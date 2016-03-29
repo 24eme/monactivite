@@ -1,35 +1,67 @@
 {% extends '::base.html.twig' %}
 
+{% set menu = 'source' %}
+
 {% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
 
 {% block body %}
     <div class="row">
         <div class="col-xs-12">
             <div class="panel panel-default">
-              <div class="panel-heading">Ajouter une source</div>
-              <div class="panel-body">
-                {{ form(form) }}
-              </div>
+                <div class="panel-heading"><h3 class="panel-title">Ajouter une source</h3></div>
+                <div class="panel-body">
+                    {% include "Source/formCreation.html.twig" with { 'form': form } %}
+                </div>
+                <table class="table table-bordered table-condensed">
+                    <thead>
+                    <tr>
+                        <th class="col-xs-2">Type</th>
+                        <th class="col-xs-5">Description</th>
+                        <th class="col-xs-5">Exemple</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>GIT <small>(par chemin)</small></td>
+                        <td>Chemin vers le dossier du dépot GIT</td>
+                        <td><small><code>/path/to/your/git/folder</code><small></td>
+                    </tr>
+                    <tr>
+                        <td>Mail <small>(par fichier)</small></td>
+                        <td>Chemin vers fichier contenant les mails <small>(Pour les clients lourds comme Thunderbird, ...)</small></td>
+                        <td><small><code>/home/user/.thunderbird/00000000.default/ImapMail/imap.googlemail.com/[Gmail].sbd/Messages envoy&AOk-s</code></small></td>
+                    </tr>
+                    <tr>
+                        <td>Flux <small>(RSS ou Atom)</small></td>
+                        <td>Lien vers un flux RSS ou Atom</td>
+                        <td><small><code>http://rss.framasoft.org</code></small></td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
         <div class="col-xs-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">Liste des sources</div>
-                <div class="list-group">
-                {% for entity in entities %}
-                    <a href="{{ path('source_edit', {'id': entity.id }) }}" class="list-group-item">
-                         <div class="col-xs-1">
-                            {{ entity.importer }}
-                        </div>
-                        <div class="col-xs-2">
-                        {{ entity.name }}
-                        </div>
-                        <div class="col-xs-9">{{ entity.source }}</div>
-                        <div class="clearfix"></div>
-                    </a>
-                {% endfor %}
-                </div>
-            </div>
+            <h3>Sources Existantes</h3>
+            <table class="table table-striped table-condensed">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Source</th>
+                </tr>
+            </thead>
+            {% for entity in entities %}
+                <tr>
+                    <td>{{ entity.importer }}</td>
+                    <td>{{ entity.source }}</td>
+                    <td class="text-right">
+                        <span class="btn-group">
+                            <a class="btn btn-xs btn-default" href="{{ path('source_edit', {'id': entity.id }) }}"><span class="glyphicon glyphicon-pencil"></span></a>
+                            <a class="btn btn-xs btn-default" href=""><span class="glyphicon glyphicon-trash"></span></a>
+                        </span>
+                    </td>
+                </tr>
+            {% endfor %}
+            </table>
         </div>
     </div>
 {% endblock %}

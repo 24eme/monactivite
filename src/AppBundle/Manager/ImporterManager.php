@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace AppBundle\Manager;
 
@@ -30,5 +30,19 @@ class ImporterManager
         }
 
         return $this->importers[$name];
+    }
+
+    public function search(Source $source) {
+        foreach($this->importers as $importer) {
+            try{
+                $importer->check($source);
+
+                return $importer;
+            } catch(\Exception $e) {
+                continue;
+            }
+        }
+
+        return null;
     }
 }

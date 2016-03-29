@@ -1,0 +1,56 @@
+{% extends '::base.html.twig' %}
+
+{% set menu = 'source' %}
+
+{% form_theme form 'bootstrap_3_layout.html.twig' %}
+
+{% block body %}
+    {{ form_start(form) }}
+        <h2 style="margin-bottom: 20px; margin-top: 0;">Ajout d'une source de données</h2>
+
+        {% if not importer %}
+        <div class="alert alert-danger">Le type de source n'a pas pu être trouvé, merci de le définir à la main</div>
+        {% endif %}
+
+        {{ form_errors(form) }}
+        <div class="row">
+            <div class="col-xs-3">
+                <div class="form-group {% if not importer %}has-error{% endif %}">
+                    {{ form_widget(form.importer, { 'attr': {'placeholder': 'Type de la source', 'class': 'input-lg', 'autofocus': 'autofocus' }}) }}
+                </div>
+            </div>
+            <div class="col-xs-7">
+                <div class="form-group">
+                        {{ form_widget(form.source, { 'attr': {'placeholder': 'Source des données à récuperer', 'class': 'input-lg' }}) }}
+                </div>
+            </div>
+            <div class="col-xs-2">
+                <div class="form-group text-right">
+                    {{ form_widget(form.submit,  { 'attr': { 'class': 'btn btn-default btn-lg' }}) }}
+                </div>
+            </div>
+        </div>
+
+        {% if importer %}
+        <div class="panel panel-default">
+            <div class="panel-heading"><h3 class="panel-title">Jeu de données provenant de l'import</h3></div>
+            <div class="panel-body" style="max-height: 400px; overflow: auto;">
+                {% include 'Activity/list.html.twig' with { 'activitiesByDates':  activitiesByDates, 'noTags': true } %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="row {% if not importer %}hidden{% endif %}">
+            <div class="col-xs-3 text-left">
+                <a href="{{ path('source') }}" class="btn btn-default text-danger btn-block btn-lg">Annuler</a>
+            </div>
+            <div class="col-xs-6">
+
+            </div>
+            <div class="col-xs-3 text-right">
+                {{ form_widget(form.add,  { 'attr': { 'class': 'btn btn-success btn-block btn-lg' }}) }}
+            </div>
+        </div>
+
+    {{ form_end(form) }}
+{% endblock %}

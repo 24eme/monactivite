@@ -2,22 +2,22 @@
     {{ form_errors(form) }}
     <div class="col-xs-6">
         <div class="form-group">
-        {{ form_widget(form.name, { 'attr': {'placeholder': 'Nom' }}) }}
+        {{ form_widget(form.name, { 'attr': {'placeholder': 'Nom', 'autofocus': 'autofocus', 'class': 'input-lg' }}) }}
         </div>
     </div>
     <div class="col-xs-2">
         <div class="form-group">
-        {{ form_widget(form.color, { 'attr': {'placeholder': 'Couleur', 'class': 'minicolors' }}) }}
+        {{ form_widget(form.color, { 'attr': {'placeholder': 'Couleur', 'class': 'minicolors input-lg' }}) }}
         </div>
     </div>
     <div class="col-xs-1">
         <div class="form-group">
-            <button class="btn btn-default" data-icon="glyphicon-{{ form.icon.vars.value }}" data-form-item-relation="#{{ form.icon.vars.id }}" role="iconpicker"></button>
+            <button class="btn btn-lg btn-default" data-icon="glyphicon-{{ form.icon.vars.value }}" data-form-item-relation="#{{ form.icon.vars.id }}" role="iconpicker"></button>
         </div>
     </div>
     <div class="col-xs-1">
         <div class="form-group">
-            {{ form_widget(form.submit) }}
+            {{ form_widget(form.submit, { 'attr': { 'class': 'btn btn-default btn-lg' }}) }}
         </div>
     </div>
 {{ form_end(form) }}
