@@ -30,10 +30,16 @@ class ActivityController extends Controller
         $dateTo->modify('-6 month');
 
         $activities = $repo->findByDatesInterval($dateFrom, $dateTo, $nbDays, $query);
+        $activitiesByDates = $am->createView($activities);
 
         $tags = $em->getRepository('AppBundle:Tag')->findAll();
 
-        $dateNext = new \DateTime();
+        $dateNext = null;
+        if(count($activitiesByDates) > 0) {
+            end($activitiesByDates);
+            $dateNext = new \DateTime(key($activitiesByDates));
+            $dateNext = $dateNext->modify("-1 day")->format('Y-m-d');
+        }
         /*if(isset($activity)) {
 
             $dateNext = new \DateTime($activity->getExecutedAt()->format('Y-m-d'));
