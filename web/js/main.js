@@ -31,4 +31,28 @@ $(document).ready( function() {
     $('.select2').select2({
         theme: 'bootstrap'
     });
+
+    $('.dropdown-toggle').dropdown();
+
+    $('#activities_container').on('click', '.btn-activity-tag', function() {
+        $('#modal-tag-add #activity_tag_add_activity_id').val($(this).parents('.ligne').data('id'));
+        $('#modal-tag-add #activity_tag_add_tag_id').val("-1");
+        $('#modal-tag-add').modal();
+    });
+
+    $('#modal-tag-add').on('show.bs.modal', function (event) {
+        console.log(event);
+    })
+
+    $('#modal-tag-add .btn-tag').on('click', function(e) {
+        $('#modal-tag-add #activity_tag_add_tag_id').val($(this).parents('.tag').data('id'));
+        var buttonTarget = $('.ligne[data-id='+$('#modal-tag-add #activity_tag_add_activity_id').val()+'] .btn-tag-empty').last();
+        var button = $(this).parents('.tag').find('.btn-tag-small');
+        button.insertBefore(buttonTarget);
+        buttonTarget.remove();
+        var form = $('#modal-tag-add form');
+        $.post(form.attr('action'), form.serialize(), function() {});
+        $('#modal-tag-add').modal("hide");
+        e.preventDefault();
+    });
 });

@@ -32,8 +32,6 @@ class ActivityController extends Controller
         $activities = $repo->findByDatesInterval($dateFrom, $dateTo, $nbDays, $query);
         $activitiesByDates = $am->createView($activities);
 
-        $tags = $em->getRepository('AppBundle:Tag')->findAll();
-
         $dateNext = null;
         if(count($activitiesByDates) > 0) {
             end($activitiesByDates);

@@ -15,36 +15,36 @@
             <div class="ligneContainer">
                 {% set i = 0 %}
                 {% for activity in activities.activities %}
-                    <div class="ligne" style="{% if(i % 2) %}background-color: #f5f5f5;{% endif %}">
-                            {% if(not noTags | default(false)) %}
-                            <div class="col-xs-2 text-left itemTags">
-                                <div class="btn-group">
-                                    {% for j in 0..(3 - activity.tags | length) %}
-                                    <button class="btn btn-sm btn-default btn-tag-empty"><span class="glyphicon glyphicon-plus"></span></button>
-                                    {% endfor %}
-                                    {% for tag in activity.getTagsReverse() %}
-                                        {% include 'Tag/button_small.html.twig' with {'tag': tag, url: ''} %}
-                                    {% endfor %}
-                                </div>
+                    <div class="ligne" data-id="{{ activity.id }}" style="{% if(i % 2) %}background-color: #f5f5f5;{% endif %}">
+                        {% if(not noTags | default(false)) %}
+                        <div class="col-xs-2 text-left itemTags">
+                            <div class="btn-group">
+                                {% for j in 0..(3 - activity.tags | length) %}
+                                <button type="button" class="btn btn-sm btn-default btn-tag-empty btn-activity-tag"><span class="glyphicon glyphicon-plus"></span></button>
+                                {% endfor %}
+                                {% for tag in activity.getTagsReverse() %}
+                                    {% include 'Tag/button_small.html.twig' with {'tag': tag, url: 'javascript:void(0)'} %}
+                                {% endfor %}
                             </div>
-                            {% endif %}
-                            <div class="col-xs-2 itemAttribute">
-                                <span style="padding-right: 4px; font-size: 14px; opacity: 0.7;">{{ activity.executedAt | date('H:i') }}</span>&nbsp;
-                                <div class="btn-group">
-                                    {% for attribute in activity.attributes %}
-                                        <a href="{{ path('timeline', { 'q': (query~' '~attribute.name~':'~attribute.value) | trim }) }}" data-toggle="tooltip" data-placement="auto" title="{{ attribute.value }}&nbsp;<small>({{ attribute.name }})</small>" data-html="true" data-container="body" class="btn btn-sm btn-default text-left btn-attribute-small"><span class="text-muted text-left">{{ attribute.value | replace({ "." : "", "-": "", "@": "" }) | slice(0, 5) | upper  }}</span></a>
+                        </div>
+                        {% endif %}
+                        <div class="col-xs-2 itemAttribute">
+                            <span style="padding-right: 4px; font-size: 14px; opacity: 0.7;">{{ activity.executedAt | date('H:i') }}</span>&nbsp;
+                            <div class="btn-group">
+                                {% for attribute in activity.attributes %}
+                                    <a href="{{ path('timeline', { 'q': (query~' '~attribute.name~':'~attribute.value) | trim }) }}" data-toggle="tooltip" data-placement="auto" title="{{ attribute.value }}&nbsp;<small>({{ attribute.name }})</small>" data-html="true" data-container="body" class="btn btn-sm btn-default text-left btn-attribute-small"><span class="text-muted text-left">{{ attribute.value | replace({ "." : "", "-": "", "@": "" }) | slice(0, 5) | upper  }}</span></a>
+                                {% endfor %}
+                                {% if activity.attributes | length < 3 %}
+                                    {% for j in 0..(2 - (activity.attributes | length)) %}
+                                        <button class="btn btn-sm btn-default btn-attribute-small-empty text-left">&nbsp;</button>
                                     {% endfor %}
-                                    {% if activity.attributes | length < 3 %}
-                                        {% for j in 0..(2 - (activity.attributes | length)) %}
-                                            <button class="btn btn-sm btn-default btn-attribute-small-empty text-left">&nbsp;</button>
-                                        {% endfor %}
-                                    {% endif %}
-                                </div>
+                                {% endif %}
                             </div>
-                            <div class="col-xs-8 itemContent">
-                                <span>{{ activity.title }}</span>&nbsp; <small style="opacity: 0.7;"  class="text-muted" data-trigger="hover" data-placement="auto" data-content="{{ activity.content | nl2br }}" data-toggle="popover" data-container="body" data-html="true"> + </small><small style="opacity: 0.7;"  class="text-muted">{{ activity.content }}</small>
-                            </div>
-                            <div class="clearfix"></div>
+                        </div>
+                        <div class="col-xs-8 itemContent">
+                            <span>{{ activity.title }}</span>&nbsp; <small style="opacity: 0.7;"  class="text-muted" data-trigger="hover" data-placement="auto" data-content="{{ activity.content | nl2br }}" data-toggle="popover" data-container="body" data-html="true"> + </small><small style="opacity: 0.7;"  class="text-muted">{{ activity.content }}</small>
+                        </div>
+                        <div class="clearfix"></div>
                     </div>
                 {% set i = i + 1 %}
                 {% endfor %}
