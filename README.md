@@ -29,7 +29,7 @@ Création et construction de la base de données
 
 Chargement des données de base
 
-> php app/console doctrine:schema:update --force
+> php app/console doctrine:fixtures:load
 
 Lancement de l'application
 
