@@ -22,10 +22,7 @@ class DefaultController extends Controller
 
         $tags = $em->getRepository('AppBundle:Tag')->findAll();
 
-        $tagAddForm = $this->createForm(ActivityTagAddType::class, array(), array(
-            'action' => '',
-            'method' => 'POST',
-        ));
+        $tagAddForm = $this->createForm(ActivityTagAddType::class, array(), array('action' => $this->generateUrl('activity_tag'),'method' => 'POST'));
 
         return $this->render('default/index.html.twig', array('query' => $request->get('q'), 'dateFrom' => $dateFrom, 'nbDays' => $nbDays, 'tags' => $tags, 'tagAddForm' => $tagAddForm->createView()));
     }

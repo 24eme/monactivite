@@ -5,6 +5,7 @@ namespace AppBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 class ActivityTagAddType extends AbstractType
 {
@@ -15,8 +16,8 @@ class ActivityTagAddType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('activity_id', 'hidden')
-            ->add('tag_id', 'hidden')
+            ->add('activity_id', HiddenType::class)
+            ->add('tag_id', HiddenType::class)
         ;
     }
 
@@ -31,7 +32,7 @@ class ActivityTagAddType extends AbstractType
     /**
      * @return string
      */
-    public function getName()
+    public function getBlockPrefix()
     {
         return 'activity_tag_add';
     }
