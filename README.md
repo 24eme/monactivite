@@ -3,6 +3,9 @@ Mon Activité
 
 Mon activité est un outil pour récupérer son activité quotidienne à partir de mail, commit, flux RSS etc...
 
+![Page d'acceuil](docs/interface_home.jpg "Page d'acceuil")
+![Liste des sources](docs/interface_source.jpg "Liste des sources")
+
 Installation
 ------------
 
