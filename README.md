@@ -24,6 +24,7 @@ Récupération des vendors via composer
 Création et construction de la base de données
 
 > php app/console doctrine:database:create
+
 > php app/console doctrine:schema:update --force
 
 Chargement des données de base
