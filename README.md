@@ -11,7 +11,7 @@ Installation
 
 Récupérer le projet
 
-> git clone https://github.com/wincelau/monactivite.git
+> git clone https://github.com/24eme/monactivite.git
 
 Récupération locale de composer (optionnelle si vous l'avez déjà installé au global)
 
