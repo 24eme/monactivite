@@ -13,7 +13,7 @@ Récupérer le projet
 
 > git clone https://github.com/wincelau/monactivite.git
 
-Récupération local de composer (optionnel si vous l'avez déjà installer au global)
+Récupération local de composer (optionnel si vous l'avez déjà installé au global)
 
 > https://getcomposer.org/download/
 
