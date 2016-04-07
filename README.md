@@ -1,4 +1,32 @@
-monactivite
-===========
+Mon Activité
+============
 
-A Symfony project created on June 3, 2015, 11:02 pm.
+Mon activité est un outil pour récupérer son activité quotidienne à partir de mail, commit, flux RSS etc...
+
+Installation
+------------
+
+Récupérer le projet
+
+> git clone https://github.com/wincelau/monactivite.git
+
+Récupération local de composer (optionnel si vous l'avez déjà installer au global)
+
+> https://getcomposer.org/download/
+
+Récupération des vendors via composer
+
+> php composer.phar install
+
+Création et construction de la base de données
+
+> php app/console doctrine:database:create
+> php app/console doctrine:schema:update --force
+
+Chargement des données de base
+
+> php app/console doctrine:schema:update --force
+
+Lancement de l'application
+
+> php app/console server:start
