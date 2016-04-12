@@ -24,6 +24,11 @@ class LoadFilterData extends AbstractFixture implements OrderedFixtureInterface
         $filterMail->setTag($this->getReference('tag-mail'));
         $manager->persist($filterMail);
 
+        $filterEvent = new Filter();
+        $filterEvent->setQuery('Type:Event');
+        $filterEvent->setTag($this->getReference('tag-event'));
+        $manager->persist($filterEvent);
+
         $manager->flush();
     }
 
