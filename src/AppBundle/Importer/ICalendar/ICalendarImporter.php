@@ -39,7 +39,7 @@ class ICalendarImporter extends Importer
                     continue;
                 }
                 if($date->format('H:i:s') == "00:00:00") {
-                    $date = $date->modify('+7 hours');
+                    $date = $date->modify('+8 hours');
                 }
 
                 $title = $vevent->SUMMARY."";
