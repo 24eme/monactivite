@@ -23,7 +23,7 @@ class ICalendarImporter extends Importer
     }
 
     public function run(Source $source, OutputInterface $output, $dryrun = false, $checkExist = true, $limit = false) {
-        $output->writeln(sprintf("<comment>Started import git commit in %s</comment>", $source->getSource()));
+        $output->writeln(sprintf("<comment>Started import icalendar event in %s</comment>", $source->getSource()));
 
         $vobject = VObject\Reader::read(
             fopen($source->getSource(), 'r', false, stream_context_create(array("ssl"=>array("verify_peer"=>false, "verify_peer_name"=>false))))
@@ -37,6 +37,9 @@ class ICalendarImporter extends Importer
 
                 if($date->format('Y-m-d') > date('Y-m-d')) {
                     continue;
+                }
+                if($date->format('H:i:s') == "00:00:00") {
+                    $date = $date->modify('+7 hours');
                 }
 
                 $title = $vevent->SUMMARY."";
