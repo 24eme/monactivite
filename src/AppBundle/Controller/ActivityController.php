@@ -38,7 +38,7 @@ class ActivityController extends Controller
         if(count($activitiesByDates) > 0) {
             end($activitiesByDates);
             $dateNext = new \DateTime(key($activitiesByDates));
-            $dateNext = $dateNext->modify("-1 day")->format('Y-m-d');
+            $dateNext = $dateNext->format('Y-m-d');
         }
         /*if(isset($activity)) {
 
