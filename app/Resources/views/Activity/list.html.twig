@@ -42,7 +42,12 @@
                             </div>
                         </div>
                         <div class="col-xs-8 itemContent">
-                            <span>{{ activity.title }}</span>&nbsp; <small style="opacity: 0.7;"  class="text-muted" data-trigger="hover" data-placement="auto" data-content="{{ activity.content | nl2br }}" data-toggle="popover" data-container="body" data-html="true"> + </small><small style="opacity: 0.7;"  class="text-muted">{{ activity.content }}</small>
+                            <span>{{ activity.title }}</span>&nbsp;<small style="opacity: 0.7;"  class="text-muted">{{ activity.content | slice(0, 200) }}</small>
+                        </div>
+                        <div class="col-xs-1 text-right itemAction">
+                            {% if(activity.content ) %}
+                            <a href="" title="{{ activity.content | nl2br }}" data-toggle="tooltipHtml"><span class=" glyphicon glyphicon-eye-open"></span></a>
+                            {% endif %}
                         </div>
                         <div class="clearfix"></div>
                     </div>
