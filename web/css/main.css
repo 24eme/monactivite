@@ -3,16 +3,9 @@
     padding-bottom: 35px;
 }
 
-.popover {
+/*.popover {
     width: 500px;
     opacity: 0.9 !important;
-}
-
-.tooltip {
-}
-
-.tooltip-inner {
-    
 }
 
 .popover-content {
@@ -20,7 +13,7 @@
     overflow: hidden;
     font-size: 13px;
     line-height: 15px;
-}
+}*/
 
 .btn-show-hover {
     visibility: hidden;
@@ -35,37 +28,37 @@
 }
 
 .btn-tag .badge {
-    font-size: 11px; 
+    font-size: 11px;
     font-weight: bold;
 }
 
 .btn-tag-small {
-    padding-left: 2px; 
+    padding-left: 2px;
     padding-right: 2px;
     width: 32px;
-    border: none; 
+    border: none;
     background: transparent;
 }
 
 .btn-attribute-small {
-   width: 46px; 
-   border: 0; 
-   font-size: 11px; 
-   opacity: 0.9; 
-   padding-top:6px; 
-   padding-bottom: 8px; 
+   width: 46px;
+   border: 0;
+   font-size: 11px;
+   opacity: 0.9;
+   padding-top:6px;
+   padding-bottom: 8px;
    background: transparent;
    padding-left: 0;
    padding-right: 0;
 }
 
 .btn-attribute-small-empty {
-    width: 46px; 
-    border: 0; 
-    font-size: 11px; 
-    opacity: 0.9; 
-    padding-top:6px; 
-    padding-bottom: 8px; 
+    width: 46px;
+    border: 0;
+    font-size: 11px;
+    opacity: 0.9;
+    padding-top:6px;
+    padding-bottom: 8px;
     background: transparent;
 }
 
@@ -81,28 +74,44 @@
     height: 28px;
     overflow: hidden;
     border-bottom: 1px solid #e8e8e8;
-    padding-top: 0; 
+    padding-top: 0;
     padding-bottom: 0;
 }
 
 .itemTags {
-    padding-left: 0; 
-    padding-right: 0px; 
+    padding-left: 0;
+    padding-right: 0px;
     width: 132px;
 }
 
 .itemAttribute {
-    padding-right: 0; 
-    padding-top: 0;  
-    padding-left: 0; 
-    padding-bottom: 0; 
-    width: 198px; 
+    padding-right: 0;
+    padding-top: 0;
+    padding-left: 0;
+    padding-bottom: 0;
+    width: 198px;
     line-height: 24px;
 }
 
 .itemContent {
-    padding-top: 2px; 
-    padding-left: 0; 
-    padding-right: 0px; 
-    width: 800px;
+    padding-top: 2px;
+    padding-left: 0;
+    padding-right: 0px;
+    width: 776px;
+}
+
+.itemAction {
+    padding-top: 3px;
+    padding-left: 0;
+    padding-right: 0px;
+    width: 24px;
+}
+
+.ligne .itemAction:hover a {
+    opacity: 0.6;
+}
+
+.itemAction a {
+    color: #333;
+    opacity: 0.1;
 }

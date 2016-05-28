@@ -38,6 +38,13 @@ class Tag
     /**
      * @var string
      *
+     * @ORM\Column(name="color_text", type="string", length=255, nullable=true)
+     */
+    private $colorText;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="icon", type="string", length=255, nullable=true)
      */
     private $icon;
@@ -50,7 +57,7 @@ class Tag
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -73,7 +80,7 @@ class Tag
     /**
      * Get name
      *
-     * @return string 
+     * @return string
      */
     public function getName()
     {
@@ -96,7 +103,7 @@ class Tag
     /**
      * Get color
      *
-     * @return string 
+     * @return string
      */
     public function getColor()
     {
@@ -119,7 +126,7 @@ class Tag
     /**
      * Get icon
      *
-     * @return string 
+     * @return string
      */
     public function getIcon()
     {
@@ -159,7 +166,7 @@ class Tag
     /**
      * Get activities
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getActivities()
     {
@@ -169,5 +176,33 @@ class Tag
     public function __toString() {
 
         return $this->getName();
+    }
+
+    /**
+     * Set colorText
+     *
+     * @param string $colorText
+     * @return Tag
+     */
+    public function setColorText($colorText)
+    {
+        $this->colorText = $colorText;
+
+        return $this;
+    }
+
+    /**
+     * Get colorText
+     *
+     * @return string
+     */
+    public function getColorText()
+    {
+        if(!$this->colorText && $this->getColor()) {
+
+            return '#fff';
+        }
+
+        return $this->colorText;
     }
 }

@@ -20,7 +20,7 @@ class TagType extends AbstractType
             ->add('icon', 'hidden')
         ;
     }
-    
+
     /**
      * @param OptionsResolverInterface $resolver
      */

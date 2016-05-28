@@ -1,7 +1,18 @@
-{% extends 'base.html.twig' %}
+{% extends '::base.html.twig' %}
 
 {% set menu = 'update' %}
 
 {% block body %}
-    Pour récupérer vos dernières activités, lancer : <code>php app/console monactivite:execute</code>
+    <p>
+        <a id="btn_execute_update" data-loading-text="<span class='glyphicon glyphicon-hourglass'></span> Récupération en cours veuillez patienter ..." href="{{ path('execute_update') }}" class="btn btn-block btn-primary"><span class="glyphicon glyphicon-refresh"></span> Lancer une mise à jour des données</a>
+    </p>
+
+    <div id="update_result" class="hidden" style="margin-top: 20px;">
+        <div class="alert alert-success">
+            <h3 style="margin-top: 0;">La mise à jour est terminée</h2>
+            <p id="update_result_info"></p>
+        </div>
+    </div>
+    <hr />
+    <p>La mise à jour peut aussi être lancée en ligne de commande : <code>php app/console monactivite:execute</code></p>
 {% endblock %}

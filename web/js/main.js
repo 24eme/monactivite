@@ -5,6 +5,7 @@ $(document).ready( function() {
 
     $('[data-toggle="popover"]').popover();
     $('[data-toggle="tooltip"]').tooltip();
+    $('[data-toggle="tooltipHtml"]').tooltip({'html': true, 'container': 'body', 'template': '<div style="min-width: 250px; max-width: 400px; max-height: 170px;" class="tooltip tooltipHtml" role="tooltip"><div class="tooltip-arrow"></div><div style="min-width: 250px; max-width: 400px; display: block; text-align: left; overflow: hidden; max-height: 170px;" class="tooltip-inner"></div></div>'});
 
     $('.iconpicker[data-form-item-relation]').on('change', function(e) {
         var icon = e.icon.replace("glyphicon-", "");
@@ -54,5 +55,25 @@ $(document).ready( function() {
         $.post(form.attr('action'), form.serialize(), function() {});
         $('#modal-tag-add').modal("hide");
         e.preventDefault();
+    });
+
+    $('#btn_execute_update').on('click', function(e) {
+        e.preventDefault();
+
+        var btn = $(this).button('loading');
+        $('#update_result #update_result_info').html("");
+        $('#update_result').addClass('hidden');
+        btn.addClass('btn-info');
+
+        $.get($(this).attr('href'), function(data) {
+            btn.removeClass('btn-info');
+            btn.removeClass('btn-primary');
+            btn.addClass('btn-default');
+            $('#update_result #update_result_info').html(data.replace(/\n/g, '<br />'));
+            $('#update_result').removeClass('hidden');
+            btn.button('reset');
+        });
+
+        return false;
     });
 });
