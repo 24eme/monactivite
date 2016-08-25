@@ -15,8 +15,8 @@
         {% endblock %}
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     </head>
-    <body>
-        <nav class="navbar navbar-default navbar-fixed-top">
+    <body style="background: #f7f7f7;">
+        <nav class="navbar navbar-default navbar-fixed-top" style="opacity:0.9; background-color: #fff;">
           <div class="container">
             <div class="navbar-header">
               <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#nav-main-element">
@@ -25,7 +25,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              <a class="navbar-brand" href="{{ path('timeline') }}">Mon Activité</a>
+              <a style="padding-top:8px; padding-bottom: 8px;" class="navbar-brand" href="{{ path('timeline') }}"><img src="{{ asset('images/logo.png') }}" alt="Mon activité" /></a>
             </div>
             <form action="" method="get" class="navbar-form navbar-left" role="search">
                 <div class="form-group">
@@ -43,16 +43,16 @@
             </form>
             <div class="collapse navbar-collapse" id="nav-main-element">
                 <ul class="nav navbar-nav navbar-right">
+                    <li class="{%if (menu | default(null) == 'source') %}active{% endif %}"><a data-toggle="tooltip" data-placement="bottom" title="Sources" href="{{ path('source') }}"><span class="glyphicon glyphicon-glyphicon glyphicon-save"></span></a></li>
                     <li class="{%if (menu | default(null) == 'tag') %}active{% endif %}"><a data-toggle="tooltip" data-placement="bottom" title="Tags" href="{{ path('tag') }}"><span class="glyphicon glyphicon-tags"></span></a></li>
                     <li class="{%if (menu | default(null) == 'filter') %}active{% endif %}"><a data-toggle="tooltip" data-placement="bottom" title="Filtres" href="{{ path('filter') }}"><span class="glyphicon glyphicon-filter"></span></a></li>
-                    <li class="{%if (menu | default(null) == 'source') %}active{% endif %}"><a data-toggle="tooltip" data-placement="bottom" title="Sources" href="{{ path('source') }}"><span class="glyphicon glyphicon-align-justify"></span></a></li>
                     <li class="{%if (menu | default(null) == 'update') %}active{% endif %}"><a data-toggle="tooltip" data-placement="bottom" title="Mise à jour des données" href="{{ path('update') }}"><span class="glyphicon glyphicon-refresh"></span></a></li>
                 </ul>
             </div>
 
           </div>
         </nav>
-        <div id="main" class="container">
+        <div id="main" class="container" style="background: white;">
         {% block body %}{% endblock %}
         </div>
         {% block javascripts %}
