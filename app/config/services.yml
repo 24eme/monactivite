@@ -57,5 +57,5 @@ services:
         arguments: [@app.manager.activity, @doctrine.orm.entity_manager]
 
     app.importer.github:
-        class: AppBundle\Importer\GithubRepository\GithubImporter
+        class: AppBundle\Importer\Github\GithubImporter
         arguments: [@app.manager.activity, @doctrine.orm.entity_manager]
