@@ -30,8 +30,15 @@ class GithubImporter extends Importer
         $events = array();
         for($i = 1; $i < 10; $i++) {
             $params = array('http'=> array('user_agent' => 'Mon activité'));
-            //$params['http']['header'] = "Authorization: Basic " . base64_encode("user:password")));
-            $eventsPage = json_decode(file_get_contents("https://api.github.com/users/".$user."/events?page=".$i, false, stream_context_create($params)));
+            //$params['http']['header'] = "Authorization: Basic " . base64_encode("user:password");
+            try{
+                $eventsPage = json_decode(file_get_contents("https://api.github.com/users/".$user."/events?page=".$i, false, stream_context_create($params)));
+            } catch(\Exception $e) {
+                if($output->isVerbose()) {
+                    $output->writeln(sprintf("<error>%s</error>", $e->getMessage()));
+                }
+                return;
+            }
             $finish = false;
             foreach($eventsPage as $event) {
                 if($event->created_at < $fromDate) {
@@ -79,8 +86,10 @@ class GithubImporter extends Importer
                           array('sha' => $repo['sha'], 'author' => $repo['user'], 'since' => $repo['since'])
                     )
                 );
-            } catch(\Github\Exception\RuntimeException $exception) {
-                continue;
+            } catch(\Github\Exception\RuntimeException $e) {
+                $output->writeln(sprintf("<error>%s</error>", $e->getMessage()));
+
+                return;
             }
 
             foreach($commitsRepo as $key => $commit) {
