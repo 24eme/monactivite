@@ -18,7 +18,7 @@ class DefaultController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $nbDays = $request->get('nb', 10);
-        $dateFrom = $request->get('date', date('Y-m-d'));
+        $dateFrom = $request->get('date', date('Y-m-d H:i:s'));
         $query = $request->get('q', null);
 
         $tags = $em->getRepository('AppBundle:Tag')->findAll();
