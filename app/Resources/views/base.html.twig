@@ -31,7 +31,7 @@
                 <div class="form-group">
                     <div class="input-group">
                         <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                        <input type="text" name="q" value="{{ query | default(null) }}" class="form-control" style="width: 400px;" placeholder="Rechercher...">
+                        <input type="text" name="q" value="{{ query | default(null) }}" class="form-control" style="width: 380px;" placeholder="Rechercher...">
                         {% if(query | default(null)) %}
                         <span class="input-group-btn">
                         <a data-toggle="tooltip" data-placement="bottom" title="Ajouter un filtre" href="{{ path('filter', {'q': query}) }}" class="btn btn-default" type="button"><small><small><small><small><span class="glyphicon glyphicon-plus"></span></small></small></small></small><span class="glyphicon glyphicon-filter"></span></a>

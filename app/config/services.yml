@@ -22,7 +22,7 @@ services:
 
     app.manager.importer:
         class: AppBundle\Manager\ImporterManager
-        arguments: [[@app.importer.git, @app.importer.mail, @app.importer.feed, @app.importer.icalendar, @app.importer.caldav, @app.importer.github]]
+        arguments: [[@app.importer.git, @app.importer.mail, @app.importer.feed, @app.importer.icalendar, @app.importer.caldav, @app.importer.github, @app.importer.imap]]
 
     app.manager.filter:
         class: AppBundle\Manager\FilterManager
@@ -58,4 +58,8 @@ services:
 
     app.importer.github:
         class: AppBundle\Importer\Github\GithubImporter
+        arguments: [@app.manager.activity, @doctrine.orm.entity_manager]
+
+    app.importer.imap:
+        class: AppBundle\Importer\Imap\ImapImporter
         arguments: [@app.manager.activity, @doctrine.orm.entity_manager]
