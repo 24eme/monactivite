@@ -8,6 +8,11 @@ services:
         class: AppBundle\Utils\Slugger
         arguments: []
 
+    twig.extension.intl:
+        class: Twig_Extensions_Extension_Intl
+        tags:
+            - { name: twig.extension }
+
     app.mail.parser:
         class: AppBundle\Utils\MailParser
         arguments: [@lasso_mail_parser.part_factory]
