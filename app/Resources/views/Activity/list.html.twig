@@ -3,7 +3,7 @@
 
 {% for date, activities in activitiesByDates %}
     <h3>
-        <span class="pull-right">{{ date | localizeddate("none", "none", null, null, "E D MMM yyyy") | capitalize }}</span>
+        <span class="pull-right">{{ date | localizeddate("none", "none", null, null, "E d MMM yyyy") | capitalize }}</span>
         <div class="btn-group">
             {% for tag in activities.tags %}
                 {% include 'Tag/button.html.twig' with {'tag': tag.entity, url: path('timeline', { 'q': (query~' tag:'~tag.entity.name) | trim }), 'badge': tag.nb} %}

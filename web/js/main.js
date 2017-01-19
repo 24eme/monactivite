@@ -3,9 +3,13 @@ $(document).ready( function() {
         theme: 'bootstrap'
     });
 
-    $('[data-toggle="popover"]').popover();
-    $('[data-toggle="tooltip"]').tooltip();
-    $('[data-toggle="tooltipHtml"]').tooltip({'html': true, 'container': 'body', 'template': '<div style="min-width: 250px; max-width: 400px; max-height: 170px;" class="tooltip tooltipHtml" role="tooltip"><div class="tooltip-arrow"></div><div style="min-width: 250px; max-width: 400px; display: block; text-align: left; overflow: hidden; max-height: 170px;" class="tooltip-inner"></div></div>'});
+    var initAdvancedElements = function() {
+        $('[data-toggle="popover"]').popover();
+        $('[data-toggle="tooltip"]').tooltip();
+        $('[data-toggle="tooltipHtml"]').tooltip({'html': true, 'container': 'body', 'template': '<div style="min-width: 250px; max-width: 400px; max-height: 170px;" class="tooltip tooltipHtml" role="tooltip"><div class="tooltip-arrow"></div><div style="min-width: 250px; max-width: 400px; display: block; text-align: left; overflow: hidden; max-height: 170px;" class="tooltip-inner"></div></div>'});
+    }
+
+    initAdvancedElements();
 
     $('.iconpicker[data-form-item-relation]').on('change', function(e) {
         var icon = e.icon.replace("glyphicon-", "");
@@ -26,6 +30,7 @@ $(document).ready( function() {
             }
             $('#btn_load_more_container').remove();
             $('#activities_container').html($('#activities_container').html()+"\n"+data);
+            initAdvancedElements();
         });
     });
 
