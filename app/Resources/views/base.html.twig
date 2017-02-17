@@ -31,12 +31,12 @@
                 <div class="form-group">
                     <div class="input-group">
                         <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                        <input type="text" name="q" value="{{ query | default(null) }}" class="form-control" style="width: 380px;" placeholder="Rechercher...">
-                        {% if(query | default(null)) %}
+                        <input type="text" name="q" value="{{ query | default(null) }}" class="form-control" style="width: 420px;" placeholder="Rechercher...">
                         <span class="input-group-btn">
-                        <a data-toggle="tooltip" data-placement="bottom" title="Ajouter un filtre" href="{{ path('filter', {'q': query}) }}" class="btn btn-default" type="button"><small><small><small><small><span class="glyphicon glyphicon-plus"></span></small></small></small></small><span class="glyphicon glyphicon-filter"></span></a>
-                        <a data-toggle="tooltip" data-placement="bottom" title="Annuler la recherche" href="{{ path('timeline') }}" class="btn btn-default" type="button"><span class="glyphicon glyphicon-remove"></span></a></span>
-                        {% endif %}
+                            <a {% if(not query|default(null)) %}disabled="disabled"{% endif %} data-toggle="tooltip" data-placement="bottom" title="Créer un filtre" href="{{ path('filter', {'q': query | default(null)}) }}" class="btn btn-default" type="button">
+                            <span style="font-size: 10px;" class="glyphicon glyphicon-plus"></span><span class="glyphicon glyphicon-filter"></span>
+                        </a>
+                        </span>
                     </div>
                     <button class="btn btn-default"><span class="glyphicon glyphicon-time"></span> 6 mois</button>
                 </div>
