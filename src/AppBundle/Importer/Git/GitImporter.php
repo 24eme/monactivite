@@ -66,7 +66,7 @@ class GitImporter extends Importer
                     $output->writeln(sprintf("<info>Imported</info> %s", $activity->getTitle()));
                 }
 
-                if($limit && $nb > $limit) {
+                if($limit && $nb >= $limit) {
                     break;
                 }
             } catch (\Exception $e) {
