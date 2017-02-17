@@ -34,3 +34,12 @@ Chargement des données de base
 Lancement de l'application
 
 > php app/console server:start
+
+Contribuer
+----------
+
+### Tests
+
+Lancer les tests unitaires
+
+> phpunit -c app/
