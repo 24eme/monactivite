@@ -59,15 +59,14 @@ class MailImporter extends Importer
 
             $mail .= $line;
         }
-
         if($mail && $start) {
             if($this->importMail($mail, $source, $output, $dryrun, $checkExist)) { $nb++; }
         }
 
         fclose($handle);
 
+        $source->setUpdateParam(array('line' => $nbLigne));
         if(!$dryrun) {
-            $source->setUpdateParam(array('line' => $nbLigne));
             $this->em->persist($source);
             $this->em->flush();
         }
@@ -91,6 +90,7 @@ class MailImporter extends Importer
         } catch(\Exception $e) {
             $subject = null;
         }
+
 
         try {
             $date = $parsedMail->getMail()->getHeaderField("Date");
@@ -116,6 +116,8 @@ class MailImporter extends Importer
         }
 
         $body = $parsedMail->getPrimaryContent();
+
+        $body = str_replace("\r", "", $body);
 
         $activity = new Activity();
         $activity->setExecutedAt($date);

@@ -8,7 +8,7 @@ use Zend\Mail\Storage\Part;
 use Html2Text\Html2Text;
 
 class ParsedMail extends \Lasso\MailParserBundle\ParseHelper {
-    
+
     private $rawMail;
     /** @var Part */
     private $mail;
@@ -122,10 +122,9 @@ class ParsedMail extends \Lasso\MailParserBundle\ParseHelper {
             try {
                 if ($contentType == 'text/plain') {
                     $textContent[] = $this->decodeBody($part);
-                }
-                if ($contentType == 'text/html') {
+                } elseif ($contentType == 'text/html') {
                     $html2text = new Html2Text($this->decodeBody($part));
-                    $textContent[] = $html2text->get_text();
+                    $htmlContent[] = $html2text->get_text();
                 }
             } catch (UnexpectedValueException $exception) {
                 if ($exception->getCode() == self::INVALID_CHARSET_ERROR_CODE) {
@@ -165,12 +164,14 @@ class ParsedMail extends \Lasso\MailParserBundle\ParseHelper {
             );
         };
 
-        if (!empty($htmlContent)) {
-            return $combineParts($htmlContent, 'text/html');
+        if (!empty($textContent)) {
+
+            return $combineParts($textContent, 'text/plain');
         }
 
-        if (!empty($textContent)) {
-            return $combineParts($textContent, 'text/plain');
+        if (!empty($htmlContent)) {
+
+            return $combineParts($htmlContent, 'text/plain');
         }
 
         return null;
