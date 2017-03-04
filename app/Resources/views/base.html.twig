@@ -53,7 +53,18 @@
           </div>
         </nav>
         <div id="main" class="container" style="background: white;">
-        {% block body %}{% endblock %}
+            {% if app.session.flashbag.peekAll|length > 0 %}
+                {% for type, messages in app.session.flashbag.all %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ type ? type : '' }} alert-dismissible">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            {{ message|trans({}, domain|default('messages')) }}
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+            {% endif %}
+
+            {% block body %}{% endblock %}
         </div>
         {% block javascripts %}
             <script src="{{ asset('bower_components/jquery/dist/jquery.min.js') }}"></script>

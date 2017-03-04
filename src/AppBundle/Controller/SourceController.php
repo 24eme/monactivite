@@ -85,7 +85,8 @@ class SourceController extends Controller
             $em->persist($entity);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('source_show', array('id' => $entity->getId())));
+            $this->addFlash('success', sprintf("La source donnée \"%s\" a été ajouté", $entity->getSourceProtected()));
+            return $this->redirectToRoute('source');
         }
 
         if($importer) {
