@@ -23,7 +23,7 @@ class ICalendarImporter extends Importer
     }
 
     public function run(Source $source, OutputInterface $output, $dryrun = false, $checkExist = true, $limit = false) {
-        $output->writeln(sprintf("<comment>Started import icalendar event in %s</comment>", $source->getSource()));
+        $output->writeln(sprintf("<comment>Started import icalendar event in %s</comment>", $source->getSourceProtected()));
 
         $vobject = VObject\Reader::read(
             fopen($source->getSource(), 'r', false, stream_context_create(array("ssl"=>array("verify_peer"=>false, "verify_peer_name"=>false))))

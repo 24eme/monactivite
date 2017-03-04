@@ -74,7 +74,7 @@
             {% for entity in entities %}
                 <tr>
                     <td>{{ entity.importer }}</td>
-                    <td>{{ entity.source }}
+                    <td>{{ entity.sourceProtected }}
                         <a class="btn btn-xs btn-default pull-right" href="{{ path('source_edit', {'id': entity.id }) }}"><span class="glyphicon glyphicon-trash"></span></a></td>
                 </tr>
             {% endfor %}

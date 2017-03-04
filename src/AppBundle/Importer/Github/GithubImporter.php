@@ -17,7 +17,7 @@ class GithubImporter extends Importer
 
     public function run(Source $source, OutputInterface $output, $dryrun = false, $checkExist = true, $limit = false) {
 
-        $output->writeln(sprintf("<comment>Started import git commit on github %s</comment>", $source->getSource()));
+        $output->writeln(sprintf("<comment>Started import git commit on github %s</comment>", $source->getSourceProtected()));
 
         $user = preg_replace("|^http[s]*://github.com/|", "", $source->getSource());
 

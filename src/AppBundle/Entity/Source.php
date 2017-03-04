@@ -150,4 +150,9 @@ class Source
     {
         return $this->updateParam;
     }
+
+    public function getSourceProtected() {
+
+        return preg_replace("|://.*:.*@|", "://", $this->getSource());
+    }
 }

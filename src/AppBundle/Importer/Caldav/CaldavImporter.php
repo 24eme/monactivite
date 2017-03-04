@@ -18,7 +18,7 @@ class CaldavImporter extends Importer
     }
 
     public function run(Source $source, OutputInterface $output, $dryrun = false, $checkExist = true, $limit = false) {
-        $output->writeln(sprintf("<comment>Started import caldav event in %s</comment>", $source->getSource()));
+        $output->writeln(sprintf("<comment>Started import caldav event in %s</comment>", $source->getSourceProtected()));
 
         $caldavClient = $this->getClient($source);
 

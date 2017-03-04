@@ -25,7 +25,7 @@ class MailImporter extends Importer
     }
 
     public function run(Source $source, OutputInterface $output, $dryrun = false, $checkExist = true, $limit = false) {
-        $output->writeln(sprintf("<comment>Started import mails in %s</comment>", $source->getSource()));
+        $output->writeln(sprintf("<comment>Started import mails in %s</comment>", $source->getSourceProtected()));
 
         $mail = null;
         $start = false;

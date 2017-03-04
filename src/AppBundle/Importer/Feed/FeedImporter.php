@@ -25,7 +25,7 @@ class FeedImporter extends Importer
     }
 
     public function run(Source $source, OutputInterface $output, $dryrun = false, $checkExist = true, $limit = false) {
-        $output->writeln(sprintf("<comment>Started import feed %s</comment>", $source->getSource()));
+        $output->writeln(sprintf("<comment>Started import feed %s</comment>", $source->getSourceProtected()));
 
         $resource = $this->feedParser->download($source->getSource());
 
