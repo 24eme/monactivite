@@ -23,8 +23,8 @@ class FilterType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('query', null,array('required' => true))
-            ->add('tag', null,array('required' => true));
+            ->add('query', null, array('required' => true))
+            ->add('tag', null, array('required' => true, 'empty_value' => ""));
         ;
     }
 
