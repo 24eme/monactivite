@@ -34,8 +34,10 @@ $(document).ready( function() {
         });
     });
 
+    $.fn.select2.defaults.set( "theme", "bootstrap" );
+
     $('.select2').select2({
-        theme: 'bootstrap'
+        theme: "bootstrap"
     });
 
     $('.dropdown-toggle').dropdown();
