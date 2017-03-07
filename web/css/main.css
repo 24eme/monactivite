@@ -1,3 +1,16 @@
+body {
+    background: #f7f7f7;
+}
+
+#nav_top {
+    opacity:0.9;
+    background-color: #f9f9f9;
+}
+
+#nav_top_input_search {
+    width: 420px;
+}
+
 #main {
     margin-bottom: 8px;
     padding-bottom: 10px;
@@ -121,4 +134,14 @@
 
 .tooltip, .tooltip-inner {
     max-width: 400px;
+}
+
+@media (max-width: 1199px) {
+    #nav_top_input_search {
+        width: 230px;
+    }
+
+    .itemContent {
+        width: 575px;
+    }
 }
