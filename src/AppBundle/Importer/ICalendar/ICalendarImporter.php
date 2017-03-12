@@ -17,6 +17,7 @@ class ICalendarImporter extends Importer
     }
 
     public function getReader(Source $source) {
+
         return VObject\Reader::read(
             fopen($source->getSource(), 'r', false, stream_context_create(array("ssl"=>array("verify_peer"=>false, "verify_peer_name"=>false))))
         );
@@ -25,48 +26,54 @@ class ICalendarImporter extends Importer
     public function run(Source $source, OutputInterface $output, $dryrun = false, $checkExist = true, $limit = false) {
         $output->writeln(sprintf("<comment>Started import icalendar event in %s</comment>", $source->getSourceProtected()));
 
-        $vobject = VObject\Reader::read(
-            fopen($source->getSource(), 'r', false, stream_context_create(array("ssl"=>array("verify_peer"=>false, "verify_peer_name"=>false))))
-        );
+        $vobject = $this->getReader($source);
 
         $nb = 0;
 
         foreach($vobject->VEVENT as $vevent) {
             try {
-                $date = $vevent->DTSTART->getDateTime();
+                $dateStart = $vevent->DTSTART->getDateTime();
+                $dateEnd = $vevent->DTEND->getDateTime();
 
-                if($date->format('Y-m-d') > date('Y-m-d')) {
-                    continue;
-                }
-                if($date->format('H:i:s') == "00:00:00") {
-                    $date = $date->modify('+8 hours');
-                }
+                $date = clone $dateStart;
 
-                $title = $vevent->SUMMARY."";
-                $content = $vevent->DESCRIPTION."";
+                while($date->format('YmdHis') < $dateEnd->format("YmdHis")) {
+                    if($date->format('Y-m-d') > date('Y-m-d')) {
+                        break;
+                    }
 
-                $activity = new Activity();
-                $activity->setExecutedAt($date);
-                $activity->setTitle($title);
-                $activity->setContent($content);
+                    $dateExecutedAt = clone $date;
+                    if($date->format('H:i:s') == "00:00:00") {
+                        $dateExecutedAt = $dateExecutedAt->modify('+8 hours');
+                    }
 
-                $type = new ActivityAttribute();
-                $type->setName("Type");
-                $type->setValue("Event");
+                    $title = $vevent->SUMMARY."";
+                    $content = $vevent->DESCRIPTION."";
 
-                $activity->addAttribute($type);
-                $this->am->addFromEntity($activity, $checkExist);
-                $this->em->persist($type);
-                $this->em->persist($activity);
+                    $activity = new Activity();
+                    $activity->setExecutedAt($dateExecutedAt);
+                    $activity->setTitle($title);
+                    $activity->setContent($content);
 
-                if(!$dryrun) {
-                    $this->em->flush($activity);
-                }
+                    $type = new ActivityAttribute();
+                    $type->setName("Type");
+                    $type->setValue("Event");
 
-                $nb++;
+                    $activity->addAttribute($type);
+                    $this->am->addFromEntity($activity, $checkExist);
+                    $this->em->persist($type);
+                    $this->em->persist($activity);
 
-                if($output->isVerbose()) {
-                    $output->writeln(sprintf("<info>Imported</info> %s", $activity->getTitle()));
+                    if(!$dryrun) {
+                        $this->em->flush($activity);
+                    }
+
+                    if($output->isVerbose()) {
+                        $output->writeln(sprintf("<info>Imported</info> %s", $activity->getTitle()));
+                    }
+
+                    $date = $date->modify("+1 day");
+                    $nb++;
                 }
 
                 if($limit && $nb > $limit) {
@@ -74,7 +81,7 @@ class ICalendarImporter extends Importer
                 }
             } catch (\Exception $e) {
                 if($output->isVerbose()) {
-                    $output->writeln(sprintf("<error>%s</error> %s", $e->getMessage(), $activity->getTitle()));
+                    $output->writeln(sprintf("<error>%s</error> %s", $e->getMessage()));
                 }
             }
         }
