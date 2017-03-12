@@ -20,7 +20,6 @@ class GitImporterTest extends KernelTestCase
     {
         $em = $this->container->get('doctrine.orm.entity_manager');
         $gitImporter = $this->container->get('app.importer.git');
-        $mainManager = $this->container->get('app.manager.main');
         $gitDir = preg_replace("|/tests$|", "", dirname(__FILE__));
         $nbCommits = shell_exec("cd ".$gitDir."; git log | grep -E \"^commit \" | wc -l")*1;
 

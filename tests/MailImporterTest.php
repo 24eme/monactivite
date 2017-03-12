@@ -20,7 +20,6 @@ class MailImporterTest extends KernelTestCase
     {
         $em = $this->container->get('doctrine.orm.entity_manager');
         $mailImporter = $this->container->get('app.importer.mail');
-        $mainManager = $this->container->get('app.manager.main');
         $mailFile = dirname(__FILE__)."/data/mails";
         $nbMails = 2;
 
