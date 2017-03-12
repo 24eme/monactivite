@@ -60,7 +60,9 @@ class FilterController extends Controller
             $em->persist($entity);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('filter_show', array('id' => $entity->getId())));
+            $this->addFlash('success', sprintf("Le filtre a été ajouté"));
+
+            return $this->redirectToRoute('filter');
         }
 
         return array(
