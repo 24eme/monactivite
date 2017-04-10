@@ -47,7 +47,9 @@ class ActivityRepository extends EntityRepository
             return array();
         }
 
-        $dateTo = $dates[count($dates) - 1]['date'];
+        $dateTo = new \DateTime($dates[count($dates) - 1]['date']);
+        $dateTo = $dateTo->modify("+4 hours");
+        $dateFrom = $dateFrom->modify("-4 hours");
 
         $query = $this->getEntityManager()
                     ->createQuery('
