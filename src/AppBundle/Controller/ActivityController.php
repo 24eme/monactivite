@@ -6,7 +6,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use AppBundle\Form\ActivityTagAddType;
+use AppBundle\Entity\Activity;
 
 /**
  * Filter controller.
@@ -47,6 +49,15 @@ class ActivityController extends Controller
         }*/
 
         return $this->render('Activity/list.html.twig', array('activitiesByDates' => $am->createView($activities), 'query' => $query, 'dateNext' => $dateNext, 'nbDays' => $nbDays));
+    }
+
+    /**
+     * @Route("/view/{id}", name="activity_view")
+     * @ParamConverter("activity", class="AppBundle:Activity")
+     */
+    public function viewAction(Request $request, Activity $activity)
+    {
+        return $this->render('Activity/view.html.twig', array('activity' => $activity));
     }
 
     /**

@@ -1,0 +1,25 @@
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header" style="padding-bottom: 0;">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">{{ activity.executedAt | date('H:i') }} - {{ activity.title }}</h4>
+            <div class="row">
+                <div class="col-xs-12" style="margin-top: 7px;">
+                    {% for tag in activity.tags %}
+                        {% include 'Tag/button.html.twig' with {'tag': tag } %}
+                    {% endfor %}
+                </div>
+                <div class="col-xs-12" style="margin-top: 5px;">
+                    <ul class="list-inline">
+                    {% for attribute in activity.attributes %}
+                        <li><small><span class="text-muted">{{ attribute.name }}: </span>{{ attribute.value }}</small></li>
+                    {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="modal-body">
+            {{ activity.content | nl2br }}
+        </div>
+    </div>
+</div>

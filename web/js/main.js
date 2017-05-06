@@ -48,9 +48,12 @@ $(document).ready( function() {
         $('#modal-tag-add').modal();
     });
 
-    $('#modal-tag-add').on('show.bs.modal', function (event) {
-        console.log(event);
-    })
+    $('#activities_container').on('click', '.btn-activity-view', function() {
+        $('#modal-default').load($(this).attr('href'));
+        $('#modal-default').modal();
+
+        return false;
+    });
 
     $('#modal-tag-add .btn-tag').on('click', function(e) {
         $('#modal-tag-add #activity_tag_add_tag_id').val($(this).parents('.tag').data('id'));
