@@ -13,7 +13,7 @@ Récupérer le projet
 
 > git clone https://github.com/24eme/monactivite.git
 
-### Installation simplifié
+### Installation simplifiée
 
 Via la commande make, lancer simplement la commande
 
