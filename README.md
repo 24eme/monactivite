@@ -21,7 +21,7 @@ Via la commande make, lancer simplement la commande
 
 ### Installation pas à pas
 
-Récupération locale de composer (optionnelle si vous l'avez déjà installé au global)
+Installation de composer (optionnelle si vous l'avez déjà installé en global)
 
 > https://getcomposer.org/download/
 
