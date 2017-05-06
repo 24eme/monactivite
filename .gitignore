@@ -9,3 +9,5 @@
 /vendor/
 /web/bundles/
 *.php~
+/data/*
+.make

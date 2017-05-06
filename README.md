@@ -13,11 +13,23 @@ Récupérer le projet
 
 > git clone https://github.com/24eme/monactivite.git
 
+### Installation simplifié
+
+Via la commande make, lancer simplement la commande
+
+> make
+
+### Installation pas à pas
+
 Récupération locale de composer (optionnelle si vous l'avez déjà installé au global)
 
 > https://getcomposer.org/download/
 
-Récupération des vendors via composer
+Copier le fichier de configuration
+
+> cp app/config/parameters.yml{.dump,}
+
+Récupération des libairies externes via composer
 
 > php composer.phar install
 
@@ -27,11 +39,11 @@ Création et construction de la base de données
 
 > php app/console doctrine:schema:update --force
 
-Chargement des données de base
+Chargement des données initiales
 
 > php app/console doctrine:fixtures:load
 
-Lancement de l'application
+### Lancer l'application
 
 > php app/console server:start
 
