@@ -106,7 +106,7 @@ class ActivityRepository extends EntityRepository
             $param = explode(":", $term);
             if(count($param) < 2) {
               $param[1] = $param[0];
-              $param[0] = 'title';
+              $param[0] = '*';
             }
             array_push($params, $param);
         }
@@ -115,18 +115,30 @@ class ActivityRepository extends EntityRepository
                                  ->select('aq')
                                  ->from('AppBundle:Activity', 'aq');
 
-
         foreach($params as $key => $param) {
             $name = $param[0];
             $value = str_replace('*', '%', $param[1]);
 
             if($name == 'title' || $name == 'content') {
-              $query->andwhere('aq.'.$name.' LIKE :q'.$key.'value')
+                $query
+                    ->andwhere('aq.'.$name.' LIKE :q'.$key.'value')
                     ->setParameter('q'.$key.'value', $value);
             } elseif($name == 'tag') {
-              $query->leftJoin('aq.tags', 'aqt'.$key)
-                  ->andWhere('aqt'.$key.'.name LIKE :q'.$key.'value')
-                  ->setParameter('q'.$key.'value', $value);
+                $query
+                    ->leftJoin('aq.tags', 'aqt'.$key)
+                    ->andWhere('aqt'.$key.'.name LIKE :q'.$key.'value')
+                    ->setParameter('q'.$key.'value', $value);
+            } elseif($name == "*") {
+                $keyJoin = uniqid();
+                $query
+                    ->leftJoin('aq.attributes', "aqa".$keyJoin)
+                    ->leftJoin('aq.tags', 'aqt'.$keyJoin)
+                    ->andWhere($query->expr()->orX(
+                        $query->expr()->like('aq.title', ':value'),
+                        $query->expr()->like('aq.content', ':value'),
+                        $query->expr()->like("aqa".$keyJoin.'.value', ':value'),
+                        $query->expr()->like("aqt".$keyJoin.'.name', ':value')
+                    ))->setParameter(':value', "%".$value."%");
             } else {
                 $query->leftJoin('aq.attributes', 'aqa'.$key)
                   ->andwhere('aqa'.$key.'.value LIKE :q'.$key.'value')
@@ -135,7 +147,6 @@ class ActivityRepository extends EntityRepository
                   ->setParameter('q'.$key.'value', $value);
             }
         }
-
 
         return $query;
     }
