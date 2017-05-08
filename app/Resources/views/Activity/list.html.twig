@@ -24,7 +24,7 @@
                                 {% endfor %}
                                 {% set j = 0 %}
                                 {% for tag in activity.getTagsReverse() if j < 4 %}
-                                    {% include 'Tag/button_small.html.twig' with {'tag': tag, url: 'javascript:void(0)'} %}
+                                    {% include 'Tag/button_small.html.twig' with {'tag': tag, url: path('timeline', { 'q': (query~' tag:'~tag.name) | trim })} %}
                                     {% set j = j + 1 %}
                                 {% endfor %}
                             </div>

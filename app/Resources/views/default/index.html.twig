@@ -21,7 +21,7 @@
                     <div class="col-xs-4">
                         <p data-id="{{ tag.id }}" class="tag">
                             <span class="hidden">{% include 'Tag/button_small.html.twig' with {'tag': tag, 'url': ''} %}</span>
-                            {% include 'Tag/button.html.twig' with {'tag': tag, 'url': ''} %}
+                            {% include 'Tag/button.html.twig' with {'tag': tag, 'url': 'javascript:void(0)' } %}
                         </p>
                     </div>
                     {% endfor %}
