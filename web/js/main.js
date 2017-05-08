@@ -58,7 +58,7 @@ $(document).ready( function() {
     $('#modal-tag-add .btn-tag').on('click', function(e) {
         $('#modal-tag-add #activity_tag_add_tag_id').val($(this).parents('.tag').data('id'));
         var buttonTarget = $('.ligne[data-id='+$('#modal-tag-add #activity_tag_add_activity_id').val()+'] .btn-tag-empty').last();
-        var button = $(this).parents('.tag').find('.btn-tag-small');
+        var button = $(this).parents('.tag').find('.btn-tag-small').clone();
         var form = $('#modal-tag-add form');
         $.post(form.attr('action'), form.serialize(), function() {
             button.insertBefore(buttonTarget);
