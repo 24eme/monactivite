@@ -48,7 +48,7 @@
                         </div>
                         <div class="col-xs-1 text-right itemAction">
                             {% if(activity.content ) %}
-                            <a href="{{ path('activity_view', { id: activity.id })}}" title="{{ activity.content | nl2br }}" class="btn-activity-view" data-toggle="tooltipHtml"><span class="glyphicon glyphicon-eye-open"></span></a>
+                            <a href="{% if activity.id %}{{ path('activity_view', { id: activity.id })}}{% endif %}" title="{{ activity.content | nl2br }}" class="btn-activity-view" data-toggle="tooltipHtml"><span class="glyphicon glyphicon-eye-open"></span></a>
                             {% endif %}
                         </div>
                         <div class="clearfix"></div>
