@@ -56,7 +56,7 @@ class MailImporterTest extends KernelTestCase
         $this->assertSame($activity->getTitle(), "Test mail text/plain");
         $this->assertSame($activity->getContent(), "Bonjour,\n\nCeci est un mail en text/plain tout simple, qui contient même des accents.\n\nLe testeur");
 
-        $this->assertCount(3, $activity->getAttributes());
+        $this->assertCount(5, $activity->getAttributes());
 
         $this->assertSame($activity->getAttributes()[0]->getName(), "Type");
         $this->assertSame($activity->getAttributes()[0]->getValue(), "Mail");
@@ -64,6 +64,10 @@ class MailImporterTest extends KernelTestCase
         $this->assertSame($activity->getAttributes()[1]->getValue(), "sender@example.org");
         $this->assertSame($activity->getAttributes()[2]->getName(), "Recipient");
         $this->assertSame($activity->getAttributes()[2]->getValue(), "recipient@example.org");
+        $this->assertSame($activity->getAttributes()[3]->getName(), "To");
+        $this->assertSame($activity->getAttributes()[3]->getValue(), "recipient@example.org");
+        $this->assertSame($activity->getAttributes()[4]->getName(), "Cc");
+        $this->assertSame($activity->getAttributes()[4]->getValue(), "recipient_copy@example.org");
 
         next($activities);
         $activity = current($activities);
@@ -73,7 +77,7 @@ class MailImporterTest extends KernelTestCase
         $this->assertSame($activity->getTitle(), "Test mail text/html");
         $this->assertSame($activity->getContent(), "Bonjour,\n\nCeci est un mail *html*.\n\nAvec une liste\n\n   - Point n°1\n   - Point n°2\n   - Point n°3\n\nLe testeur");
 
-        $this->assertCount(3, $activity->getAttributes());
+        $this->assertCount(5, $activity->getAttributes());
 
         $this->assertSame($activity->getAttributes()[0]->getName(), "Type");
         $this->assertSame($activity->getAttributes()[0]->getValue(), "Mail");
@@ -81,6 +85,10 @@ class MailImporterTest extends KernelTestCase
         $this->assertSame($activity->getAttributes()[1]->getValue(), "sender@example.org");
         $this->assertSame($activity->getAttributes()[2]->getName(), "Recipient");
         $this->assertSame($activity->getAttributes()[2]->getValue(), "recipient_primaire@example.org");
+        $this->assertSame($activity->getAttributes()[3]->getName(), "To");
+        $this->assertSame($activity->getAttributes()[3]->getValue(), "recipient_primaire@example.org, recipient_secondaire@example.org");
+        $this->assertSame($activity->getAttributes()[4]->getName(), "Cc");
+        $this->assertSame($activity->getAttributes()[4]->getValue(), "recipient_copy@example.org");
 
         $this->assertSame($source->getUpdateParam()['line'], shell_exec("cat ".$mailFile." | wc -l")*1);
 

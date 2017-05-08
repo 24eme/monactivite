@@ -110,15 +110,24 @@ class MailImporter extends Importer
         }
 
         $to = null;
+        $tos = array();
         foreach($parsedMail->getAllEmailAddresses(array('to')) as $address) {
+            $tos[$address] = $address;
+            if($to) {
+                continue;
+            }
             $to = $address;
-            break;
         }
 
-        $body = $parsedMail->getPrimaryContent();
+        $ccs = array();
+        foreach($parsedMail->getAllEmailAddresses(array('cc')) as $address) {
+            $ccs[$address] = $address;
+        }
+
+        $body = null;
+        $body .= $parsedMail->getPrimaryContent();
 
         $body = str_replace("\r", "", $body);
-
         $activity = new Activity();
         $activity->setExecutedAt($date);
         $activity->setTitle($subject);
@@ -140,6 +149,18 @@ class MailImporter extends Importer
             $recipient->setValue($to);
         }
 
+        if(count($tos)) {
+            $toAttribute = new ActivityAttribute();
+            $toAttribute->setName("To");
+            $toAttribute->setValue(implode(", ", $tos));
+        }
+
+        if(count($ccs)) {
+            $ccAttribute = new ActivityAttribute();
+            $ccAttribute->setName("Cc");
+            $ccAttribute->setValue(implode(", ", $ccs));
+        }
+
         $activity->addAttribute($type);
 
         if(isset($sender)) {
@@ -148,6 +169,14 @@ class MailImporter extends Importer
 
         if(isset($recipient)) {
             $activity->addAttribute($recipient);
+        }
+
+        if(isset($toAttribute)) {
+            $activity->addAttribute($toAttribute);
+        }
+
+        if(isset($ccAttribute)) {
+            $activity->addAttribute($ccAttribute);
         }
 
         try {
@@ -159,6 +188,12 @@ class MailImporter extends Importer
             }
             if(isset($recipient)) {
                 $this->em->persist($recipient);
+            }
+            if(isset($toAttribute)) {
+                $this->em->persist($toAttribute);
+            }
+            if(isset($ccAttribute)) {
+                $this->em->persist($ccAttribute);
             }
             $this->em->persist($activity);
 

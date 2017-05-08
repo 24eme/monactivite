@@ -57,13 +57,13 @@ class ActivityController extends Controller
      */
     public function viewAction(Request $request, Activity $activity)
     {
-        return $this->render('Activity/view.html.twig', array('activity' => $activity));
+        return $this->render('Activity/view.html.twig', array('activity' => $activity, 'query' => $request->get('query', null)));
     }
 
     /**
      * @Route("/tag", name="activity_tag")
      */
-    public function tag(Request $request)
+    public function tagAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
         $am = $this->get('app.manager.activity');
