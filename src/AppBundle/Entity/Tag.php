@@ -205,4 +205,14 @@ class Tag
 
         return $this->colorText;
     }
+
+    public function getBorderColor()
+    {
+        if(!$this->colorText && $this->getColor()) {
+
+            return '#fff';
+        }
+
+        return $this->colorText;
+    }
 }

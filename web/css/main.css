@@ -40,7 +40,9 @@ body {
 }
 
 .btn-tag {
-    border: 0;
+    border: 1px solid #eaeaea;
+    padding-top: 4px;
+    padding-bottom: 4px;
 }
 
 .btn-tag .badge {

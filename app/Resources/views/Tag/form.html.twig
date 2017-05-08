@@ -1,13 +1,18 @@
 {{ form_start(form) }}
     {{ form_errors(form) }}
-    <div class="col-xs-6">
+    <div class="col-xs-4">
         <div class="form-group">
         {{ form_widget(form.name, { 'attr': {'placeholder': 'Nom', 'autofocus': 'autofocus', 'class': 'input-lg' }}) }}
         </div>
     </div>
     <div class="col-xs-2">
         <div class="form-group">
-        {{ form_widget(form.color, { 'attr': {'placeholder': 'Couleur', 'class': 'minicolors input-lg' }}) }}
+        {{ form_widget(form.color, { 'attr': {'placeholder': 'Fond', 'class': 'minicolors input-lg' }}) }}
+        </div>
+    </div>
+    <div class="col-xs-2">
+        <div class="form-group">
+        {{ form_widget(form.colorText, { 'attr': {'placeholder': 'Texte', 'class': 'minicolors input-lg' }}) }}
         </div>
     </div>
     <div class="col-xs-1">
