@@ -19,11 +19,13 @@
                         {% if(not noTags | default(false)) %}
                         <div class="col-xs-2 text-left itemTags">
                             <div class="btn-group">
-                                {% for j in 0..(3 - activity.tags | length) %}
+                                {% for j in 0..(3 - activity.tags | length) if activity.tags | length <= 3 %}
                                 <button type="button" class="btn btn-sm btn-default btn-tag-empty btn-activity-tag"><span class="glyphicon glyphicon-plus"></span></button>
                                 {% endfor %}
-                                {% for tag in activity.getTagsReverse() %}
+                                {% set j = 0 %}
+                                {% for tag in activity.getTagsReverse() if j < 4 %}
                                     {% include 'Tag/button_small.html.twig' with {'tag': tag, url: 'javascript:void(0)'} %}
+                                    {% set j = j + 1 %}
                                 {% endfor %}
                             </div>
                         </div>
@@ -42,7 +44,7 @@
                             </div>
                         </div>
                         <div class="col-xs-8 itemContent">
-                            <span>{{ activity.title }}</span>&nbsp;<small style="opacity: 0.7;"  class="text-muted">{{ activity.content | slice(0, 200) }}</small>
+                            <span>{{ activity.title }} ({{activity.tags | length}})</span>&nbsp;<small style="opacity: 0.7;"  class="text-muted">{{ activity.content | slice(0, 200) }}</small>
                         </div>
                         <div class="col-xs-1 text-right itemAction">
                             {% if(activity.content ) %}
