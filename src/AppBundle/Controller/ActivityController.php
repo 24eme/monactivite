@@ -26,13 +26,19 @@ class ActivityController extends Controller
         $am = $this->get('app.manager.activity');
         $repo = $em->getRepository('AppBundle:Activity');
 
-        $nbDays = $request->get('nb', 10);
+        $nbDays = $request->get('nb', 15);
         $dateFrom = new \DateTime($request->get('date', date('Y-m-d')));
+        $dateTo = null;
+        if($request->get('dateTo')) {
+            $dateTo = new \DateTime($request->get('dateTo'));
+        }
         $query = $request->get('q', null);
         $duration = $request->get("duration", 6);
 
-        $dateTo = clone $dateFrom;
-        $dateTo->modify("-".$duration." month");
+        if(!$dateTo){
+            $dateTo = clone $dateFrom;
+            $dateTo->modify("-".$duration." month");
+        }
 
         $activities = $repo->findByDatesInterval($dateFrom, $dateTo, $nbDays, $query);
         $activitiesByDates = $am->createView($activities);
@@ -44,7 +50,7 @@ class ActivityController extends Controller
             $dateNext = $dateNext->format('Y-m-d');
         }
 
-        return $this->render('Activity/list.html.twig', array('activitiesByDates' => $am->createView($activities), 'query' => $query, 'dateNext' => $dateNext, 'nbDays' => $nbDays, 'duration' => $duration));
+        return $this->render('Activity/list.html.twig', array('activitiesByDates' => $am->createView($activities), 'query' => $query, 'dateNext' => $dateNext, 'dateTo' => $dateTo->format('Y-m-d'), 'nbDays' => $nbDays, 'duration' => $duration));
     }
 
     /**
