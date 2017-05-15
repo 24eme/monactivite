@@ -18,7 +18,7 @@ class ActivityRepository extends EntityRepository
         $querySearchDQL = null;
         $querySearch = null;
         if($queryString) {
-            $querySearch = $this->searchQueryToQueryDoctrine($queryString);
+            $querySearch = $this->searchQueryToQueryDoctrine($queryString, $dateFrom, $dateTo);
             $querySearchDQL = ' AND a IN('.$querySearch->getDQL().')';
         }
 
@@ -50,6 +50,11 @@ class ActivityRepository extends EntityRepository
         $dateTo = new \DateTime($dates[count($dates) - 1]['date']);
         $dateTo = $dateTo->modify("+4 hours");
         $dateFrom = $dateFrom->modify("-4 hours");
+
+        if($queryString) {
+            $querySearch = $this->searchQueryToQueryDoctrine($queryString, $dateFrom, $dateTo);
+            $querySearchDQL = ' AND a IN('.$querySearch->getDQL().')';
+        }
 
         $query = $this->getEntityManager()
                     ->createQuery('
@@ -99,7 +104,7 @@ class ActivityRepository extends EntityRepository
         return $query->getResult();
     }
 
-    public function searchQueryToQueryDoctrine($searchQuery) {
+    public function searchQueryToQueryDoctrine($searchQuery, $dateFrom = null, $dateTo = null) {
         $terms = explode(" ", $searchQuery);
         $params = array();
         foreach($terms as $term) {
@@ -114,6 +119,12 @@ class ActivityRepository extends EntityRepository
         $query = $this->getEntityManager()->createQueryBuilder()
                                  ->select('aq')
                                  ->from('AppBundle:Activity', 'aq');
+
+        if($dateTo && $dateFrom) {
+            $query->andWhere("aq.executedAt >= :date_to AND aq.executedAt <= :date_from")
+                  ->setParameter('date_from', $dateFrom)
+                  ->setParameter('date_to', $dateTo);
+        }
 
         foreach($params as $key => $param) {
             $name = $param[0];

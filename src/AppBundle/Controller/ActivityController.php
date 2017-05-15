@@ -29,9 +29,10 @@ class ActivityController extends Controller
         $nbDays = $request->get('nb', 10);
         $dateFrom = new \DateTime($request->get('date', date('Y-m-d')));
         $query = $request->get('q', null);
+        $duration = $request->get("duration", 6);
 
         $dateTo = clone $dateFrom;
-        $dateTo->modify('-6 month');
+        $dateTo->modify("-".$duration." month");
 
         $activities = $repo->findByDatesInterval($dateFrom, $dateTo, $nbDays, $query);
         $activitiesByDates = $am->createView($activities);
@@ -42,13 +43,8 @@ class ActivityController extends Controller
             $dateNext = new \DateTime(key($activitiesByDates));
             $dateNext = $dateNext->format('Y-m-d');
         }
-        /*if(isset($activity)) {
 
-            $dateNext = new \DateTime($activity->getExecutedAt()->format('Y-m-d'));
-            $dateNext = $dateNext->modify("-1 day")->format('Y-m-d');
-        }*/
-
-        return $this->render('Activity/list.html.twig', array('activitiesByDates' => $am->createView($activities), 'query' => $query, 'dateNext' => $dateNext, 'nbDays' => $nbDays));
+        return $this->render('Activity/list.html.twig', array('activitiesByDates' => $am->createView($activities), 'query' => $query, 'dateNext' => $dateNext, 'nbDays' => $nbDays, 'duration' => $duration));
     }
 
     /**

@@ -3,7 +3,7 @@
 {% block body %}
     <div class="row">
         <div id="activities_container" class="col-lg-12" style="margin-top: -10px;">
-            {% render path('activity_list', { 'q': query, 'date': dateFrom, 'nb': nbDays}) %}
+            {{ render(path('activity_list', { 'q': query, 'date': dateFrom, 'nb': nbDays, 'duration': duration})) }}
         </div>
     </div>
 

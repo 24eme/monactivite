@@ -20,6 +20,10 @@ $(document).ready( function() {
         $($(this).attr('data-form-item-relation')).val(icon);
     });
 
+    $('.submit-on-change').on('change', function() {
+        $(this).parents('form').submit();
+    });
+
     $('#activities_container').on('click', '#btn_load_more_activities', function() {
         var button = $(this);
         button.button('loading');

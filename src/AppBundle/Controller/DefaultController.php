@@ -20,12 +20,13 @@ class DefaultController extends Controller
         $nbDays = $request->get('nb', 10);
         $dateFrom = $request->get('date', date('Y-m-d H:i:s'));
         $query = $request->get('q', null);
+        $duration = $request->get('duration', 6);
 
         $tags = $em->getRepository('AppBundle:Tag')->findAll();
 
         $tagAddForm = $this->createForm(ActivityTagAddType::class, array(), array('action' => $this->generateUrl('activity_tag'),'method' => 'POST'));
 
-        return $this->render('default/index.html.twig', array('query' => $request->get('q'), 'dateFrom' => $dateFrom, 'nbDays' => $nbDays, 'tags' => $tags, 'tagAddForm' => $tagAddForm->createView()));
+        return $this->render('default/index.html.twig', array('query' => $request->get('q'), 'dateFrom' => $dateFrom, 'nbDays' => $nbDays, 'tags' => $tags, 'duration' => $duration, 'tagAddForm' => $tagAddForm->createView()));
     }
 
     /**
