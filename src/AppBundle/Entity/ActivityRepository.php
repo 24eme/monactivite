@@ -14,6 +14,34 @@ use Doctrine\ORM\Query;
 class ActivityRepository extends EntityRepository
 {
 
+    public function countDatesByInterval($dateFrom, $dateTo, $queryString = null) {
+        $querySearchDQL = null;
+        $querySearch = null;
+        if($queryString) {
+            $querySearch = $this->searchQueryToQueryDoctrine($queryString, $dateFrom, $dateTo);
+            $querySearchDQL = ' AND a IN('.$querySearch->getDQL().')';
+        }
+
+        $query = $this->getEntityManager()
+                    ->createQuery('
+                          SELECT DATE(a.executedAt) as date, COUNT(a) as total
+                          FROM AppBundle:Activity a
+                          WHERE a.executedAt >= :date_to AND a.executedAt <= :date_from'.$querySearchDQL.'
+                          GROUP BY date
+                          ORDER BY a.executedAt ASC
+                      ')
+                    ->setParameter('date_from', $dateFrom)
+                    ->setParameter('date_to', $dateTo);
+
+        if($querySearch) {
+            foreach($querySearch->getParameters() as $p) {
+                $query->setParameter($p->getName(), $p->getValue());
+            }
+        }
+
+        return $query->getScalarResult();
+    }
+
     public function findByDatesInterval($dateFrom, $dateTo, $nbDaysMax, $queryString = null) {
         $querySearchDQL = null;
         $querySearch = null;
@@ -34,10 +62,10 @@ class ActivityRepository extends EntityRepository
                     ->setParameter('date_to', $dateTo)
                     ->setMaxResults($nbDaysMax);
 
-         if($querySearch) {
-          foreach($querySearch->getParameters() as $p) {
-              $query->setParameter($p->getName(), $p->getValue());
-          }
+        if($querySearch) {
+            foreach($querySearch->getParameters() as $p) {
+                $query->setParameter($p->getName(), $p->getValue());
+            }
         }
 
         $dates = $query->getScalarResult();

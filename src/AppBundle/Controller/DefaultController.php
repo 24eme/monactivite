@@ -18,15 +18,30 @@ class DefaultController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $nbDays = $request->get('nb', 10);
-        $dateFrom = $request->get('date', date('Y-m-d H:i:s'));
+        $dateFrom = new \DateTime($request->get('date', $request->get('date', date('Y-m-d H:i:s'))));
         $query = $request->get('q', null);
         $duration = $request->get('duration', 6);
+        $dateTo = null;
+        if($request->get('dateTo')) {
+            $dateTo = new \DateTime($request->get('dateTo'));
+        }
+        if(!$dateTo){
+            $dateTo = clone $dateFrom;
+            $dateTo->modify("-".$duration." month");
+        }
 
         $tags = $em->getRepository('AppBundle:Tag')->findAll();
 
+        $stats = $em->getRepository('AppBundle:Activity')->countDatesByInterval($dateFrom, $dateTo, $query);
+        $total = 0;
+        foreach($stats as $key => $stat) {
+            $total += $stat['total'];
+        }
+        $statsMax = $total/count($stats) * 3;
+
         $tagAddForm = $this->createForm(ActivityTagAddType::class, array(), array('action' => $this->generateUrl('activity_tag'),'method' => 'POST'));
 
-        return $this->render('default/index.html.twig', array('query' => $request->get('q'), 'dateFrom' => $dateFrom, 'nbDays' => $nbDays, 'tags' => $tags, 'duration' => $duration, 'tagAddForm' => $tagAddForm->createView()));
+        return $this->render('default/index.html.twig', array('query' => $request->get('q'), 'dateFrom' => $dateFrom->format('Y-m-d  H:i:s'), 'stats' => $stats, 'statsMax' => $statsMax, 'nbDays' => $nbDays, 'tags' => $tags, 'duration' => $duration, 'tagAddForm' => $tagAddForm->createView()));
     }
 
     /**
