@@ -33,10 +33,20 @@ $(document).ready( function() {
                 return;
             }
             $('#btn_load_more_container').remove();
-            $('#activities_container').html($('#activities_container').html()+"\n"+data);
+            var newContent = $(data);
+            newContent.hide();
+            newContent.insertAfter($("#activities_container .list-end:last"));
             initAdvancedElements();
+            newContent.fadeIn(1000);
         });
     });
+
+
+    $(document).on('scroll', function(e) {
+        if(!$('#btn_load_more_activities').attr('disabled') && ($(document).scrollTop() + ($(window).height() * 0.35)) >  ($(document).height() - $(window).height())) {
+            $('#btn_load_more_activities').click();
+        }
+    })
 
     $.fn.select2.defaults.set( "theme", "bootstrap" );
 
@@ -91,4 +101,6 @@ $(document).ready( function() {
 
         return false;
     });
+
+    $('#btn_load_more_activities').click();
 });
