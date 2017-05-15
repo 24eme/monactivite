@@ -139,7 +139,7 @@ body {
 }
 
 .heatmap-item {
-    background-color: #de6e00;
+    background-color: #777;
     display: inline-block; width: 14.4px; height: 14.4px; padding: 0; margin: 0; margin: 1px; float: left; cursor: pointer;
 }
 
