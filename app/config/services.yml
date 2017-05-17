@@ -13,6 +13,11 @@ services:
         tags:
             - { name: twig.extension }
 
+    twig.extension.text:
+        class: Twig_Extensions_Extension_Text
+        tags:
+            - { name: twig.extension }
+
     app.mail.parser:
         class: AppBundle\Utils\MailParser
         arguments: [@lasso_mail_parser.part_factory]

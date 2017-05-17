@@ -47,7 +47,7 @@
                         </div>
                         <div class="col-xs-1 text-right itemAction">
                             {% if(activity.content ) %}
-                            <a href="{% if activity.id %}{{ path('activity_view', { 'id': activity.id, 'query': query, 'dateFrom': dateFrom, 'dateTo': dateTo, 'nbDays': nbDays })}}{% endif %}" title="{{ activity.content | nl2br }}" class="btn-activity-view" data-toggle="tooltipHtml"><span class="glyphicon glyphicon-eye-open"></span></a>
+                            <a href="{% if activity.id %}{{ path('activity_view', { 'id': activity.id, 'query': query, 'dateFrom': dateFrom, 'dateTo': dateTo, 'nbDays': nbDays })}}{% endif %}" title="{{ activity.content | truncate(350, true, '...') | nl2br }}" class="btn-activity-view" data-toggle="tooltipHtml"><span class="glyphicon glyphicon-eye-open"></span></a>
                             {% endif %}
                         </div>
                         <div class="clearfix"></div>
