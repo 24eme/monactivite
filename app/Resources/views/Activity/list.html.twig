@@ -1,12 +1,9 @@
-{% set query = query | default(null) %}
-{% set dateNext = dateNext | default(null) %}
-
 {% for date, activities in activitiesByDates %}
     <h3>
         <span class="pull-right">{{ date | localizeddate("none", "none", null, null, "E d MMM yyyy") | capitalize }}</span>
         <div class="btn-group">
             {% for tag in activities.tags %}
-                {% include 'Tag/button.html.twig' with {'tag': tag.entity, url: path('timeline', { 'q': (query~' tag:'~tag.entity.name) | trim, 'duration': duration}), 'badge': tag.nb} %}
+                {% include 'Tag/button.html.twig' with {'tag': tag.entity, url: path('timeline', { 'q': (query~' tag:'~tag.entity.name) | trim, 'dateFrom': dateFrom, 'dateTo': dateTo, 'nbDays': nbDays}), 'badge': tag.nb} %}
             {% endfor %}
         </div>
     </h3>
@@ -24,7 +21,7 @@
                                 {% endfor %}
                                 {% set j = 0 %}
                                 {% for tag in activity.getTagsReverse() if j < 4 %}
-                                    {% include 'Tag/button_small.html.twig' with {'tag': tag, url: path('timeline', { 'q': (query~' tag:'~tag.name) | trim, 'duration': duration})} %}
+                                    {% include 'Tag/button_small.html.twig' with {'tag': tag, url: path('timeline', { 'q': (query~' tag:'~tag.name) | trim, 'dateFrom': dateFrom, 'dateTo': dateTo, 'nbDays': nbDays})} %}
                                     {% set j = j + 1 %}
                                 {% endfor %}
                             </div>
@@ -35,7 +32,7 @@
                             <div class="btn-group">
                                 {% set j = 0 %}
                                 {% for attribute in activity.attributes if j < 3  %}
-                                    <a href="{{ path('timeline', { 'q': (query~' '~attribute.name~':'~attribute.value) | trim, 'duration': duration}) }}" data-toggle="tooltip" data-placement="auto" title="{{ attribute.value }}&nbsp;<small>({{ attribute.name }})</small>" data-html="true" data-container="body" class="btn btn-sm btn-default text-left btn-attribute-small"><span class="text-muted text-left">{{ attribute.value | replace({ "." : "", "-": "", "@": "" }) | slice(0, 5) | upper  }}</span></a>
+                                    <a href="{% if(not noTags | default(false)) %}{{ path('timeline', { 'q': (query~' '~attribute.name~':'~attribute.value) | trim, 'dateFrom': dateFrom, 'dateTo': dateTo, 'nbDays': nbDays}) }}{% endif %}" data-toggle="tooltip" data-placement="auto" title="{{ attribute.value }}&nbsp;<small>({{ attribute.name }})</small>" data-html="true" data-container="body" class="btn btn-sm btn-default text-left btn-attribute-small"><span class="text-muted text-left">{{ attribute.value | replace({ "." : "", "-": "", "@": "" }) | slice(0, 5) | upper  }}</span></a>
                                     {% set j = j + 1 %}
                                 {% endfor %}
                                 {% if activity.attributes | length < 3 %}
@@ -50,7 +47,7 @@
                         </div>
                         <div class="col-xs-1 text-right itemAction">
                             {% if(activity.content ) %}
-                            <a href="{% if activity.id %}{{ path('activity_view', { id: activity.id, query: query })}}{% endif %}" title="{{ activity.content | nl2br }}" class="btn-activity-view" data-toggle="tooltipHtml"><span class="glyphicon glyphicon-eye-open"></span></a>
+                            <a href="{% if activity.id %}{{ path('activity_view', { 'id': activity.id, 'query': query, 'dateFrom': dateFrom, 'dateTo': dateTo, 'nbDays': nbDays })}}{% endif %}" title="{{ activity.content | nl2br }}" class="btn-activity-view" data-toggle="tooltipHtml"><span class="glyphicon glyphicon-eye-open"></span></a>
                             {% endif %}
                         </div>
                         <div class="clearfix"></div>
@@ -63,10 +60,10 @@
     <div class="list-end"></div>
 {% endfor %}
 
-{% if(dateNext) %}
+{% if dateNext is defined and dateNext %}
 <div class="row" id="btn_load_more_container" style="margin-top: 10px;">
     <div class="col-lg-12 text-center">
-        <button data-loading-text="Chargement en cours ..." id="btn_load_more_activities" data-url="{{ path('activity_list', { 'q': query, 'date': dateNext, 'nb': nbDays, 'duration': duration, 'dateTo': dateTo}) }}" class="btn btn-link">Charger les jours précédents</button>
+        <button data-loading-text="Chargement en cours ..." id="btn_load_more_activities" data-url="{{ path('activity_list', { 'q': query, 'dateFrom': dateFrom, 'dateTo': dateTo, 'nbDays': nbDays, 'dateFromQuery': dateNext }) }}" class="btn btn-link">Charger les jours précédents</button>
     </div>
 </div>
 {% endif %}

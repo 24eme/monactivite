@@ -17,31 +17,38 @@ class DefaultController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $nbDays = $request->get('nb', 10);
-        $dateFrom = new \DateTime($request->get('date', $request->get('date', date('Y-m-d H:i:s'))));
+        $nbDays = $request->get('nbDays', 10);
+        $dateFrom = new \DateTime($request->get('dateFrom', $request->get('dateFrom', date('Y-m-d'))));
         $query = $request->get('q', null);
-        $duration = $request->get('duration', 6);
         $dateTo = null;
         if($request->get('dateTo')) {
             $dateTo = new \DateTime($request->get('dateTo'));
-        }
-        if(!$dateTo){
+        } else {
             $dateTo = clone $dateFrom;
-            $dateTo->modify("-".$duration." month");
+            $dateTo->modify("-6 month");
         }
 
         $tags = $em->getRepository('AppBundle:Tag')->findAll();
+        $tagAddForm = $this->createForm(ActivityTagAddType::class, array(), array('action' => $this->generateUrl('activity_tag'),'method' => 'POST'));
 
-        $stats = $em->getRepository('AppBundle:Activity')->countDatesByInterval($dateFrom, $dateTo, $query);
+        /*$stats = $em->getRepository('AppBundle:Activity')->countDatesByInterval($dateFrom, $dateTo, $query);
         $total = 0;
         foreach($stats as $key => $stat) {
             $total += $stat['total'];
         }
         $statsMax = $total/count($stats) * 3;
+        */
 
-        $tagAddForm = $this->createForm(ActivityTagAddType::class, array(), array('action' => $this->generateUrl('activity_tag'),'method' => 'POST'));
 
-        return $this->render('default/index.html.twig', array('query' => $request->get('q'), 'dateFrom' => $dateFrom->format('Y-m-d  H:i:s'), 'stats' => $stats, 'statsMax' => $statsMax, 'nbDays' => $nbDays, 'tags' => $tags, 'duration' => $duration, 'tagAddForm' => $tagAddForm->createView()));
+        return $this->render('default/index.html.twig',
+            array('query' => $query,
+                  'dateFrom' => $dateFrom->format('Y-m-d'),
+                  'dateTo' => $dateTo->format('Y-m-d'),
+                  'nbDays' => $nbDays,
+                  'tags' => $tags,
+                  'tagAddForm' => $tagAddForm->createView()
+            )
+        );
     }
 
     /**

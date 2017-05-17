@@ -1,10 +1,10 @@
 $(document).ready( function() {
+    moment.locale('fr');
     $('input.minicolors').minicolors({
         theme: 'bootstrap'
     });
 
     var initAdvancedElements = function() {
-        $('[data-toggle="popover"]').popover();
         $('[data-toggle="tooltip"]').tooltip();
         $('[data-toggle="tooltipHtml"]').tooltip({'html': true, 'container': 'body', 'template': '<div style="min-width: 250px; max-width: 400px; max-height: 170px;" class="tooltip tooltipHtml" role="tooltip"><div class="tooltip-arrow"></div><div style="min-width: 250px; max-width: 400px; display: block; text-align: left; overflow: hidden; max-height: 170px;" class="tooltip-inner"></div></div>'});
     }
@@ -55,6 +55,21 @@ $(document).ready( function() {
     });
 
     $('.dropdown-toggle').dropdown();
+
+    $('#btn-select-time').daterangepicker({
+        startDate: moment($('#input-date-to').val()),
+        endDate:  moment($('#input-date-from').val()),
+        ranges: {
+           '6 mois': [moment().subtract(6, 'month'), moment()],
+           '1 an': [moment().subtract(1, 'year'), moment()],
+           '2 ans': [moment().subtract(2, 'year'), moment()],
+           '5 ans': [moment().subtract(5, 'year'), moment()]
+        }
+    }, function(start, end) {
+        $('#input-date-to').val(start.format('YYYY-MM-DD'));
+        $('#input-date-from').val(end.format('YYYY-MM-DD'));
+        $('#form-search').submit();
+    });
 
     $('#activities_container').on('click', '.btn-activity-tag', function() {
         $('#modal-tag-add #activity_tag_add_activity_id').val($(this).parents('.ligne').data('id'));

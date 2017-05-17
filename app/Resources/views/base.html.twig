@@ -11,7 +11,8 @@
             <link href="{{ asset('bower_components/bootstrap-iconpicker/bootstrap-iconpicker/css/bootstrap-iconpicker.min.css') }}" rel="stylesheet" />
             <link href="{{ asset('bower_components/select2/dist/css/select2.min.css') }}" rel="stylesheet" />
             <link href="{{ asset('bower_components/select2-bootstrap-theme/dist/select2-bootstrap.min.css') }}" rel="stylesheet" />
-            <link href="{{ asset('css/main.css') }}" rel="stylesheet" />
+            <link href="{{ asset('bower_components/daterangepicker/daterangepicker.css') }}" rel="stylesheet" />
+            <link href="{{ asset('css/main.css?201705180031') }}" rel="stylesheet" />
         {% endblock %}
         <link rel="icon" type="image/x-icon" href="{{ asset('images/favicon.ico') }}" />
     </head>
@@ -27,8 +28,9 @@
               </button>
               <a style="padding-top:8px; padding-bottom: 8px;" class="navbar-brand" href="{{ path('timeline') }}"><img src="{{ asset('images/logo.png') }}" alt="Mon activité" /></a>
             </div>
-            <form action="" method="get" class="navbar-form navbar-left hidden-sm" role="search">
+            <form id="form-search" action="" method="get" class="navbar-form navbar-left hidden-sm" role="search">
                 <div class="form-group">
+                    {% if query is defined %}
                     <div class="input-group">
                         <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
                         <input type="text" name="q" value="{{ query | default(null) }}" class="form-control" id="nav_top_input_search"  placeholder="Rechercher...">
@@ -38,12 +40,15 @@
                         </a>
                         </span>
                     </div>
-                    {% set durations = {'6': '6 mois', '12': '1 an', '24': '2 ans'} %}
-                    <select name="duration" class="form-control submit-on-change">
-                        {% for duraKey,duraLibelle in durations %}
-                            <option {% if(duraKey == duration | default(null)) %}selected="selected"{% endif %} value="{{ duraKey }}">{{ duraLibelle }}</option>
-                        {% endfor %}
-                    </select>
+                    {% endif %}
+                    {% if dateFrom is defined and dateTo is defined %}
+                    <button id="btn-select-time" type="button" class="btn btn-default btn-xs" style="line-height: 12px; padding-top: 3px; padding-bottom: 4px;"><span style="line-height: 24px; margin-right: 4px;" class="glyphicon glyphicon-calendar pull-left" ></span><small><span class="text-muted">Du</span> {{ dateFrom | localizeddate("none", "none", null, null, "dd/MM/yyyy")}}<br /><span class="text-muted">Au</span> {{ dateTo | localizeddate("none", "none", null, null, "dd/MM/yyyy")}}</small></button>
+                    <input type="hidden" id="input-date-from" name="dateFrom" value="{{ dateFrom }}" />
+                    <input type="hidden" id="input-date-to" name="dateTo" value="{{ dateTo }}" />
+                    {% endif %}
+                    {% if nbDays is defined %}
+                    <input type="hidden" name="nbDays" value="{{ nbDays }}" />
+                    {% endif %}
                 </div>
             </form>
             <div class="collapse navbar-collapse" id="nav-main-element">
@@ -74,12 +79,14 @@
         <div id="modal-default" class="modal" tabindex="-1" role="dialog"></div>
         {% block javascripts %}
             <script src="{{ asset('bower_components/jquery/dist/jquery.min.js') }}"></script>
+            <script src="{{ asset('bower_components/moment/moment-with-locales.js') }}"></script>
             <script src="{{ asset('bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
             <script src="{{ asset('bower_components/jquery-minicolors/jquery.minicolors.min.js') }}"></script>
             <script src="{{ asset('bower_components/select2/dist/js/select2.min.js') }}"></script>
             <script src="{{ asset('bower_components/bootstrap-iconpicker/bootstrap-iconpicker/js/iconset/iconset-glyphicon.min.js') }}"></script>
             <script src="{{ asset('bower_components/bootstrap-iconpicker/bootstrap-iconpicker/js/bootstrap-iconpicker.min.js') }}"></script>
-            <script src="{{ asset('js/main.js?20170508') }}"></script>
+            <script src="{{ asset('bower_components/daterangepicker/daterangepicker.js') }}"></script>
+            <script src="{{ asset('js/main.js?201705190031') }}"></script>
         {% endblock %}
     </body>
 </html>

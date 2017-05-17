@@ -22,6 +22,9 @@ class ActivityRepository extends EntityRepository
             $querySearchDQL = ' AND a IN('.$querySearch->getDQL().')';
         }
 
+        $dateFrom = clone $dateFrom;
+        $dateFrom = $dateFrom->modify("+ 1 day");
+
         $query = $this->getEntityManager()
                     ->createQuery('
                           SELECT DATE(a.executedAt) as date, COUNT(a) as total
@@ -50,6 +53,8 @@ class ActivityRepository extends EntityRepository
             $querySearchDQL = ' AND a IN('.$querySearch->getDQL().')';
         }
 
+        $dateFrom = $dateFrom->modify("+ 1 day");
+
         $query = $this->getEntityManager()
                     ->createQuery('
                           SELECT DATE(a.executedAt) as date
@@ -77,7 +82,7 @@ class ActivityRepository extends EntityRepository
 
         $dateTo = new \DateTime($dates[count($dates) - 1]['date']);
         $dateTo = $dateTo->modify("+4 hours");
-        $dateFrom = $dateFrom->modify("-4 hours");
+        $dateFrom = $dateFrom->modify("+4 hours");
 
         if($queryString) {
             $querySearch = $this->searchQueryToQueryDoctrine($queryString, $dateFrom, $dateTo);

@@ -8,7 +8,7 @@ body {
 }
 
 #nav_top_input_search {
-    width: 420px;
+    width: 418px;
 }
 
 #main {
@@ -145,7 +145,7 @@ body {
 
 @media (max-width: 1199px) {
     #nav_top_input_search {
-        width: 223px;
+        width: 219px;
     }
 
     .itemContent {

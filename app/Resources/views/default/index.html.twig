@@ -1,14 +1,14 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="row">
+    <!--<div class="row">
         <div class="col-xs-12">
-            {% for stat in stats %}<a title="{{ stat.date | localizeddate("none", "none", null, null, "E d MMM yyyy") }} : {{ stat.total }} activités" class="heatmap-item" style="opacity: {{ (((stat.total) / statsMax) + 0.05) }};"></a>{% endfor %}
+            {#% for stat in stats %}<a title="{{ stat.date | localizeddate("none", "none", null, null, "E d MMM yyyy") }} : {{ stat.total }} activités" class="heatmap-item" style="opacity: {{ (((stat.total) / statsMax) + 0.05) }};"></a>{% endfor %#}
         </div>
-    </div>
+    </div>-->
     <div class="row">
         <div id="activities_container" class="col-lg-12" style="margin-top: -10px;">
-            {{ render(path('activity_list', { 'q': query, 'date': dateFrom, 'nb': nbDays, 'duration': duration})) }}
+            {{ render(path('activity_list', { 'q': query, 'dateTo': dateTo, 'dateFrom': dateFrom, 'nbDays': nbDays })) }}
         </div>
     </div>
 

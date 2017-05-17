@@ -20,37 +20,43 @@ class ActivityController extends Controller
     /**
      * @Route("/list", name="activity_list")
      */
-    public function indexAction(Request $request)
+    public function listAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
         $am = $this->get('app.manager.activity');
         $repo = $em->getRepository('AppBundle:Activity');
 
-        $nbDays = $request->get('nb', 15);
-        $dateFrom = new \DateTime($request->get('date', date('Y-m-d')));
-        $dateTo = null;
-        if($request->get('dateTo')) {
-            $dateTo = new \DateTime($request->get('dateTo'));
+        $nbDays = $request->get('nbDays');
+        $dateFrom = new \DateTime($request->get('dateFrom'));
+        $dateTo = new \DateTime($request->get('dateTo'));
+        if($request->get('dateFromQuery')) {
+            $dateFromQuery = new \DateTime($request->get('dateFromQuery'));
+        } else {
+            $dateFromQuery = clone $dateFrom;
         }
-        $query = $request->get('q', null);
-        $duration = $request->get("duration", 6);
+        $query = $request->get('q');
 
-        if(!$dateTo){
-            $dateTo = clone $dateFrom;
-            $dateTo->modify("-".$duration." month");
-        }
-
-        $activities = $repo->findByDatesInterval($dateFrom, $dateTo, $nbDays, $query);
+        $activities = $repo->findByDatesInterval($dateFromQuery, $dateTo, $nbDays, $query);
         $activitiesByDates = $am->createView($activities);
 
         $dateNext = null;
         if(count($activitiesByDates) > 0) {
             end($activitiesByDates);
             $dateNext = new \DateTime(key($activitiesByDates));
+            $dateNext->modify("-1 day");
             $dateNext = $dateNext->format('Y-m-d');
         }
 
-        return $this->render('Activity/list.html.twig', array('activitiesByDates' => $am->createView($activities), 'query' => $query, 'dateNext' => $dateNext, 'dateTo' => $dateTo->format('Y-m-d'), 'nbDays' => $nbDays, 'duration' => $duration));
+        return $this->render('Activity/list.html.twig',
+            array(
+                'activitiesByDates' => $am->createView($activities),
+                'dateNext' => $dateNext,
+                'query' => $query,
+                'dateTo' => $dateTo->format('Y-m-d'),
+                'dateFrom' => $dateFrom->format('Y-m-d'),
+                'nbDays' => $nbDays,
+            )
+        );
     }
 
     /**
@@ -59,7 +65,7 @@ class ActivityController extends Controller
      */
     public function viewAction(Request $request, Activity $activity)
     {
-        return $this->render('Activity/view.html.twig', array('activity' => $activity, 'query' => $request->get('query', null)));
+        return $this->render('Activity/view.html.twig', array('activity' => $activity, 'query' => $request->get('query', null), 'dateTo' => $request->get('dateTo', null), 'dateFrom' => $request->get('dateFrom', null), 'nbDays' => $request->get('nbDays', null)));
     }
 
     /**
