@@ -16,23 +16,24 @@ class MailImporterTest extends KernelTestCase
         $this->container = self::$kernel->getContainer();
     }
 
-    public function testGitImporter()
+    public function testRun()
     {
         $em = $this->container->get('doctrine.orm.entity_manager');
-        $mailImporter = $this->container->get('app.importer.mail');
+        $importer = $this->container->get('app.importer.mail');
         $mailFile = dirname(__FILE__)."/data/mails";
         $nbMails = 2;
 
         $source = new Source();
-        $source->setImporter($mailImporter->getName());
-        $source->setSource($mailFile);
+        $source->setImporter($importer->getName());
+        $importer->updateParameters($source, array(
+            "path" => $mailFile,
+        ));
 
         $this->assertSame($source->getImporter(), "Mail");
-        $this->assertSame($source->getSource(), $mailFile);
-        $this->assertSame($source->getName(), null);
+        $this->assertSame($source->getParameter("path"), $mailFile);
         $this->assertSame($source->getUpdateParam(), null);
 
-        $mailImporter->run($source, new \Symfony\Component\Console\Output\NullOutput(), true, false);
+        $importer->run($source, new \Symfony\Component\Console\Output\NullOutput(), true, false);
 
         $em->getUnitOfWork()->computeChangeSets();
         $entities = $em->getUnitOfWork()->getScheduledEntityInsertions();

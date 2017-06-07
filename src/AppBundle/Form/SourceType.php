@@ -8,16 +8,18 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SourceType extends AbstractType
 {
+    protected $importer;
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
-            ->add('importer')
-            ->add('source')
-        ;
+        $importer = $options['importer'];
+        foreach($importer->getParameters() as $paramKey => $param) {
+            $builder->add($paramKey, null, array('required' => $param['required'], "label" => $param['label'], 'attr' => array("placeholder" => $param['help'])));
+        }
     }
 
     /**
@@ -25,16 +27,14 @@ class SourceType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(array(
-            'data_class' => 'AppBundle\Entity\Source'
-        ));
+        $resolver->setDefaults(array('importer' => null));
     }
 
     /**
      * @return string
      */
-    public function getName()
+    public function getBlockPrefix()
     {
-        return 'appbundle_source';
+        return 'source_parameters';
     }
 }

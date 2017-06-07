@@ -17,8 +17,24 @@ class CaldavImporter extends Importer
         return 'Caldav';
     }
 
+    public function getDescription() {
+
+        return "Récupère les évènements d'un calendrier via le protocole CalDAV";
+    }
+
+    public function getParameters() {
+
+        return array(
+            'path' => array("required" => true, "label" => "Chemin", "help" => ""),
+        );
+    }
+
+    public function updateTitle(Source $source) {
+        $source->setTitle($source->getParameter('path'));
+    }
+
     public function run(Source $source, OutputInterface $output, $dryrun = false, $checkExist = true, $limit = false) {
-        $output->writeln(sprintf("<comment>Started import caldav event in %s</comment>", $source->getSourceProtected()));
+        $output->writeln(sprintf("<comment>Started import caldav event in %s</comment>", $source->getTitle()));
 
         $caldavClient = $this->getClient($source);
 

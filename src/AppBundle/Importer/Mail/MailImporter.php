@@ -17,6 +17,23 @@ class MailImporter extends Importer
         return 'Mail';
     }
 
+    public function getDescription() {
+
+        return "Récupère les mails à partir d'un fichier (fonctionne par exemple avec Thunderbird)";
+    }
+
+    public function getParameters() {
+
+        return array(
+            'path' => array("required" => true, "label" => "Chemin", "help" => "Chemin vers le fichier contenant les mails"),
+            'sender' => array("required" => false, "label" => "Expéditeur", "help" => "Filtrer l'email de l'expéditeur (optionnelle)"),
+        );
+    }
+
+    public function updateTitle(Source $source) {
+        $source->setTitle($source->getParameter('path'));
+    }
+
     public function __construct($am, $em, $mailParser)
     {
         parent::__construct($am, $em);
@@ -25,16 +42,18 @@ class MailImporter extends Importer
     }
 
     public function run(Source $source, OutputInterface $output, $dryrun = false, $checkExist = true, $limit = false) {
-        $output->writeln(sprintf("<comment>Started import mails in %s</comment>", $source->getSourceProtected()));
+        $output->writeln(sprintf("<comment>Started import mails in %s</comment>", $source->getTitle()));
 
         $mail = null;
         $start = false;
         $nb = 0;
-        $handle = fopen($source->getSource(), "r");
+
+        $path = ($source->getParameter("path")) ? $source->getParameter("path") : $source->getSource();
+        $handle = fopen($path, "r");
 
         $nbLigne = 0;
         $lineToStart = 0;
-        if(isset($source->getUpdateParam()['line'])) {
+        if(isset($source->getUpdateParam()['line']) && !$dryrun) {
             $lineToStart = $source->getUpdateParam()['line'];
         }
 
@@ -85,6 +104,17 @@ class MailImporter extends Importer
             return false;
         }
 
+        $from = null;
+        foreach($parsedMail->getAllEmailAddresses(array('from')) as $address) {
+            $from = $address;
+            break;
+        }
+
+        if($source->getParameter('sender') && !preg_match("/".$source->getParameter('sender')."/", $from)) {
+
+            return false;
+        }
+
         try {
             $subject = $parsedMail->getMail()->getHeaderField("Subject");
         } catch(\Exception $e) {
@@ -101,12 +131,6 @@ class MailImporter extends Importer
             }
 
             return false;
-        }
-
-        $from = null;
-        foreach($parsedMail->getAllEmailAddresses(array('from')) as $address) {
-            $from = $address;
-            break;
         }
 
         $to = null;
@@ -222,17 +246,19 @@ class MailImporter extends Importer
     public function check(Source $source) {
         parent::check($source);
 
-        if(!file_exists($source->getSource())) {
-            throw new \Exception(sprintf("File %s doesn't exist", $source->getSource()));
+        $path = ($source->getParameter("path")) ? $source->getParameter("path") : $source->getSource();
+
+        if(!file_exists($path)) {
+            throw new \Exception(sprintf("File %s doesn't exist", $path));
         }
 
         $line = "";
-        $handle = fopen($source->getSource(), "r");
+        $handle = fopen($path, "r");
         for($i=1; $i<20; $i++) { $line .= fgets($handle); }
         fclose($handle);
 
         if(!preg_match("/Message-ID/i", $line)) {
-           throw new \Exception(sprintf("This file is not a mail file : %s", $source->getSource()));
+           throw new \Exception(sprintf("This file is not a mail file : %s", $path));
         }
     }
 

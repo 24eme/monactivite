@@ -1,0 +1,70 @@
+{% extends '::base.html.twig' %}
+
+{% set menu = 'source' %}
+
+{% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
+
+{% block body %}
+    {{ form_start(form) }}
+        <h2 style="margin-bottom: 20px; margin-top: 0;">{% if isCreation %}Ajout d'une source de données {{ importer.name }}{% else %}Modification de la source données {{ importer.name }}{% endif %}</h2>
+
+        {% if not importer %}
+        <div class="alert alert-danger">Le type de source n'a pas pu être trouvé, merci de le définir à la main</div>
+        {% endif %}
+
+        {{ form_errors(form) }}
+        {{ form_widget(form) }}
+
+        <div class="row">
+            <div class="col-xs-6 text-left">
+                {% if activitiesByDates is not defined %}
+                <a href="{{ path('source') }}" class="btn btn-default btn-lg">Annuler</a>
+                {% endif %}
+            </div>
+            <div class="col-xs-6 text-right">
+                <button type="submit" class="btn btn-default btn-lg" value="test">Lancer le test</button>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 20px;">
+            <div class="col-xs-12">
+                    {% if checkError is defined and checkError %}
+                    <div class="alert alert-danger">
+                        {{ checkError }}
+                    </div>
+                    {% endif %}
+            </div>
+        </div>
+
+        {% if activitiesByDates is defined %}
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading"><h3 class="panel-title">Jeu de données provenant de l'import</h3></div>
+                    {% if activitiesByDates | length %}
+                    <div class="panel-body" style="max-height: 400px; overflow: auto;">
+                        {% include 'Activity/list.html.twig' with { 'activitiesByDates':  activitiesByDates, 'noTags': true } %}
+                    </div>
+                    {% else %}
+                    <div class="panel-body">
+                        Aucun résultat
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="row {% if not importer %}hidden{% endif %}">
+            <div class="col-xs-3 text-left">
+                <a href="{{ path('source') }}" class="btn btn-default btn-lg">Annuler</a>
+            </div>
+            <div class="col-xs-6">
+
+            </div>
+            <div class="col-xs-3 text-right">
+                <button type="submit" name="action" class="btn btn-primary btn-lg" value="save">{% if isCreation %}Ajouter{% else %}Modifier{% endif %}</button>
+            </div>
+        </div>
+        {% endif %}
+
+    {{ form_end(form) }}
+{% endblock %}

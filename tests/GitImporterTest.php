@@ -19,20 +19,30 @@ class GitImporterTest extends KernelTestCase
     public function testGitImporter()
     {
         $em = $this->container->get('doctrine.orm.entity_manager');
-        $gitImporter = $this->container->get('app.importer.git');
+        $importer = $this->container->get('app.importer.git');
         $gitDir = preg_replace("|/tests$|", "", dirname(__FILE__));
         $nbCommits = shell_exec("cd ".$gitDir."; git log | grep -E \"^commit \" | wc -l")*1;
 
         $source = new Source();
-        $source->setImporter($gitImporter->getName());
-        $source->setSource(preg_replace("|/app$|", "", self::$kernel->getRootDir()));
+        $source->setImporter($importer->getName());
+        $importer->updateParameters($source, array(
+                "name" => "monactivite",
+        ));
+
+        $this->assertSame($source->getParameter("name"), "monactivite");
+
+        $importer->updateParameters($source, array(
+                "path" => preg_replace("|/app$|", "", self::$kernel->getRootDir()),
+                "name" => null,
+        ));
 
         $this->assertSame($source->getImporter(), "Git");
-        $this->assertSame($source->getSource(), $gitDir);
-        $this->assertSame($source->getName(), null);
+        $this->assertSame($source->getParameter("path"), $gitDir);
+        $this->assertSame($source->getParameter("name"), "monactivite.git");
+        $this->assertSame($source->getTitle(), $gitDir);
         $this->assertSame($source->getUpdateParam(), null);
 
-        $gitImporter->run($source, new \Symfony\Component\Console\Output\NullOutput(), true, false);
+        $importer->run($source, new \Symfony\Component\Console\Output\NullOutput(), true, false);
 
         $em->getUnitOfWork()->computeChangeSets();
         $entities = $em->getUnitOfWork()->getScheduledEntityInsertions();
@@ -42,7 +52,7 @@ class GitImporterTest extends KernelTestCase
             if(!$activity instanceof \AppBundle\Entity\Activity) {
                 continue;
             }
-            $activities[$activity->getExecutedAt()->format('YmdHis')] = $activity;
+            $activities[$activity->getExecutedAt()->format('YmdHis').uniqid()] = $activity;
         }
 
         ksort($activities);

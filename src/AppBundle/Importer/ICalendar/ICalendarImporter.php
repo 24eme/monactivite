@@ -16,15 +16,34 @@ class ICalendarImporter extends Importer
         return 'ICalendar';
     }
 
+    public function getDescription() {
+
+        return "Récupère les évènements d'un calendrier provenant d'un fichier iCalendar (.ics)";
+    }
+
+    public function getParameters() {
+
+        return array(
+            'uri' => array("required" => true, "label" => "Url ou chemin", "help" => "Url ou chemin du fichier .ics"),
+            'name' => array("required" => false, "label" => "Nom du calendrier", "help" => "Nom du calendrier (optionnelle)"),
+        );
+    }
+
+    public function updateTitle(Source $source) {
+        $source->setTitle($source->getParameter('uri'));
+    }
+
     public function getReader(Source $source) {
 
+        $uri = ($source->getParameter('uri')) ? $source->getParameter('uri') : $source->getSource();
+
         return VObject\Reader::read(
-            fopen($source->getSource(), 'r', false, stream_context_create(array("ssl"=>array("verify_peer"=>false, "verify_peer_name"=>false))))
+            fopen($uri, 'r', false, stream_context_create(array("ssl" => array( "verify_peer" => false, "verify_peer_name" => false))))
         );
     }
 
     public function run(Source $source, OutputInterface $output, $dryrun = false, $checkExist = true, $limit = false) {
-        $output->writeln(sprintf("<comment>Started import icalendar event in %s</comment>", $source->getSourceProtected()));
+        $output->writeln(sprintf("<comment>Started import icalendar event in %s</comment>", $source->getTitle()));
 
         $vobject = $this->getReader($source);
 
@@ -81,7 +100,7 @@ class ICalendarImporter extends Importer
                 }
             } catch (\Exception $e) {
                 if($output->isVerbose()) {
-                    $output->writeln(sprintf("<error>%s</error> %s", $e->getMessage()));
+                    $output->writeln(sprintf("<error>%s</error>", $e->getMessage()));
                 }
             }
         }

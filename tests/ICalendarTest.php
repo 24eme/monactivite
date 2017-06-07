@@ -19,20 +19,24 @@ class ICalendarTest extends KernelTestCase
     public function testICalendar()
     {
         $em = $this->container->get('doctrine.orm.entity_manager');
-        $iCalendarImporter = $this->container->get('app.importer.icalendar');
+        $importer = $this->container->get('app.importer.icalendar');
         $icsFile = dirname(__FILE__)."/data/calendrier.ics";
         $nbEvents = 6;
 
         $source = new Source();
-        $source->setImporter($iCalendarImporter->getName());
-        $source->setSource($icsFile);
+        $source->setImporter($importer->getName());
+        $importer->updateParameters($source, array(
+            "uri" => $icsFile,
+            "name" => "Calendrier"
+        ));
 
         $this->assertSame($source->getImporter(), "ICalendar");
-        $this->assertSame($source->getSource(), $icsFile);
-        $this->assertSame($source->getName(), null);
+        $this->assertSame($source->getParameter("uri"), $icsFile);
+        $this->assertSame($source->getParameter("name"), "Calendrier");
+        $this->assertSame($source->getTitle(), $icsFile);
         $this->assertSame($source->getUpdateParam(), null);
 
-        $iCalendarImporter->run($source, new \Symfony\Component\Console\Output\NullOutput(), true, false);
+        $importer->run($source, new \Symfony\Component\Console\Output\NullOutput(), true, false);
 
         $em->getUnitOfWork()->computeChangeSets();
         $entities = $em->getUnitOfWork()->getScheduledEntityInsertions();
@@ -42,7 +46,7 @@ class ICalendarTest extends KernelTestCase
             if(!$activity instanceof \AppBundle\Entity\Activity) {
                 continue;
             }
-            $activities[$activity->getExecutedAt()->format('YmdHis')] = $activity;
+            $activities[$activity->getExecutedAt()->format('YmdHis').uniqid()] = $activity;
         }
 
         $this->assertCount($nbEvents, $activities);

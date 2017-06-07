@@ -17,6 +17,23 @@ class FeedImporter extends Importer
         return 'Feed';
     }
 
+    public function getDescription() {
+
+        return "Récupère l'activité à partir d'un flux RSS ou Atom";
+    }
+
+    public function getParameters() {
+
+        return array(
+            'uri' => array("required" => true, "label" => "Uri", "help" => "Url ou chemin vers un flux rss"),
+            'name' => array("required" => true, "label" => "Name", "help" => "Nom du flux (optionnelle)"),
+        );
+    }
+
+    public function updateTitle(Source $source) {
+        $source->setTitle($source->getParameter('uri'));
+    }
+
     public function __construct($am, $em, $feedParser)
     {
         parent::__construct($am, $em);
@@ -25,15 +42,9 @@ class FeedImporter extends Importer
     }
 
     public function run(Source $source, OutputInterface $output, $dryrun = false, $checkExist = true, $limit = false) {
-        $output->writeln(sprintf("<comment>Started import feed %s</comment>", $source->getSourceProtected()));
+        $output->writeln(sprintf("<comment>Started import feed %s</comment>", $source->getTitle()));
 
-        $resource = $this->feedParser->download($source->getSource());
-
-        $parser = $this->feedParser->getParser(
-            $resource->getUrl(),
-            $resource->getContent(),
-            $resource->getEncoding()
-        );
+        $parser = $this->getParser($source);
 
         $feed = $parser->execute();
 
@@ -47,10 +58,10 @@ class FeedImporter extends Importer
             $activity->setTitle($item->getTitle());
             $activity->setContent($item->getContent());
 
-            if($source->getName()) {
+            if($source->getParameter('name')) {
                 $name = new ActivityAttribute();
                 $name->setName("Name");
-                $name->setValue($source->getName());
+                $name->setValue($source->getParameter('name'));
             }
 
             if($item->getAuthor()) {
@@ -101,6 +112,26 @@ class FeedImporter extends Importer
         }
 
         $output->writeln(sprintf("<info>%s new activity imported</info>", $nb));
+    }
+
+    public function getParser($source) {
+        if(preg_match("|^file://|", $source->getParameter('uri'))) {
+            $content = file_get_contents($source->getParameter('uri'));
+
+            return $this->feedParser->getParser(
+                $source->getParameter('uri'),
+                file_get_contents($source->getParameter('uri')),
+                mb_detect_encoding($content)
+            );
+        }
+
+        $resource = $this->feedParser->download($source->getParameter('uri'));
+
+        return $this->feedParser->getParser(
+            $resource->getUrl(),
+            $resource->getContent(),
+            $resource->getEncoding()
+        );
     }
 
     public function getRootDir() {

@@ -15,17 +15,48 @@ class GitImporter extends Importer
         return 'Git';
     }
 
+    public function getDescription() {
+
+        return "Récupère les commits d'un dêpot git à partir d'un dossier en local";
+    }
+
+    public function getParameters() {
+
+        return array(
+            'path' => array("required" => true, "label" => "Chemin", "help" => "Chemin vers le dossier du projet git"),
+            'name' => array("required" => false, "label" => "Nom", "help" => "Nom du dépot git (optionelle, calculer automatiquement)"),
+            'author' => array("required" => false, "label" => "Auteur", "help" => "Filtrer l'auteur des commits, grâce à une expression régulière (optionelle)"),
+        );
+    }
+
+    public function updateParameters(Source $source, $parameters) {
+        parent::updateParameters($source, $parameters);
+        if(!$source->getParameter('name')) {
+            $source->setParameter('name', basename($source->getParameter('path')).".git");
+        }
+    }
+
+    public function updateTitle(Source $source) {
+        $source->setTitle($source->getParameter('path'));
+    }
+
     public function run(Source $source, OutputInterface $output, $dryrun = false, $checkExist = true, $limit = false) {
-        $output->writeln(sprintf("<comment>Started import git commit in %s</comment>", $source->getSourceProtected()));
+        $output->writeln(sprintf("<comment>Started import git commit in %s</comment>", $source->getTitle()));
 
         $storeFile = $this->storeCsv($source);
 
-        $repositoryName = basename($source->getSource()).".git";
+        $repositoryName = $source->getParameter('name');
 
         $nb = 0;
 
         foreach(file($storeFile) as $line) {
             $datas = str_getcsv($line, ";", '"');
+
+            $authorEmail = isset($datas[2]) ? trim(preg_replace("/^.+<(.+)>$/", '\1', $datas[2])) : null;
+
+            if($source->getParameter('author') && !preg_match("/".$source->getParameter('author')."/", $authorEmail)) {
+                continue;
+            }
 
             try {
                 $activity = new Activity();
@@ -43,7 +74,7 @@ class GitImporter extends Importer
 
                 $author = new ActivityAttribute();
                 $author->setName("Author");
-                $author->setValue(isset($datas[2]) ? trim(preg_replace("/^.+<(.+)>$/", '\1', $datas[2])) : null);
+                $author->setValue($authorEmail);
 
                 $activity->addAttribute($type);
                 $activity->addAttribute($repository);
@@ -94,25 +125,28 @@ class GitImporter extends Importer
     public function check(Source $source) {
         parent::check($source);
 
-        if(!file_exists($source->getSource())) {
-            throw new \Exception(sprintf("Folder %s doesn't exist", $source->getSource()));
+        $path = $source->getParameter('path');
+
+        if(!file_exists($path)) {
+            throw new \Exception(sprintf("Le répertoire \"%s\" n'existe pas", $path));
         }
 
-        if(!file_exists($source->getSource()."/.git")) {
-            throw new \Exception(sprintf("This folder isn't a git repository", $source->getSource()));
+        if(!file_exists($path."/.git")) {
+            throw new \Exception(sprintf("Le répertoire n'est pas un dépot Git", $path));
         }
     }
 
     protected function storeCsv(Source $source) {
         $fromDate = "1990-01-01";
+        $path = $source->getParameter('path');
 
         if(isset($source->getUpdateParam()['date'])) {
-            $fromDate = (new \DateTime($source->getUpdateParam()['date']))->modify('-7 days')->format('Y-m-d');
+            $fromDate = (new \DateTime($source->getUpdateParam()['date']))->modify('-15 days')->format('Y-m-d');
         }
 
         $storeFile = sprintf("%s/var/commits_%s_%s.csv", dirname(__FILE__), date("YmdHis"), uniqid());
 
-        shell_exec(sprintf("%s/bin/git2csv.sh %s \"\" %s > %s", dirname(__FILE__), $source->getSource(), $fromDate, $storeFile));
+        shell_exec(sprintf("%s/bin/git2csv.sh %s \"\" %s > %s", dirname(__FILE__), $path, $fromDate, $storeFile));
 
         $source->setUpdateParam(array('date' => date('Y-m-d')));
 

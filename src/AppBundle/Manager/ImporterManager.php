@@ -23,6 +23,11 @@ class ImporterManager
         $importer->run($source, $output, $dryRun);
     }
 
+    public function getImporters() {
+
+        return $this->importers;
+    }
+
     public function get($name) {
         if(!isset($this->importers[$name])) {
 

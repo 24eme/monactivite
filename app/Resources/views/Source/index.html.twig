@@ -2,60 +2,27 @@
 
 {% set menu = 'source' %}
 
-{% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
-
 {% block body %}
     <div class="row">
         <div class="col-xs-12">
             <div class="panel panel-default">
-                <div class="panel-heading"><h3 class="panel-title">Ajouter une source</h3></div>
-                <div class="panel-body">
-                    {% include "Source/formCreation.html.twig" with { 'form': form } %}
-                </div>
-                <table class="table table-bordered table-condensed">
+                <div class="panel-heading"><h3 class="panel-title">Ajouter une source de données</h3></div>
+                <table class="table table-striped">
                     <thead>
                     <tr>
                         <th class="col-xs-2">Type</th>
-                        <th class="col-xs-5">Description</th>
-                        <th class="col-xs-5">Exemple</th>
+                        <th class="col-xs-8">Description</th>
+                        <th class="col-xs-2"></th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td>GIT <small>(par chemin)</small></td>
-                        <td>Chemin vers le dossier du dépot GIT</td>
-                        <td><small><code>/path/to/your/git/folder</code><small></td>
-                    </tr>
-                    <tr>
-                        <td>Mail <small>(par fichier)</small></td>
-                        <td>Chemin vers fichier contenant les mails <small>(Pour les clients lourds comme Thunderbird, ...)</small></td>
-                        <td><small><code>/home/user/.thunderbird/00000000.default/ImapMail/imap.googlemail.com/[Gmail].sbd/Messages envoy&AOk-s</code></small></td>
-                    </tr>
-                    <tr>
-                        <td>Mail <small>(par IMAP)</small></td>
-                        <td>Récupération des mails via le protocole IMAP</small></td>
-                        <td><small><code>email@email.org:mot_de_passe@{imap.gmail.com:993/imap/ssl}[Gmail]Messages envoyés</code></small></td>
-                    </tr>
-                    <tr>
-                        <td>Flux <small>(RSS ou Atom)</small></td>
-                        <td>Lien vers un flux RSS ou Atom</td>
-                        <td><small><code>http://rss.framasoft.org</code></small></td>
-                    </tr>
-                    <tr>
-                        <td>iCalendar <small>(par fichier ou lien)</small></td>
-                        <td>Chemin ou lien vers un fichier iCalendar<small>(.ics)</small></td>
-                        <td><small><code>/path/to/your/calendar/file.ics</code></small></td>
-                    </tr>
-                    <tr>
-                        <td>Caldav</small></td>
-                        <td>Lien du Caldav avec l'utilisateur et le mot de passe</td>
-                        <td><small><code>http://utilisateur:motdepasse@serveur.org/lien_vers_le_caldav</code></small></td>
-                    </tr>
-                    <tr>
-                        <td>Github</small></td>
-                        <td>Import de tous les derniers commits d'un utilisateur github</td>
-                        <td><small><code>https://github.com/nom_utilisateur</code></small></td>
-                    </tr>
+                        {% for importer in importers %}
+                        <tr>
+                            <td><a href="{{ path('source_create', {'type': importer.name}) }}">{{ importer.name }}</a></td>
+                            <td>{{ importer.description }}</td>
+                            <td><a href="{{ path('source_create', {'type': importer.name}) }}" class="btn btn-default btn-xs btn-block">Ajouter</a></td>
+                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
@@ -71,11 +38,10 @@
                     <th>Source</th>
                 </tr>
             </thead>
-            {% for entity in entities %}
+            {% for source in sources %}
                 <tr>
-                    <td>{{ entity.importer }}</td>
-                    <td>{{ entity.sourceProtected }}
-                        <a class="btn btn-xs btn-default pull-right" href="{{ path('source_edit', {'id': entity.id }) }}"><span class="glyphicon glyphicon-trash"></span></a></td>
+                    <td>{{ source.importer }}</td>
+                    <td>{{ source.title }} <a class="btn btn-xs btn-default pull-right" href="{{ path('source_edit', {'id': source.id }) }}"><span class="glyphicon glyphicon-pencil"></span></a></td>
                 </tr>
             {% endfor %}
             </table>

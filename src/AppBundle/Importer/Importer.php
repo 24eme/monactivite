@@ -16,6 +16,21 @@ abstract class Importer
         $this->em = $em;
     }
 
+    public abstract function getParameters();
+
+    public function updateParameters(Source $source, $parameters) {
+        foreach($parameters as $key => $parameter) {
+            if(!isset($this->getParameters()[$key])) {
+                unset($parameters[$key]);
+            }
+        }
+        $source->setParameters($parameters);
+
+        $this->updateTitle($source);
+    }
+
+    public abstract function updateTitle(Source $source);
+
     public abstract function run(Source $source, OutputInterface $output, $dryrun = false, $checkExist = true, $limit = false);
 
     public function check(Source $source) {
@@ -35,6 +50,8 @@ abstract class Importer
     public abstract function getRootDir();
 
     public abstract function getName();
+
+    public abstract function getDescription();
 
     public function getVarDir() {
 

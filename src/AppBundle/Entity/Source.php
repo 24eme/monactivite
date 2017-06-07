@@ -31,16 +31,23 @@ class Source
     /**
      * @var string
      *
-     * @ORM\Column(name="source", type="string", length=255)
+     * @ORM\Column(name="source", type="string", length=255, nullable=true)
      */
     private $source;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="name", type="string", length=255, nullable=true)
+     * @ORM\Column(name="title", type="string", length=255, nullable=true)
      */
-    private $name;
+    private $title;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="parameters", type="json_array", nullable=true)
+     */
+    private $parameters;
 
     /**
      * @var string
@@ -106,26 +113,63 @@ class Source
     }
 
     /**
-     * Set name
+     * Set title
      *
-     * @param string $name
+     * @param string $title
      * @return Source
      */
-    public function setName($name)
+    public function setTitle($title)
     {
-        $this->name = $name;
+        $this->title = preg_replace("|://.+:.*@|", "://", $title);
 
         return $this;
     }
 
     /**
-     * Get name
+     * Get title
      *
      * @return string
      */
-    public function getName()
+    public function getTitle()
     {
-        return $this->name;
+        return $this->title;
+    }
+
+    /**
+     * Set $paramaters
+     *
+     * @param array $paramaters
+     * @return Source
+     */
+    public function setParameters($parameters)
+    {
+        $this->parameters = $parameters;
+
+        return $this;
+    }
+
+    public function setParameter($name, $value) {
+
+        $this->parameters[$name] = $value;
+    }
+
+    /**
+     * Get parameters
+     *
+     * @return array
+     */
+    public function getParameters()
+    {
+        return $this->parameters;
+    }
+
+    public function getParameter($name) {
+        if(!isset($this->parameters[$name])) {
+
+            return null;
+        }
+
+        return $this->parameters[$name];
     }
 
     /**
@@ -151,8 +195,4 @@ class Source
         return $this->updateParam;
     }
 
-    public function getSourceProtected() {
-
-        return preg_replace("|://.*:.*@|", "://", $this->getSource());
-    }
 }

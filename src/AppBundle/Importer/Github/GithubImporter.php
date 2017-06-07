@@ -15,9 +15,25 @@ class GithubImporter extends Importer
         return 'Github';
     }
 
+    public function getDescription() {
+
+        return "";
+    }
+
+    public function getParameters() {
+
+        return array(
+            'path' => array("required" => true, "label" => "Chemin", "help" => ""),
+        );
+    }
+
+    public function updateTitle(Source $source) {
+        $source->setTitle($source->getParameter('path'));
+    }
+
     public function run(Source $source, OutputInterface $output, $dryrun = false, $checkExist = true, $limit = false) {
 
-        $output->writeln(sprintf("<comment>Started import git commit on github %s</comment>", $source->getSourceProtected()));
+        $output->writeln(sprintf("<comment>Started import git commit on github %s</comment>", $source->getTitle()));
 
         $user = preg_replace("|^http[s]*://github.com/|", "", $source->getSource());
 
