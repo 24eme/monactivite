@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
+  <title>framadate activity</title>
+  <link href="https://framagit.org/framasoft/framadate.atom" rel="self" type="application/atom+xml"/>
+  <link href="https://framagit.org/framasoft/framadate" rel="alternate" type="text/html"/>
+  <id>https://framagit.org/framasoft/framadate</id>
+  <updated>2017-05-22T20:24:54Z</updated>
+<entry>
+  <id>tag:framagit.org,2017-05-22:263042</id>
+  <link href="/framasoft/framadate/issues/220#note_102503"/>
+  <title>Framartin commented on issue #220 at Framasoft / framadate</title>
+  <updated>2017-05-22T20:24:54Z</updated>
+  <media:thumbnail width="40" height="40" url="https://framagit.org/uploads/user/avatar/7/26_original-size_redone_progressif.jpg"/>
+  <author>
+    <name>Framartin</name>
+    <email></email>
+  </author>
+  <summary type="xhtml">
+<div xmlns="http://www.w3.org/1999/xhtml">
+<p dir="auto"><a href="https://github.com/distributedweaknessfiling/DWF-CVE-2017-1000000/blob/f2e15ac3468dd382d9ffa3d5acc032c106f3248c/CVE-2017-1000039.json" rel="nofollow noreferrer noopener" target="_blank">CVE-2017-1000039</a> was attributed to this issue.</p>
+</div>
+  </summary>
+</entry>
+<entry>
+  <id>tag:framagit.org,2017-05-15:258173</id>
+  <link href="https://framagit.org/framasoft/framadate/issues/232"/>
+  <title>Darck Crystale opened issue #232: Improve the positionning of add column - ed...</title>
+  <updated>2017-05-15T14:15:51Z</updated>
+  <media:thumbnail width="40" height="40" url="https://framagit.org/uploads/user/avatar/7273/avatar.png"/>
+  <author>
+    <name>Darck Crystale</name>
+    <email></email>
+  </author>
+  <summary type="xhtml">
+<div xmlns="http://www.w3.org/1999/xhtml">
+<h1 dir="auto">
+<a id="user-content-problem" class="anchor" href="#problem" aria-hidden="true"></a>Problem</h1>
+
+<p dir="auto">With a long poll, edtion and deletion buttons are hidden, and we have to scroll to see them. Same with the <code>Add column</code> button.</p>
+
+<p dir="auto">See also: <a href="https://framagit.org/framasoft/framadate/issues/69" data-original="#69" data-link="false" data-project="16" data-issue="1367" data-reference-type="issue" title="Mettre le bouton d'édition d'une ligne à gauche du nom" class="gfm gfm-issue has-tooltip">#69</a>, <a href="https://framagit.org/framasoft/framadate/issues/219" data-original="#219" data-link="false" data-project="16" data-issue="16741" data-reference-type="issue" title="Déplacer les boutons d'édition et enregistrement à côté du nom" class="gfm gfm-issue has-tooltip">#219</a>, <a href="https://webapps.stackexchange.com/questions/106020/how-to-edit-or-delete-a-question-in-framadate/106095#106095" rel="nofollow noreferrer noopener" target="_blank">https://webapps.stackexchange.com/questions/106020/how-to-edit-or-delete-a-question-in-framadate/106095#106095</a></p>
+
+<h1 dir="auto">
+<a id="user-content-proposition" class="anchor" href="#proposition" aria-hidden="true"></a>Proposition</h1>
+
+<p dir="auto">Rework of the poll table:
+<a class="no-attachment-icon" href="https://framagit.org/framasoft/framadate/uploads/ed1cd05af967ca27e7e10268a75d77f5/maquette.png" target="_blank" rel="noopener noreferrer"><img src="https://framagit.org/framasoft/framadate/uploads/ed1cd05af967ca27e7e10268a75d77f5/maquette.png" alt="maquette" /></a>
+<a class="no-attachment-icon" href="https://framagit.org/framasoft/framadate/uploads/a74e7121cfa3ceeb007d572054b024de/maquette-expliqu%C3%A9e.png" target="_blank" rel="noopener noreferrer"><img src="https://framagit.org/framasoft/framadate/uploads/a74e7121cfa3ceeb007d572054b024de/maquette-expliqu%C3%A9e.png" alt="maquette-expliquée" /></a></p>
+</div>
+  </summary>
+</entry>
+<entry>
+  <id>tag:framagit.org,2017-05-15:258166</id>
+  <link href="/framasoft/framadate/issues/69#note_100524"/>
+  <title>Darck Crystale commented on issue #69 at Framasoft / framadate</title>
+  <updated>2017-05-15T14:11:49Z</updated>
+  <media:thumbnail width="40" height="40" url="https://framagit.org/uploads/user/avatar/7273/avatar.png"/>
+  <author>
+    <name>Darck Crystale</name>
+    <email></email>
+  </author>
+  <summary type="xhtml">
+<div xmlns="http://www.w3.org/1999/xhtml">
+<p dir="auto">Egonomiquement parlant, les boutons d'actions sur des lignes de tableaux doivent se placer à droite. Par conséquent, il serait aussi tout à fait envisageable de laisser les boutons d'édition/suppression de réponse visibles tout le temps, à droite du tableau, plutôt qu'au bout des lignes du tableau.</p>
+</div>
+  </summary>
+</entry>
+<entry>
+  <id>tag:framagit.org,2017-05-15:258093</id>
+  <link href="/framasoft/framadate/issues/86#note_100490"/>
+  <title>Darck Crystale commented on issue #86 at Framasoft / framadate</title>
+  <updated>2017-05-15T12:46:45Z</updated>
+  <media:thumbnail width="40" height="40" url="https://framagit.org/uploads/user/avatar/7273/avatar.png"/>
+  <author>
+    <name>Darck Crystale</name>
+    <email></email>
+  </author>
+  <summary type="xhtml">
+<div xmlns="http://www.w3.org/1999/xhtml">
+<p dir="auto">Je rajoute : 
+Il serait super de pouvoir ajouter plusieurs moments lors de l'ajout d'une date. Par exemple, ayant 4 moments par date systématiquement, rajouter une date dans ma poll demande d'ajouter quatre fois une colonne.</p>
+</div>
+  </summary>
+</entry>
+<entry>
+  <id>tag:framagit.org,2017-05-05:251908</id>
+  <link href="/framasoft/framadate/issues/231#note_98344"/>
+  <title>Nicolas Dewaele commented on issue #231 at Framasoft / framadate</title>
+  <updated>2017-05-05T12:30:54Z</updated>
+  <media:thumbnail width="40" height="40" url="https://framagit.org/assets/no_avatar-849f9c04a3a0d0cea2424ae97b27447dc64a7dbfae83c036c45b403392f0e8ba.png"/>
+  <author>
+    <name>Nicolas Dewaele</name>
+    <email></email>
+  </author>
+  <summary type="xhtml">
+<div xmlns="http://www.w3.org/1999/xhtml">
+<p dir="auto">Désolé, je viens de me rendre compte que ce problème peut être fusionné avec le 177</p>
+</div>
+  </summary>
+</entry>
+<entry>
+  <id>tag:framagit.org,2017-05-05:251906</id>
+  <link href="https://framagit.org/framasoft/framadate/issues/231"/>
+  <title>Nicolas Dewaele opened issue #231: Deux champs disparaissent après authentifi...</title>
+  <updated>2017-05-05T12:28:56Z</updated>
+  <media:thumbnail width="40" height="40" url="https://framagit.org/assets/no_avatar-849f9c04a3a0d0cea2424ae97b27447dc64a7dbfae83c036c45b403392f0e8ba.png"/>
+  <author>
+    <name>Nicolas Dewaele</name>
+    <email></email>
+  </author>
+  <summary type="xhtml">
+<div xmlns="http://www.w3.org/1999/xhtml">
+<p dir="auto">Bonjour,</p>
+
+<p dir="auto">J'ai fini l'installation de Framadate sur mon serveur.
+Il fonctionne très bien sans authentification.</p>
+
+<p dir="auto">J'ai voulu ensuite authentifier mes utilisateurs en utilisant le module Apache CAS, puis le module Apache LDAP mais quand j'active l'une ou l'autre, à la création d'un sondage de date ou classique, les input Votre Nom et Votre courriel disparaissent ! </p>
+
+<p dir="auto"><code>&lt;input type="hidden" name="name" value="" /&gt;</code></p>
+
+<p dir="auto">Ma configuration :</p>
+
+<ul dir="auto">
+<li>Une VM Debian 8</li>
+<li>Apache 2.4</li>
+<li>PHP 7.0</li>
+<li>Framadate 1.0.3</li>
+</ul>
+
+<p dir="auto">Merci de votre travail et merci d'avance pour votre aide.</p>
+</div>
+  </summary>
+</entry>
+<entry>
+  <id>tag:framagit.org,2017-05-05:251899</id>
+  <link href="/framasoft/framadate/issues/141#note_98342"/>
+  <title>^m&amp;#39;e commented on issue #141 at Framasoft / framadate</title>
+  <updated>2017-05-05T12:20:32Z</updated>
+  <media:thumbnail width="40" height="40" url="https://framagit.org/assets/no_avatar-849f9c04a3a0d0cea2424ae97b27447dc64a7dbfae83c036c45b403392f0e8ba.png"/>
+  <author>
+    <name>^m'e</name>
+    <email></email>
+  </author>
+  <summary type="xhtml">
+<div xmlns="http://www.w3.org/1999/xhtml">
+<p dir="auto">Calendar integration would be great, indeed. It could start by just providing a plain ICS (read-only) share link! </p>
+</div>
+  </summary>
+</entry>
+<entry>
+  <id>tag:framagit.org,2017-05-02:249744</id>
+  <link href="https://framagit.org/framasoft/framadate/merge_requests/181"/>
+  <title>Lafforgue closed merge request #181: Framadate saml auth at Framasoft / frama...</title>
+  <updated>2017-05-02T20:02:07Z</updated>
+  <media:thumbnail width="40" height="40" url="https://framagit.org/assets/no_avatar-849f9c04a3a0d0cea2424ae97b27447dc64a7dbfae83c036c45b403392f0e8ba.png"/>
+  <author>
+    <name>Lafforgue</name>
+    <email></email>
+  </author>
+  <summary type="xhtml">
+<div xmlns="http://www.w3.org/1999/xhtml">
+<p dir="auto">Ability to authenticate to the admin or pages via a connection SSO using SimpleSAMLPHP.</p>
+</div>
+  </summary>
+</entry>
+<entry>
+  <id>tag:framagit.org,2017-05-02:249743</id>
+  <link href="https://framagit.org/framasoft/framadate/merge_requests/182"/>
+  <title>Lafforgue opened merge request #182: Framadate saml auth at Framasoft / frama...</title>
+  <updated>2017-05-02T20:01:36Z</updated>
+  <media:thumbnail width="40" height="40" url="https://framagit.org/assets/no_avatar-849f9c04a3a0d0cea2424ae97b27447dc64a7dbfae83c036c45b403392f0e8ba.png"/>
+  <author>
+    <name>Lafforgue</name>
+    <email></email>
+  </author>
+  <summary type="xhtml">
+<div xmlns="http://www.w3.org/1999/xhtml">
+<p dir="auto">Ability to authenticate to the admin or pages via a connection SSO using SimpleSAMLPHP.</p>
+</div>
+  </summary>
+</entry>
+<entry>
+  <id>tag:framagit.org,2017-05-02:249738</id>
+  <link href="https://framagit.org/framasoft/framadate/merge_requests/181"/>
+  <title>Lafforgue opened merge request #181: Framadate saml auth at Framasoft / frama...</title>
+  <updated>2017-05-02T19:57:53Z</updated>
+  <media:thumbnail width="40" height="40" url="https://framagit.org/assets/no_avatar-849f9c04a3a0d0cea2424ae97b27447dc64a7dbfae83c036c45b403392f0e8ba.png"/>
+  <author>
+    <name>Lafforgue</name>
+    <email></email>
+  </author>
+  <summary type="xhtml">
+<div xmlns="http://www.w3.org/1999/xhtml">
+<p dir="auto">Ability to authenticate to the admin or pages via a connection SSO using SimpleSAMLPHP.</p>
+</div>
+  </summary>
+</entry>
+<entry>
+  <id>tag:framagit.org,2017-04-12:237574</id>
+  <link href="/framasoft/framadate/issues/60#note_89157"/>
+  <title>emedege commented on issue #60 at Framasoft / framadate</title>
+  <updated>2017-04-12T20:44:34Z</updated>
+  <media:thumbnail width="40" height="40" url="https://framagit.org/uploads/user/avatar/8038/avatar.png"/>
+  <author>
+    <name>emedege</name>
+    <email></email>
+  </author>
+  <summary type="xhtml">
+<div xmlns="http://www.w3.org/1999/xhtml">
+<p dir="auto">Autre question, comment les votes "Peut-être" doivent-ils être comptabilisés dans le décompte pour le blocage ? Peut-être relier à l'issue <a href="https://framagit.org/framasoft/framadate/issues/24" data-original="#24" data-link="false" data-project="16" data-issue="51" data-reference-type="issue" title="Deactiver le choix « Oui, si nécessaire » quand ce n'est pas nécessaire" class="gfm gfm-issue has-tooltip">#24</a> et me pencher avant sur cette possibilité pour désactiver obligatoirement cette option pour les votes ayant un maximum ?</p>
+
+<p dir="auto">J'avance, j'avance. Je bosse sur les templates-là. Quelques questions subsidiaires : y-a-t-il moyen de désactiver le cache qui est bien chiant quand on développe ? Le booléen $smarty-&gt;caching est déjà à false comme originellement prévu dans app/inc/smarty.</p>
+</div>
+  </summary>
+</entry>
+<entry>
+  <id>tag:framagit.org,2017-04-12:237555</id>
+  <link href="https://framagit.org/framasoft/framadate/issues/230"/>
+  <title>JACQUES opened issue #230: Mise à jour Framadate at Framasoft / framadate</title>
+  <updated>2017-04-12T20:02:19Z</updated>
+  <media:thumbnail width="40" height="40" url="https://framagit.org/assets/no_avatar-849f9c04a3a0d0cea2424ae97b27447dc64a7dbfae83c036c45b403392f0e8ba.png"/>
+  <author>
+    <name>JACQUES</name>
+    <email></email>
+  </author>
+  <summary type="xhtml">
+<div xmlns="http://www.w3.org/1999/xhtml">
+<p dir="auto">Bonjour,</p>
+
+<p dir="auto">Je voudrais savoir comment on procède pour mettre à jour Framadate et comment on peut savoir la version sur laquelle on est ?</p>
+
+<p dir="auto">Merci par avance.</p>
+
+<p dir="auto">Cordialement</p>
+</div>
+  </summary>
+</entry>
+<entry>
+  <id>tag:framagit.org,2017-04-12:237201</id>
+  <link href="/framasoft/framadate/issues/60#note_89034"/>
+  <title>emedege commented on issue #60 at Framasoft / framadate</title>
+  <updated>2017-04-12T11:53:59Z</updated>
+  <media:thumbnail width="40" height="40" url="https://framagit.org/uploads/user/avatar/8038/avatar.png"/>
+  <author>
+    <name>emedege</name>
+    <email></email>
+  </author>
+  <summary type="xhtml">
+<div xmlns="http://www.w3.org/1999/xhtml">
+<p dir="auto">Bonjour tout le monde,</p>
+
+<p dir="auto">Je vais essayer de bosser sur cette fonctionnalité. </p>
+
+<p dir="auto">D'après ce que j'ai compris, on ajoute une option au formulaire pour bloquer ou non plus les votes par colonne. Cette valeur est globale et pas propre à chaque colonne (si ? ça compliquerait pas mal les choses...).
+Ce que je prévois de faire (d'après ce que j'ai compris jusque là du code) :</p>
+
+<ul dir="auto">
+<li> Ajouter un champ maxVotes (positif ou nul) à Form.php</li>
+<li> Ajouter le champ dans l'étape 1 des formulaires (si pas rempli ou 0 -&gt; pas de limite, sinon limite).</li>
+<li> Changer studs.php pour bloquer les votes lorsque des colonnes ont été complétées.</li>
+<li> Changer PollService pour vérifier qu'il n'y a pas eu de vote entre temps qui ait pris la place.</li>
+</ul>
+
+<p dir="auto">Des remarques ou des avis ? J'avoue débuter complètement sur Studs et Framadate !</p>
+
+<p dir="auto">Emedege</p>
+</div>
+  </summary>
+</entry>
+</feed>
