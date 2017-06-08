@@ -6,24 +6,18 @@
 {% block body -%}
 <div class="row">
     <div class="col-xs-12">
-    <div class="panel panel-default">
-        <div class="panel-heading">Modifier le tag <div class="pull-right">{{ form_start(delete_form) }}{{ form_errors(delete_form) }}<button type="submit" class="btn btn-default btn-xs" onclick="return confirm('Êtes-vous sûr(e) de vouloir supprimer ce tag ?')" title="Supprimer"><span class="glyphicon glyphicon-trash"></span></button>{{ form_end(delete_form) }}</div></div>
-        <div class="panel-body">
-            <div class="row">
-                {% include "Tag/form.html.twig" with { 'form': edit_form } %}
-                <div class="col-xs-2 text-right">
-                    <a class="btn btn-default btn-sm" href="{{ path('tag') }}">Annuler</a>
+        <div class="panel panel-info">
+            <div class="panel-heading"><a class="btn btn-link btn-xs pull-right" href="{{ path('tag') }}"><span class="glyphicon glyphicon-repeat"></span> Annuler</a> <button type="submit" class="btn btn-xs pull-right btn-link" onclick="return confirm('Êtes-vous sûr(e) de vouloir supprimer ce tag ?')" title="Supprimer"><span class="glyphicon glyphicon-trash"></span> Supprimer ce tag</button>{{ form_end(delete_form) }}<h3 class="panel-title">Modifier le tag</h3> {{ form_start(delete_form) }}{{ form_errors(delete_form) }}</div>
+            <div class="panel-body">
+                <div class="row">
+                    {% include "Tag/form.html.twig" with { 'form': edit_form } %}
                 </div>
             </div>
         </div>
     </div>
-</div>
-<div class="col-xs-12">
-    <div class="panel panel-default">
-        <div class="panel-heading">Liste des tags</div>
-        <div class="panel-body">
-            {% include "Tag/list.html.twig" with { 'entities': entities } %}
-        </div>
+    <div class="col-xs-12">
+        <h3>Tags existants</h3>
+        {% include "Tag/list.html.twig" with { 'entities': entities } %}
     </div>
 </div>
 {% endblock %}
