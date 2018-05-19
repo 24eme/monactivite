@@ -38,7 +38,7 @@ class SourceController extends Controller
 
     /**
      * @Route("/creation/{type}", name="source_create")
-     * @Template("Source/create.html.twig")
+     * @Template("Source/form.html.twig")
      */
     public function createAction(Request $request, $type)
     {
