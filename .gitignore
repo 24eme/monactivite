@@ -10,4 +10,5 @@
 /web/bundles/
 *.php~
 /data/*
+/tests/tmp
 .make

@@ -37,6 +37,13 @@ class GitImporterTest extends KernelTestCase
                 "name" => null,
         ));
 
+        try {
+            $importer->check($source);
+        } catch (\Exception $e) {
+            $this->fail();
+        }
+
+        $this->assertFalse($importer->isRemote($source));
         $this->assertSame($source->getImporter(), "Git");
         $this->assertSame($source->getParameter("path"), $gitDir);
         $this->assertSame($source->getParameter("name"), "monactivite.git");
@@ -87,11 +94,54 @@ class GitImporterTest extends KernelTestCase
 
         $this->assertCount($nbCommits, $activities);
 
-
         $activity = current($activities);
         $this->assertCount(4, $activity->getAttributes());
         $this->assertSame($activity->getAttributes()[3]->getName(), "Branch");
         $this->assertSame($activity->getAttributes()[3]->getValue(), "master");
+    }
+
+    public function testGitImporterWithClone()
+    {
+        $em = $this->container->get('doctrine.orm.entity_manager');
+        $importer = $this->container->get('app.importer.git');
+        $slugger = $this->container->get('app.slugger');
+
+        $testTmpDir = dirname(__FILE__)."/tmp";
+        $repoDir = "git_repo.git";
+        $gitUri = "file://".$testTmpDir."/".$repoDir;
+
+        shell_exec("mkdir ".$testTmpDir." 2> /dev/null; cd ".$testTmpDir."; rm -rf git_repo*; mkdir ".$repoDir." 2> /dev/null; cd ".$repoDir."; git init --bare; cd -; git clone ".$gitUri." git_repo_clone > /dev/null 2>&1; cd git_repo_clone; echo \"coucou\" > test; git add test; git commit -m \"test\" > /dev/null 2>&1; git push > /dev/null 2>&1");
+
+        $source = new Source();
+        $importer->updateParameters($source, array(
+                "path" => $gitUri,
+                "name" => null,
+        ));
+
+        try {
+            $importer->check($source);
+        } catch (\Exception $e) {
+            $this->fail();
+        }
+
+        $this->assertTrue($importer->isRemote($source));
+        $this->assertSame($source->getParameter("name"), $repoDir);
+
+        $importer->run($source, new NullOutput(), true, false);
+
+        $this->assertFileExists($importer->getVarDir()."/".$slugger->slugify($gitUri)."/HEAD");
+
+        $activities = $this->getActivitiesInsertions($em);
+
+        $this->assertCount(1, $activities);
+
+        shell_exec("cd ".$testTmpDir."/git_repo_clone; echo \"coucou2\" > test2; git add test2; git commit -m \"test2\" > /dev/null 2>&1; git push > /dev/null 2>&1");
+
+        $importer->run($source, new NullOutput(), true, false);
+
+        $activities = $this->getActivitiesInsertions($em);
+
+        $this->assertCount(2, $activities);
     }
 
     public function getActivitiesInsertions($em) {

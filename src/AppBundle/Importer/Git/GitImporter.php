@@ -10,6 +10,14 @@ use AppBundle\Entity\Source;
 
 class GitImporter extends Importer
 {
+    protected $slugger;
+
+    public function __construct($am, $em, $slugger)
+    {
+        parent::__construct($am, $em);
+        $this->slugger = $slugger;
+    }
+
     public function getName() {
 
         return 'Git';
@@ -32,8 +40,9 @@ class GitImporter extends Importer
 
     public function updateParameters(Source $source, $parameters) {
         parent::updateParameters($source, $parameters);
+
         if(!$source->getParameter('name')) {
-            $source->setParameter('name', basename($source->getParameter('path')).".git");
+            $source->setParameter('name', preg_replace("/.git$/", "", basename($source->getParameter('path'))).".git");
         }
     }
 
@@ -43,6 +52,10 @@ class GitImporter extends Importer
 
     public function run(Source $source, OutputInterface $output, $dryrun = false, $checkExist = true, $limit = false) {
         $output->writeln(sprintf("<comment>Started import git commit in %s</comment>", $source->getTitle()));
+
+        if($this->isRemote($source)) {
+            $this->cloneAndFetchRepository($source);
+        }
 
         $storeFile = $this->storeCsv($source);
 
@@ -141,18 +154,34 @@ class GitImporter extends Importer
 
         $path = $source->getParameter('path');
 
-        if(!file_exists($path)) {
+        if(!$this->isRemote($source) && !file_exists($path)) {
             throw new \Exception(sprintf("Le répertoire \"%s\" n'existe pas", $path));
         }
 
-        if(!file_exists($path."/.git")) {
+        if(!$this->isRemote($source) && !file_exists($path."/.git")) {
             throw new \Exception(sprintf("Le répertoire n'est pas un dépot Git", $path));
         }
     }
 
+    public function isRemote(Source $source) {
+
+        return (bool) preg_match("|^[a-zA-Z]+://|", $source->getParameter('path'));
+    }
+
+    protected function cloneAndFetchRepository(Source $source) {
+        $uri = $source->getParameter('path');
+        $dirName = $this->slugger->slugify($source->getParameter('path'));
+        $path = $this->getVarDir()."/".$dirName;
+        if(!file_exists($path."/HEAD")) {
+            shell_exec(sprintf("cd %s; git clone %s %s --bare > /dev/null 2>&1", $this->getVarDir(), $uri, $dirName));
+        }
+
+        shell_exec(sprintf("cd %s; git fetch > /dev/null 2>&1", $path));
+    }
+
     protected function storeCsv(Source $source) {
         $fromDate = "1990-01-01";
-        $path = $source->getParameter('path');
+        $path = ($this->isRemote($source)) ? $this->getVarDir()."/".$this->slugger->slugify($source->getParameter('path')) : $source->getParameter('path');
         $branch = $source->getParameter('branch');
 
         if(isset($source->getUpdateParam()['date'])) {

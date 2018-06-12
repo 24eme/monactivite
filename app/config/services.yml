@@ -48,7 +48,7 @@ services:
 
     app.importer.git:
         class: AppBundle\Importer\Git\GitImporter
-        arguments: [@app.manager.activity, @doctrine.orm.entity_manager]
+        arguments: [@app.manager.activity, @doctrine.orm.entity_manager, @app.slugger]
 
     app.importer.mail:
         class: AppBundle\Importer\Mail\MailImporter
