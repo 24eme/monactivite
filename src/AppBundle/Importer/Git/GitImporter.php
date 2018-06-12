@@ -25,7 +25,7 @@ class GitImporter extends Importer
 
     public function getDescription() {
 
-        return "Récupère les commits d'un dêpot git à partir d'un dossier en local";
+        return "Récupère les commits d'un dêpot git distant ou à partir d'un dossier local";
     }
 
     public function getParameters() {
