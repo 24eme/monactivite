@@ -66,10 +66,6 @@ services:
         class: AppBundle\Importer\Caldav\CaldavImporter
         arguments: [@app.manager.activity, @doctrine.orm.entity_manager]
 
-    app.importer.github:
-        class: AppBundle\Importer\Github\GithubImporter
-        arguments: [@app.manager.activity, @doctrine.orm.entity_manager]
-
     app.importer.imap:
         class: AppBundle\Importer\Imap\ImapImporter
         arguments: [@app.manager.activity, @doctrine.orm.entity_manager]
