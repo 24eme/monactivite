@@ -4,6 +4,7 @@ namespace Tests;
 
 use AppBundle\Entity\Source;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\Console\Output\NullOutput;
 
 class GitImporterTest extends KernelTestCase
 {
@@ -42,20 +43,9 @@ class GitImporterTest extends KernelTestCase
         $this->assertSame($source->getTitle(), $gitDir);
         $this->assertSame($source->getUpdateParam(), null);
 
-        $importer->run($source, new \Symfony\Component\Console\Output\NullOutput(), true, false);
+        $importer->run($source, new NullOutput(), true, false);
 
-        $em->getUnitOfWork()->computeChangeSets();
-        $entities = $em->getUnitOfWork()->getScheduledEntityInsertions();
-
-        $activities = array();
-        foreach($entities as $activity) {
-            if(!$activity instanceof \AppBundle\Entity\Activity) {
-                continue;
-            }
-            $activities[$activity->getExecutedAt()->format('YmdHis').uniqid()] = $activity;
-        }
-
-        ksort($activities);
+        $activities = $this->getActivitiesInsertions($em);
 
         $this->assertCount($nbCommits, $activities);
 
@@ -76,5 +66,48 @@ class GitImporterTest extends KernelTestCase
         $this->assertSame($activity->getAttributes()[2]->getValue(), "vince.laurent@gmail.com");
 
         $this->assertSame($source->getUpdateParam()['date'], date('Y-m-d'));
+
+
+        $em->getUnitOfWork()->clear();
+        $nbCommits = shell_exec("cd ".$gitDir."; git log master --first-parent | grep -E \"^commit \" | wc -l")*1;
+
+        $source = new Source();
+        $source->setImporter($importer->getName());
+        $importer->updateParameters($source, array(
+                "path" => preg_replace("|/app$|", "", self::$kernel->getRootDir()),
+                "name" => null,
+                "branch" => "master"
+        ));
+
+        $this->assertSame($source->getParameter("branch"), "master");
+
+        $importer->run($source, new NullOutput(), true, false);
+
+        $activities = $this->getActivitiesInsertions($em);
+
+        $this->assertCount($nbCommits, $activities);
+
+
+        $activity = current($activities);
+        $this->assertCount(4, $activity->getAttributes());
+        $this->assertSame($activity->getAttributes()[3]->getName(), "Branch");
+        $this->assertSame($activity->getAttributes()[3]->getValue(), "master");
+    }
+
+    public function getActivitiesInsertions($em) {
+        $em->getUnitOfWork()->computeChangeSets();
+        $entities = $em->getUnitOfWork()->getScheduledEntityInsertions();
+
+        $activities = array();
+        foreach($entities as $activity) {
+            if(!$activity instanceof \AppBundle\Entity\Activity) {
+                continue;
+            }
+            $activities[$activity->getExecutedAt()->format('YmdHis').uniqid()] = $activity;
+        }
+
+        ksort($activities);
+
+        return $activities;
     }
 }

@@ -26,6 +26,7 @@ class GitImporter extends Importer
             'path' => array("required" => true, "label" => "Chemin", "help" => "Chemin vers le dossier du projet git"),
             'name' => array("required" => false, "label" => "Nom", "help" => "Nom du dépot git (optionelle, calculer automatiquement)"),
             'author' => array("required" => false, "label" => "Auteur", "help" => "Filtrer l'auteur des commits, grâce à une expression régulière (optionelle)"),
+            'branch' => array("required" => false, "label" => "Auteur", "help" => "Récupère les commits d'une branch avec l'option --first-parent"),
         );
     }
 
@@ -46,13 +47,14 @@ class GitImporter extends Importer
         $storeFile = $this->storeCsv($source);
 
         $repositoryName = $source->getParameter('name');
+        $branchName = $source->getParameter('branch');
 
         $nb = 0;
 
         foreach(file($storeFile) as $line) {
             $datas = str_getcsv($line, ";", '"');
 
-            $authorEmail = isset($datas[2]) ? trim(preg_replace("/^.+<(.+)>$/", '\1', $datas[2])) : null;
+            $authorEmail = isset($datas[1]) ? trim(preg_replace("/^.+<(.+)>$/", '\1', $datas[1])) : null;
 
             if($source->getParameter('author') && !preg_match("/".$source->getParameter('author')."/", $authorEmail)) {
                 continue;
@@ -60,9 +62,9 @@ class GitImporter extends Importer
 
             try {
                 $activity = new Activity();
-                $activity->setExecutedAt(isset($datas[3]) ? new \DateTime(trim($datas[3])) : null);
-                $activity->setTitle(isset($datas[4]) ? trim($datas[4]) : null);
-                $activity->setContent(isset($datas[5]) ? str_replace('\n', "\n", trim($datas[5])) : null);
+                $activity->setExecutedAt(isset($datas[2]) ? new \DateTime(trim($datas[2])) : null);
+                $activity->setTitle(isset($datas[3]) ? trim($datas[3]) : null);
+                $activity->setContent(isset($datas[4]) ? str_replace('\n', "\n", trim($datas[4])) : null);
 
                 $type = new ActivityAttribute();
                 $type->setName("Type");
@@ -76,15 +78,27 @@ class GitImporter extends Importer
                 $author->setName("Author");
                 $author->setValue($authorEmail);
 
+                if($branchName) {
+                    $branch = new ActivityAttribute();
+                    $branch->setName("Branch");
+                    $branch->setValue($branchName);
+                }
+
                 $activity->addAttribute($type);
                 $activity->addAttribute($repository);
                 $activity->addAttribute($author);
+                if(isset($branch)) {
+                    $activity->addAttribute($branch);
+                }
 
                 $this->am->addFromEntity($activity, $checkExist);
 
                 $this->em->persist($type);
                 $this->em->persist($repository);
                 $this->em->persist($author);
+                if(isset($branch)) {
+                    $this->em->persist($branch);
+                }
                 $this->em->persist($activity);
 
                 if(!$dryrun) {
@@ -139,14 +153,14 @@ class GitImporter extends Importer
     protected function storeCsv(Source $source) {
         $fromDate = "1990-01-01";
         $path = $source->getParameter('path');
+        $branch = $source->getParameter('branch');
 
         if(isset($source->getUpdateParam()['date'])) {
             $fromDate = (new \DateTime($source->getUpdateParam()['date']))->modify('-15 days')->format('Y-m-d');
         }
 
         $storeFile = sprintf("%s/var/commits_%s_%s.csv", dirname(__FILE__), date("YmdHis"), uniqid());
-
-        shell_exec(sprintf("%s/bin/git2csv.sh %s \"\" %s > %s", dirname(__FILE__), $path, $fromDate, $storeFile));
+        shell_exec(sprintf("%s/bin/git2csv.sh %s %s %s > %s", dirname(__FILE__), $path, $fromDate, $branch, $storeFile));
 
         $source->setUpdateParam(array('date' => date('Y-m-d')));
 
