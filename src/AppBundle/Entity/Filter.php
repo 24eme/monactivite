@@ -103,4 +103,12 @@ class Filter
 
         return null;
     }
+
+    public function toConfig() {
+
+        return array(
+            'query' => $this->getQuery(),
+            'tag' => $this->getTag()->getName(),
+        );
+    }
 }

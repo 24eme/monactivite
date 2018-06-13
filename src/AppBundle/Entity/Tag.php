@@ -206,4 +206,14 @@ class Tag
         return $this->colorText;
     }
 
+    public function toConfig() {
+
+        return array(
+            'name' => $this->getName(),
+            'color' => $this->getColor(),
+            'color_text' => $this->getColorText(),
+            'icon' => $this->getIcon(),
+        );
+    }
+
 }

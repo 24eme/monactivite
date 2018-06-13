@@ -195,4 +195,38 @@ class Source
         return $this->updateParam;
     }
 
+    public function getProtectedParameter($name, $hidePassword = true) {
+
+        return $this->protect($this->getParameter($name, $hidePassword));
+    }
+
+    protected function protect($value, $hidePassword = true) {
+        if(!preg_match("|://(.+:.*)@|", $value, $matches)) {
+            return $value;
+        }
+        $auth = null;
+
+        if(!$hidePassword) {
+            $auth = substr(hash("sha512", $matches[1]), 0, 10);
+        }
+
+        return preg_replace("|(://).+:.*(@)|", '${1}'.$auth.'${2}', $value);
+    }
+
+    public function toConfig() {
+        $config = array(
+            'importer' => $this->importer,
+        );
+
+        if(!$this->getParameter('path')) {
+            $config['path'] = $this->protect($this->getSource(), false);
+        }
+
+        foreach($this->getParameters() as $key => $value) {
+            $config[$key] = $this->protect($value, false);
+        }
+
+        return $config;
+    }
+
 }

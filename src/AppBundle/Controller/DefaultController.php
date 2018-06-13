@@ -78,4 +78,14 @@ class DefaultController extends Controller
         return $response;
     }
 
+    /**
+     * @Route("/config", name="config")
+     */
+    public function configAction()
+    {
+        $configExporter = $this->get('app.config.exporter');
+
+        return $this->render('default/config.html.twig', array('config' => $configExporter->getYaml()));
+    }
+
 }

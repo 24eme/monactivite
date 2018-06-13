@@ -46,6 +46,10 @@ services:
         class: AppBundle\Manager\MainManager
         arguments: [@app.manager.activity, @app.manager.importer, @app.manager.filter, @app.manager.source]
 
+    app.config.exporter:
+        class: AppBundle\Config\ConfigExporter
+        arguments: [@doctrine.orm.entity_manager]
+
     app.importer.git:
         class: AppBundle\Importer\Git\GitImporter
         arguments: [@app.manager.activity, @doctrine.orm.entity_manager, @app.slugger]

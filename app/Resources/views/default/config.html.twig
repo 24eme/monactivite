@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% set menu = 'config' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('bower_components/codemirror/codemirror.css') }}" rel="stylesheet" />
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('bower_components/codemirror/codemirror.js') }}"></script>
+    <script src="{{ asset('bower_components/codemirror/yaml.js') }}"></script>
+    <script src="{{ asset('bower_components/codemirror/yaml-lint.js') }}"></script>
+
+    <script type="text/javascript">
+        var editor = CodeMirror.fromTextArea(document.getElementById("editor_yml"), {
+           lineNumbers: true,
+           lineWrapping: true,
+           autofocus: true,
+           indentWithTabs: false,
+        });
+
+        editor.setSize("100%", "100%");
+    </script>
+{% endblock %}
+
+{% block body %}
+<textarea id="editor_yml" >
+{{ config }}
+</textarea>
+{% endblock %}
