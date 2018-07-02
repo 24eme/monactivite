@@ -22,7 +22,7 @@ class GitImporterTest extends KernelTestCase
         $em = $this->container->get('doctrine.orm.entity_manager');
         $importer = $this->container->get('app.importer.git');
         $gitDir = preg_replace("|/tests$|", "", dirname(__FILE__));
-        $nbCommits = shell_exec("cd ".$gitDir."; git log | grep -E \"^commit \" | wc -l")*1;
+        $nbCommits = shell_exec("cd ".$gitDir."; git log --branches | grep -E \"^commit \" | wc -l")*1;
 
         $source = new Source();
         $source->setImporter($importer->getName());
@@ -64,19 +64,32 @@ class GitImporterTest extends KernelTestCase
         $this->assertSame($activity->getTitle(), "Initial commit");
         $this->assertSame($activity->getContent(), "LICENSE | 22 ++++++++++++++++++++++\n 1 file changed, 22 insertions(+)");
 
-        $this->assertCount(3, $activity->getAttributes());
+        $this->assertCount(4, $activity->getAttributes());
         $this->assertSame($activity->getAttributes()[0]->getName(), "Type");
         $this->assertSame($activity->getAttributes()[0]->getValue(), "Commit");
         $this->assertSame($activity->getAttributes()[1]->getName(), "Repository");
         $this->assertSame($activity->getAttributes()[1]->getValue(), "monactivite.git");
         $this->assertSame($activity->getAttributes()[2]->getName(), "Author");
         $this->assertSame($activity->getAttributes()[2]->getValue(), "vince.laurent@gmail.com");
+        $this->assertSame($activity->getAttributes()[3]->getName(), "Branch");
+        $this->assertSame($activity->getAttributes()[3]->getValue(), "master");
+
+        $activityMerge = null;
+        foreach($activities as $activity) {
+            if(!preg_match("/Merge branch /", $activity->getTitle())) {
+                continue;
+            }
+
+            $activityMerge = $activity;
+            break;
+        }
+
+        $this->assertNotEmpty($activityMerge->getContent());
 
         $this->assertSame($source->getUpdateParam()['date'], date('Y-m-d'));
 
-
         $em->getUnitOfWork()->clear();
-        $nbCommits = shell_exec("cd ".$gitDir."; git log master --first-parent | grep -E \"^commit \" | wc -l")*1;
+        $nbCommits = shell_exec("cd ".$gitDir."; git log master | grep -E \"^commit \" | wc -l")*1;
 
         $source = new Source();
         $source->setImporter($importer->getName());
@@ -141,7 +154,7 @@ class GitImporterTest extends KernelTestCase
 
         $activities = $this->getActivitiesInsertions($em);
 
-        $this->assertCount(2, $activities);
+        $this->assertCount(1, $activities);
     }
 
     public function getActivitiesInsertions($em) {

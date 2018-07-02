@@ -60,24 +60,32 @@ class GitImporter extends Importer
         $storeFile = $this->storeCsv($source);
 
         $repositoryName = $source->getParameter('name');
-        $branchName = $source->getParameter('branch');
 
         $nb = 0;
 
         foreach(file($storeFile) as $line) {
             $datas = str_getcsv($line, ";", '"');
 
-            $authorEmail = isset($datas[1]) ? trim(preg_replace("/^.+<(.+)>$/", '\1', $datas[1])) : null;
+            $authorEmail = isset($datas[3]) ? trim(preg_replace("/^.+<(.+)>$/", '\1', $datas[3])) : null;
 
             if($source->getParameter('author') && !preg_match("/".$source->getParameter('author')."/", $authorEmail)) {
                 continue;
             }
 
+            $content = isset($datas[6]) ? str_replace('\n', "\n", trim($datas[6])) : null;
+
+            if($datas[2] && preg_match("/^Merge: ([a-z0-9]+) ([a-z0-9]+)$/", $datas[2], $matches)) {
+                if($content) {
+                    $content .= "\n\n";
+                }
+                $content .= shell_exec(sprintf("cd %s; git log %s..%s --oneline", $this->getPath($source), $matches[1], $matches[2]));
+            }
+
             try {
                 $activity = new Activity();
-                $activity->setExecutedAt(isset($datas[2]) ? new \DateTime(trim($datas[2])) : null);
-                $activity->setTitle(isset($datas[3]) ? trim($datas[3]) : null);
-                $activity->setContent(isset($datas[4]) ? str_replace('\n', "\n", trim($datas[4])) : null);
+                $activity->setExecutedAt(isset($datas[4]) ? new \DateTime(trim($datas[4])) : null);
+                $activity->setTitle(isset($datas[5]) ? trim($datas[5]) : null);
+                $activity->setContent($content);
 
                 $type = new ActivityAttribute();
                 $type->setName("Type");
@@ -91,27 +99,24 @@ class GitImporter extends Importer
                 $author->setName("Author");
                 $author->setValue($authorEmail);
 
-                if($branchName) {
-                    $branch = new ActivityAttribute();
-                    $branch->setName("Branch");
-                    $branch->setValue($branchName);
-                }
+                $branchName = $datas[1];
+
+                $branch = new ActivityAttribute();
+                $branch->setName("Branch");
+                $branch->setValue($branchName);
 
                 $activity->addAttribute($type);
                 $activity->addAttribute($repository);
                 $activity->addAttribute($author);
-                if(isset($branch)) {
-                    $activity->addAttribute($branch);
-                }
+                $activity->addAttribute($branch);
 
                 $this->am->addFromEntity($activity, $checkExist);
 
                 $this->em->persist($type);
                 $this->em->persist($repository);
                 $this->em->persist($author);
-                if(isset($branch)) {
-                    $this->em->persist($branch);
-                }
+                $this->em->persist($branch);
+
                 $this->em->persist($activity);
 
                 if(!$dryrun) {
@@ -179,9 +184,14 @@ class GitImporter extends Importer
         shell_exec(sprintf("cd %s; git fetch > /dev/null 2>&1", $path));
     }
 
+    protected function getPath($source) {
+
+        return ($this->isRemote($source)) ? $this->getVarDir()."/".$this->slugger->slugify($source->getParameter('path')) : $source->getParameter('path');
+    }
+
     protected function storeCsv(Source $source) {
         $fromDate = "1990-01-01";
-        $path = ($this->isRemote($source)) ? $this->getVarDir()."/".$this->slugger->slugify($source->getParameter('path')) : $source->getParameter('path');
+        $path = $this->getPath($source);
         $branch = $source->getParameter('branch');
 
         if(isset($source->getUpdateParam()['date'])) {
