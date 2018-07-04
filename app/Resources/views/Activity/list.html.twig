@@ -46,9 +46,7 @@
                             <span>{{ activity.title }}</span>&nbsp;<small style="opacity: 0.7;"  class="text-muted">{{ activity.content | slice(0, 200) }}</small>
                         </div>
                         <div class="col-xs-1 text-right itemAction">
-                            {% if(activity.content ) %}
                             <a href="{% if activity.id %}{{ path('activity_view', { 'id': activity.id, 'query': query, 'dateFrom': dateFrom, 'dateTo': dateTo, 'nbDays': nbDays })}}{% endif %}" title="{{ activity.content | truncate(350, true, '...') | nl2br }}" class="btn-activity-view" data-toggle="tooltipHtml"><span class="glyphicon glyphicon-eye-open"></span></a>
-                            {% endif %}
                         </div>
                         <div class="clearfix"></div>
                     </div>
