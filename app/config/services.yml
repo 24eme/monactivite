@@ -32,7 +32,7 @@ services:
 
     app.manager.importer:
         class: AppBundle\Manager\ImporterManager
-        arguments: [[@app.importer.git, @app.importer.mail, @app.importer.feed, @app.importer.icalendar]]
+        arguments: [[@app.importer.git, @app.importer.mail, @app.importer.feed, @app.importer.icalendar, @app.importer.caldav]]
 
     app.manager.filter:
         class: AppBundle\Manager\FilterManager
