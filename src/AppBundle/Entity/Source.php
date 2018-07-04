@@ -164,11 +164,6 @@ class Source
     }
 
     public function getParameter($name) {
-        if($name == 'path' && !isset($this->parameters[$name]) && $this->getSource()) {
-
-            return $this->getSource();
-        }
-
         if(!isset($this->parameters[$name])) {
 
             return null;
