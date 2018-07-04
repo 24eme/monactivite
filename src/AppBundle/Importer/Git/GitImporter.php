@@ -186,6 +186,11 @@ class GitImporter extends Importer
 
     protected function getPath($source) {
 
+        if(!$source->getParameter('path') && $source->getSource()) {
+
+            return $source->getSource();
+        }
+
         return ($this->isRemote($source)) ? $this->getVarDir()."/".$this->slugger->slugify($source->getParameter('path')) : $source->getParameter('path');
     }
 
