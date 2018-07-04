@@ -34,7 +34,7 @@ class GitImporter extends Importer
             'path' => array("required" => true, "label" => "Chemin", "help" => "Chemin vers le dossier du projet git"),
             'name' => array("required" => false, "label" => "Nom", "help" => "Nom du dépot git (optionelle, calculer automatiquement)"),
             'author' => array("required" => false, "label" => "Auteur", "help" => "Filtrer l'auteur des commits, grâce à une expression régulière (optionelle)"),
-            'branch' => array("required" => false, "label" => "Auteur", "help" => "Récupère les commits d'une branch avec l'option --first-parent"),
+            'branch' => array("required" => false, "label" => "Branche", "help" => "Récupère seulement les commits de la branche"),
         );
     }
 
@@ -157,7 +157,7 @@ class GitImporter extends Importer
     public function check(Source $source) {
         parent::check($source);
 
-        $path = $source->getParameter('path');
+        $path = $this->getPath($source);
 
         if(!$this->isRemote($source) && !file_exists($path)) {
             throw new \Exception(sprintf("Le répertoire \"%s\" n'existe pas", $path));
