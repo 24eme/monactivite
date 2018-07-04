@@ -120,7 +120,7 @@ class Source
      */
     public function setTitle($title)
     {
-        $this->title = preg_replace("|://.+:.*@|", "://", $title);
+        $this->title = $this->protect($title);
 
         return $this;
     }
