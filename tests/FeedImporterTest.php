@@ -26,12 +26,12 @@ class FeedImporterTest extends KernelTestCase
         $source = new Source();
         $source->setImporter($importer->getName());
         $importer->updateParameters($source, array(
-                "uri" => $url,
+                "path" => $url,
                 "name" => "Framadate"
         ));
 
         $this->assertSame($source->getImporter(), "Feed");
-        $this->assertSame($source->getParameter("uri"), $url);
+        $this->assertSame($source->getParameter("path"), $url);
         $this->assertSame($source->getParameter("name"), "Framadate");
         $this->assertSame($source->getTitle(), $url);
         $this->assertSame($source->getUpdateParam(), null);

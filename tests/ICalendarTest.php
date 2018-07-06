@@ -26,12 +26,12 @@ class ICalendarTest extends KernelTestCase
         $source = new Source();
         $source->setImporter($importer->getName());
         $importer->updateParameters($source, array(
-            "uri" => $icsFile,
+            "path" => $icsFile,
             "name" => "Calendrier"
         ));
 
         $this->assertSame($source->getImporter(), "ICalendar");
-        $this->assertSame($source->getParameter("uri"), $icsFile);
+        $this->assertSame($source->getParameter("path"), $icsFile);
         $this->assertSame($source->getParameter("name"), "Calendrier");
         $this->assertSame($source->getTitle(), $icsFile);
         $this->assertSame($source->getUpdateParam(), null);

@@ -25,7 +25,7 @@ class CaldavImporter extends Importer
     public function getParameters() {
 
         return array(
-            'path' => array("required" => true, "label" => "Chemin", "help" => ""),
+            'path' => array("required" => true, "label" => "Chemin", "help" => "Url du caldav"),
         );
     }
 
@@ -39,7 +39,7 @@ class CaldavImporter extends Importer
         $caldavClient = $this->getClient($source);
 
         foreach($caldavClient->findCalendars() as $calendar) {
-            if(!preg_match("|".str_replace("/", "", $calendar->getURL())."|", str_replace("/", "", $source->getSource()))) {
+            if(!preg_match("|".str_replace("/", "", $calendar->getURL())."|", str_replace("/", "", $source->getParameter('path')))) {
                 continue;
             }
 

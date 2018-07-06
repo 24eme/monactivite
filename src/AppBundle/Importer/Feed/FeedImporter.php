@@ -25,13 +25,13 @@ class FeedImporter extends Importer
     public function getParameters() {
 
         return array(
-            'uri' => array("required" => true, "label" => "Uri", "help" => "Url ou chemin vers un flux rss"),
+            'path' => array("required" => true, "label" => "Uri", "help" => "Url ou chemin vers un flux rss"),
             'name' => array("required" => true, "label" => "Name", "help" => "Nom du flux (optionnelle)"),
         );
     }
 
     public function updateTitle(Source $source) {
-        $source->setTitle($source->getParameter('uri'));
+        $source->setTitle($source->getParameter('path'));
     }
 
     public function __construct($am, $em, $feedParser)
@@ -115,17 +115,17 @@ class FeedImporter extends Importer
     }
 
     public function getParser($source) {
-        if(preg_match("|^file://|", $source->getParameter('uri'))) {
-            $content = file_get_contents($source->getParameter('uri'));
+        if(preg_match("|^file://|", $source->getParameter('path'))) {
+            $content = file_get_contents($source->getParameter('path'));
 
             return $this->feedParser->getParser(
-                $source->getParameter('uri'),
-                file_get_contents($source->getParameter('uri')),
+                $source->getParameter('path'),
+                file_get_contents($source->getParameter('path')),
                 mb_detect_encoding($content)
             );
         }
 
-        $resource = $this->feedParser->download($source->getParameter('uri'));
+        $resource = $this->feedParser->download($source->getParameter('path'));
 
         return $this->feedParser->getParser(
             $resource->getUrl(),
