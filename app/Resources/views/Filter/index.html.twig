@@ -18,22 +18,7 @@
     </div>
     <div class="col-xs-12">
         <h3>Filtres appliqués</h3>
-        <table class="table table-bordered table-striped table-condensed">
-            <thead>
-                <tr>
-                    <th class="col-xs-3">Tag à appliquer</th>
-                    <th>Requête de recherche</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for entity in entities %}
-                <tr>
-                    <td>{% include 'Tag/button.html.twig' with {'tag': entity.tag,  'type': 'button' , 'size': 'sm'} %}</td>
-                    <td><a href="{{ path('timeline', {'q': entity.query }) }}">{{ entity.query }}</a> <a class="btn btn-xs btn-default pull-right" href="{{ path('filter_edit', {'id': entity.id }) }}"><span class="glyphicon glyphicon-pencil"></span></a></td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        {% include "Filter/list.html.twig" with { 'entities': entities } %}
     </div>
 </div>
 {% endblock %}

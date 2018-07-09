@@ -1,18 +1,31 @@
 {% extends '::base.html.twig' %}
 
-{% form_theme edit_form 'bootstrap_3_horizontal_layout.html.twig' %}
+{% set menu = 'filter' %}
 
-{% block body -%}
-    <h1>Filter edit</h1>
+{% form_theme form 'bootstrap_3_layout.html.twig' %}
 
-    {{ form(edit_form) }}
-
-        <ul class="record_actions">
-    <li>
-        <a href="{{ path('filter') }}">
-            Back to the list
-        </a>
-    </li>
-    <li>{{ form(delete_form) }}</li>
-</ul>
+{% block body %}
+<div class="row">
+    <div class="col-xs-12">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <a class="btn btn-link btn-xs pull-right" href="{{ path('filter') }}"><span class="glyphicon glyphicon-repeat"></span> Annuler</a>
+                {{ form_start(delete_form) }}
+                <button type="submit" class="btn btn-xs pull-right btn-link" onclick="return confirm('Êtes-vous sûr(e) de vouloir supprimer ce filtre ?')" title="Supprimer"><span class="glyphicon glyphicon-trash"></span> Supprimer ce tag</button>
+                {{ form_errors(delete_form) }}
+                {{ form_end(delete_form) }}
+                <h3 class="panel-title">Modifier le filtre</h3>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    {% include "Filter/form.html.twig" with { 'form': form } %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-12">
+        <h3>Filtres appliqués</h3>
+        {% include "Filter/list.html.twig" with { 'entities': entities } %}
+    </div>
+</div>
 {% endblock %}

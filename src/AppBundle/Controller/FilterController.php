@@ -90,48 +90,6 @@ class FilterController extends Controller
         return $form;
     }
 
-    /**
-     * Displays a form to create a new Filter entity.
-     *
-     * @Route("/new", name="filter_new")
-     * @Method("GET")
-     * @Template("Filter/new.html.twig")
-     */
-    public function newAction()
-    {
-        $entity = new Filter();
-        $form   = $this->createCreateForm($entity);
-
-        return array(
-            'entity' => $entity,
-            'form'   => $form->createView(),
-        );
-    }
-
-    /**
-     * Finds and displays a Filter entity.
-     *
-     * @Route("/{id}", name="filter_show")
-     * @Method("GET")
-     * @Template("Filter/show.html.twig")
-     */
-    public function showAction($id)
-    {
-        $em = $this->getDoctrine()->getManager();
-
-        $entity = $em->getRepository('AppBundle:Filter')->find($id);
-
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Filter entity.');
-        }
-
-        $deleteForm = $this->createDeleteForm($id);
-
-        return array(
-            'entity'      => $entity,
-            'delete_form' => $deleteForm->createView(),
-        );
-    }
 
     /**
      * Displays a form to edit an existing Filter entity.
@@ -144,6 +102,8 @@ class FilterController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
+        $entities = $em->getRepository('AppBundle:Filter')->findBy(array(), array('tag' => 'ASC'));
+
         $entity = $em->getRepository('AppBundle:Filter')->find($id);
 
         if (!$entity) {
@@ -154,8 +114,9 @@ class FilterController extends Controller
         $deleteForm = $this->createDeleteForm($id);
 
         return array(
+            'entities'      => $entities,
             'entity'      => $entity,
-            'edit_form'   => $editForm->createView(),
+            'form'   => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         );
     }
@@ -174,7 +135,7 @@ class FilterController extends Controller
             'method' => 'PUT',
         ));
 
-        $form->add('submit', 'submit', array('label' => 'Update'));
+        $form->add('submit', 'submit', array('label' => 'Modifier'));
 
         return $form;
     }
@@ -202,7 +163,7 @@ class FilterController extends Controller
         if ($editForm->isValid()) {
             $em->flush();
 
-            return $this->redirect($this->generateUrl('filter_edit', array('id' => $id)));
+            return $this->redirect($this->generateUrl('filter'));
         }
 
         return array(
@@ -249,7 +210,6 @@ class FilterController extends Controller
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('filter_delete', array('id' => $id)))
             ->setMethod('DELETE')
-            ->add('submit', 'submit', array('label' => 'Delete'))
             ->getForm()
         ;
     }
