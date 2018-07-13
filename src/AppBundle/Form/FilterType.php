@@ -27,7 +27,7 @@ class FilterType extends AbstractType
     {
         $builder
             ->add('query', TextType::class, array('required' => true))
-            ->add('tag', null, array('required' => true, 'empty_value' => ""));
+            ->add('tag', null, array('required' => true, 'placeholder' => "Tag à appliquer"));
         ;
 
         $builder->get('tag')->resetViewTransformers();
@@ -73,8 +73,8 @@ class FilterType extends AbstractType
     /**
      * @return string
      */
-    public function getName()
+    public function getBlockPrefix()
     {
-        return 'appbundle_filter';
+        return 'filter';
     }
 }

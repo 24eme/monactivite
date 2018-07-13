@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use AppBundle\Entity\Tag;
 use AppBundle\Form\TagType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 /**
  * Tag controller.
@@ -75,12 +76,12 @@ class TagController extends Controller
      */
     private function createCreateForm(Tag $entity)
     {
-        $form = $this->createForm(new TagType(), $entity, array(
+        $form = $this->createForm(TagType::class, $entity, array(
             'action' => $this->generateUrl('tag_create'),
             'method' => 'POST',
         ));
 
-        $form->add('submit', 'submit', array('label' => 'Ajouter'));
+        $form->add('submit', SubmitType::class, array('label' => 'Ajouter'));
 
         return $form;
     }
@@ -124,12 +125,12 @@ class TagController extends Controller
     */
     private function createEditForm(Tag $entity)
     {
-        $form = $this->createForm(new TagType(), $entity, array(
+        $form = $this->createForm(TagType::class, $entity, array(
             'action' => $this->generateUrl('tag_update', array('id' => $entity->getId())),
             'method' => 'PUT',
         ));
 
-        $form->add('submit', 'submit', array('label' => 'Modifier'));
+        $form->add('submit', SubmitType::class, array('label' => 'Modifier'));
 
         return $form;
     }

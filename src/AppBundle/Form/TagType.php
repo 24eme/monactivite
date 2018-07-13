@@ -5,6 +5,7 @@ namespace AppBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 class TagType extends AbstractType
 {
@@ -18,7 +19,7 @@ class TagType extends AbstractType
             ->add('name')
             ->add('color')
             ->add('colorText')
-            ->add('icon', 'hidden')
+            ->add('icon', HiddenType::class)
         ;
     }
 
@@ -35,8 +36,8 @@ class TagType extends AbstractType
     /**
      * @return string
      */
-    public function getName()
+    public function getBlockPrefix()
     {
-        return 'appbundle_tag';
+        return 'tag';
     }
 }

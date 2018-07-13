@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use AppBundle\Entity\Filter;
 use AppBundle\Form\FilterType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 /**
  * Filter controller.
@@ -86,7 +87,7 @@ class FilterController extends Controller
             'method' => 'POST',
         ));
 
-        $form->add('submit', 'submit', array('label' => 'Ajouter'));
+        $form->add('submit', SubmitType::class, array('label' => 'Ajouter'));
 
         return $form;
     }
@@ -136,7 +137,7 @@ class FilterController extends Controller
             'method' => 'PUT',
         ));
 
-        $form->add('submit', 'submit', array('label' => 'Modifier'));
+        $form->add('submit', SubmitType::class, array('label' => 'Modifier'));
 
         return $form;
     }
