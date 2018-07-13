@@ -99,11 +99,6 @@ class Filter
         return $this->getQuery();
     }
 
-    public function getTags() {
-
-        return null;
-    }
-
     public function toConfig() {
 
         return array(

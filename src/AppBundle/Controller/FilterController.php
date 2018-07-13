@@ -47,16 +47,17 @@ class FilterController extends Controller
      *
      * @Route("/", name="filter_create")
      * @Method("POST")
-     * @Template("Filter/new.html.twig")
+     * @Template("Filter/index.html.twig")
      */
     public function createAction(Request $request)
     {
+        $em = $this->getDoctrine()->getManager();
         $entity = new Filter();
         $form = $this->createCreateForm($entity);
+
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
             $em->persist($entity);
             $em->flush();
 
@@ -66,7 +67,7 @@ class FilterController extends Controller
         }
 
         return array(
-            'entity' => $entity,
+            'entities' => $em->getRepository('AppBundle:Filter')->findBy(array(), array('tag' => 'ASC')),
             'form'   => $form->createView(),
         );
     }
@@ -80,7 +81,7 @@ class FilterController extends Controller
      */
     private function createCreateForm(Filter $entity)
     {
-        $form = $this->createForm(new FilterType(), $entity, array(
+        $form = $this->createForm(new FilterType($this->getDoctrine()->getManager()), $entity, array(
             'action' => $this->generateUrl('filter_create'),
             'method' => 'POST',
         ));
@@ -130,7 +131,7 @@ class FilterController extends Controller
     */
     private function createEditForm(Filter $entity)
     {
-        $form = $this->createForm(new FilterType(), $entity, array(
+        $form = $this->createForm(new FilterType($this->getDoctrine()->getManager()), $entity, array(
             'action' => $this->generateUrl('filter_update', array('id' => $entity->getId())),
             'method' => 'PUT',
         ));

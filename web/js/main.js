@@ -51,7 +51,31 @@ $(document).ready( function() {
     $.fn.select2.defaults.set( "theme", "bootstrap" );
 
     $('.select2').select2({
-        theme: "bootstrap"
+        theme: "bootstrap",
+        tags: true,
+        templateResult: function(state) {
+            if(state.new) {
+                return $("<span><span style=\"opacity: 0.6;\">Ajouter : </span>"+state.text + "</span>");
+            }
+
+            return state.text;
+        },
+        createTag: function (params) {
+            var term = $.trim(params.term);
+
+            if (term === '') {
+              return null;
+            }
+
+            return {
+              id: params.term,
+              text: params.term,
+              new: true
+            }
+        },
+        insertTag: function (data, tag) {
+           data.push(tag);
+        }
     });
 
     $('.dropdown-toggle').dropdown();
