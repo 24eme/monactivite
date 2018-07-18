@@ -84,6 +84,7 @@ $(document).ready( function() {
         startDate: moment($('#input-date-to').val()),
         endDate:  moment($('#input-date-from').val()),
         ranges: {
+           'le mois mois': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
            '6 mois': [moment().subtract(6, 'month'), moment()],
            '1 an': [moment().subtract(1, 'year'), moment()],
            '2 ans': [moment().subtract(2, 'year'), moment()],
