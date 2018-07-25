@@ -25,8 +25,8 @@
                     {% for tag in tags %}
                     <div class="col-xs-4">
                         <p data-id="{{ tag.id }}" class="tag">
-                            <span class="hidden">{% include 'Tag/button_small.html.twig' with {'tag': tag, 'url': ''} %}</span>
-                            {% include 'Tag/button.html.twig' with {'tag': tag, 'url': 'javascript:void(0)' } %}
+                            <span class="hidden">{% include 'Tag/button_small.html.twig' with {'type': 'button', 'tag': tag, 'attr':{ 'data-id': tag.id }} %}</span>
+                            {% include 'Tag/button.html.twig' with {'type': 'button', 'tag': tag } %}
                         </p>
                     </div>
                     {% endfor %}
@@ -34,5 +34,9 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <div id="form_tag_remove_container">
+    {{ form(tagRemoveForm) }}
     </div>
 {% endblock %}

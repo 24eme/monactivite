@@ -96,10 +96,31 @@ $(document).ready( function() {
         $('#form-search').submit();
     });
 
-    $('#activities_container').on('click', '.btn-activity-tag', function() {
+    $('#activities_container').on('click', 'button.btn-tag-empty', function() {
         $('#modal-tag-add #activity_tag_add_activity_id').val($(this).parents('.ligne').data('id'));
-        $('#modal-tag-add #activity_tag_add_tag_id').val("-1");
+        $('#modal-tag-add #activity_tag_add_tag_id').val("");
         $('#modal-tag-add').modal();
+    });
+
+    $('#activities_container').on('click', 'button.btn-tag-small', function() {
+        if(!confirm("Voulez vous supprimer ce tag ?")) {
+
+            return;
+        }
+
+        var button = $(this);
+        var ligne = button.parents('.ligne');
+        $('#activity_tag_delete_activity_id').val(ligne.data('id'));
+        $('#activity_tag_delete_tag_id').val(button.data('id'));
+        var buttonTarget = ligne.find('.itemTags .btn').first();
+
+        var buttonEmpty = $('<button type="button" class="btn btn-sm btn-default btn-tag-empty"><span class="glyphicon glyphicon-plus"></span></button>');
+
+        var form = $('#form_tag_remove_container form');
+        $.post(form.attr('action'), form.serialize(), function() {
+            buttonEmpty.insertBefore(buttonTarget);
+            button.remove();
+        });
     });
 
     $('#activities_container').on('click', '.btn-activity-view', function() {

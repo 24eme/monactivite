@@ -6,6 +6,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use AppBundle\Form\ActivityTagAddType;
+use AppBundle\Form\ActivityTagDeleteType;
 use Symfony\Component\HttpFoundation\Response;
 
 class DefaultController extends Controller
@@ -29,7 +30,8 @@ class DefaultController extends Controller
         }
 
         $tags = $em->getRepository('AppBundle:Tag')->findAll();
-        $tagAddForm = $this->createForm(ActivityTagAddType::class, array(), array('action' => $this->generateUrl('activity_tag'),'method' => 'POST'));
+        $tagAddForm = $this->createForm(ActivityTagAddType::class, array(), array('action' => $this->generateUrl('activity_tag_add')));
+        $tagRemoveForm = $this->createForm(ActivityTagDeleteType::class, array(), array('action' => $this->generateUrl('activity_tag_delete')));
 
         /*$stats = $em->getRepository('AppBundle:Activity')->countDatesByInterval($dateFrom, $dateTo, $query);
         $total = 0;
@@ -39,14 +41,14 @@ class DefaultController extends Controller
         $statsMax = $total/count($stats) * 3;
         */
 
-
         return $this->render('default/index.html.twig',
             array('query' => $query,
                   'dateFrom' => $dateFrom->format('Y-m-d'),
                   'dateTo' => $dateTo->format('Y-m-d'),
                   'nbDays' => $nbDays,
                   'tags' => $tags,
-                  'tagAddForm' => $tagAddForm->createView()
+                  'tagAddForm' => $tagAddForm->createView(),
+                  'tagRemoveForm' => $tagRemoveForm->createView(),
             )
         );
     }

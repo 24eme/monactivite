@@ -7,7 +7,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use AppBundle\Form\ActivityTagAddType;
+use AppBundle\Form\ActivityTagDeleteType;
 use AppBundle\Entity\Activity;
 
 /**
@@ -69,16 +71,14 @@ class ActivityController extends Controller
     }
 
     /**
-     * @Route("/tag", name="activity_tag")
+     * @Route("/tag_add", name="activity_tag_add")
+     * @Method("POST")
      */
-    public function tagAction(Request $request)
+    public function tagAddAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
-        $am = $this->get('app.manager.activity');
 
-        $values = array();
-
-        $form = $this->createForm(ActivityTagAddType::class, array());
+        $form = $this->createForm(ActivityTagAddType::class, array('method' => 'POST'));
 
         $form->handleRequest($request);
 
@@ -90,7 +90,36 @@ class ActivityController extends Controller
 
         $activity = $em->getRepository('AppBundle:Activity')->find($data['activity_id']);
         $tag = $em->getRepository('AppBundle:Tag')->find($data['tag_id']);
+
         $activity->addTag($tag);
+        $em->flush();
+
+        return new Response();
+    }
+
+    /**
+     * @Route("/tag_delete", name="activity_tag_delete")
+     * @Method("POST")
+     */
+    public function tagDeleteAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $form = $this->createForm(ActivityTagDeleteType::class);
+
+        $form->handleRequest($request);
+
+        if (!$form->isValid()) {
+
+            return new Response();
+        }
+
+        $data = $form->getData();
+
+        $activity = $em->getRepository('AppBundle:Activity')->find($data['activity_id']);
+        $tag = $em->getRepository('AppBundle:Tag')->find($data['tag_id']);
+
+        $activity->removeTag($tag);
         $em->flush();
 
         return new Response();

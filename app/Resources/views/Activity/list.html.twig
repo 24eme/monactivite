@@ -17,11 +17,11 @@
                         <div class="col-xs-2 text-left itemTags">
                             <div class="btn-group">
                                 {% for j in 0..(3 - activity.tags | length) if activity.tags | length <= 3 %}
-                                <button type="button" class="btn btn-sm btn-default btn-tag-empty btn-activity-tag"><span class="glyphicon glyphicon-plus"></span></button>
+                                <button type="button" class="btn btn-sm btn-default btn-tag-empty"><span class="glyphicon glyphicon-plus"></span></button>
                                 {% endfor %}
                                 {% set j = 0 %}
                                 {% for tag in activity.getTagsReverse() if j < 4 %}
-                                    {% include 'Tag/button_small.html.twig' with {'tag': tag, url: path('timeline', { 'q': (query~' tag:'~tag.name) | trim, 'dateFrom': dateFrom, 'dateTo': dateTo, 'nbDays': nbDays})} %}
+                                    {% include 'Tag/button_small.html.twig' with {'type': 'button', 'tag': tag, 'attr':{ 'data-id': tag.id}} %}
                                     {% set j = j + 1 %}
                                 {% endfor %}
                             </div>
