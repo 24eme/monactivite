@@ -58,6 +58,10 @@ body {
     background: transparent;
 }
 
+.btn-group > .btn.btn-tag-small:first-child:not(:last-child):not(.dropdown-toggle) {
+    border-radius: 0;
+}
+
 .btn-attribute-small {
    width: 46px;
    border: 0;
