@@ -90,8 +90,7 @@ class MailImporterTest extends KernelTestCase
         $this->assertSame($activity->getAttributes()[3]->getValue(), "recipient_primaire@example.org, recipient_secondaire@example.org");
         $this->assertSame($activity->getAttributes()[4]->getName(), "Cc");
         $this->assertSame($activity->getAttributes()[4]->getValue(), "recipient_copy@example.org");
-
-        $this->assertSame($source->getUpdateParam()['line'], shell_exec("cat ".$mailFile." | wc -l")*1);
+        $this->assertSame($source->getUpdateParam()['line'], (int) shell_exec("cat ".$mailFile." | wc -l"));
 
     }
 }

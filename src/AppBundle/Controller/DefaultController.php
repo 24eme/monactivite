@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use AppBundle\Form\ActivityTagAddType;
 use AppBundle\Form\ActivityTagDeleteType;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DefaultController extends Controller
 {
@@ -33,8 +34,8 @@ class DefaultController extends Controller
         $tagAddForm = $this->createForm(ActivityTagAddType::class, array(), array('action' => $this->generateUrl('activity_tag_add')));
         $tagRemoveForm = $this->createForm(ActivityTagDeleteType::class, array(), array('action' => $this->generateUrl('activity_tag_delete')));
 
-        /*$stats = $em->getRepository('AppBundle:Activity')->countDatesByInterval($dateFrom, $dateTo, $query);
-        $total = 0;
+        //$stats = $em->getRepository('AppBundle:Activity')->countDatesByInterval($dateFrom, $dateTo, $query);
+        /*$total = 0;
         foreach($stats as $key => $stat) {
             $total += $stat['total'];
         }
@@ -51,6 +52,32 @@ class DefaultController extends Controller
                   'tagRemoveForm' => $tagRemoveForm->createView(),
             )
         );
+    }
+
+    /**
+     * @Route("/export", name="export")
+     */
+    public function exportAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $dateFrom = new \DateTime($request->get('dateFrom'));
+        $dateTo = new \DateTime($request->get('dateTo'));
+        $query = $request->get('q', null);
+
+        $activities = $em->getRepository('AppBundle:Activity')->findByDatesIntervalByDays($dateFrom, $dateTo, $query);
+
+        $response = new StreamedResponse(function() use ($activities, $em) {
+            echo "date;tags;titre;attributs;description\n";
+            foreach($activities as $activity) {
+                echo $activity->toCSV()."\n";
+            }
+        }, 200, array(
+          'Content-Type' => 'text/csv',
+          'Content-Disposition' => 'attachment; filename=export.csv',
+        ));
+
+        return $response;
     }
 
     /**

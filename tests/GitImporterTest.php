@@ -22,7 +22,7 @@ class GitImporterTest extends KernelTestCase
         $em = $this->container->get('doctrine.orm.entity_manager');
         $importer = $this->container->get('app.importer.git');
         $gitDir = preg_replace("|/tests$|", "", dirname(__FILE__));
-        $nbCommits = shell_exec("cd ".$gitDir."; git log --branches | grep -E \"^commit \" | wc -l")*1;
+        $nbCommits = (int) shell_exec("cd ".$gitDir."; git log --branches | grep -E \"^commit \" | wc -l");
 
         $source = new Source();
         $source->setImporter($importer->getName());
@@ -89,7 +89,7 @@ class GitImporterTest extends KernelTestCase
         $this->assertSame($source->getUpdateParam()['date'], date('Y-m-d'));
 
         $em->getUnitOfWork()->clear();
-        $nbCommits = shell_exec("cd ".$gitDir."; git log master | grep -E \"^commit \" | wc -l")*1;
+        $nbCommits = (int) shell_exec("cd ".$gitDir."; git log master | grep -E \"^commit \" | wc -l");
 
         $source = new Source();
         $source->setImporter($importer->getName());
