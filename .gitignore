@@ -12,3 +12,4 @@
 /data/*
 /tests/tmp
 .make
+composer.lock
