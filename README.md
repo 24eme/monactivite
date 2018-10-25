@@ -13,6 +13,15 @@ Récupérer le projet
 
 > git clone https://github.com/24eme/monactivite.git
 
+### Dependances
+
+Sous debian, voici les dépendances de librairies PHP7 :
+
+ - php7.0-dom
+ - php7.0-curl
+ - php7.0-imap
+ - php7.0-mbstring
+
 ### Installation simplifiée
 
 Via la commande make, lancer simplement la commande
