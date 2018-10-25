@@ -22,17 +22,13 @@ services:
         class: AppBundle\Utils\MailParser
         arguments: [@lasso_mail_parser.part_factory]
 
-    app.feed.parser:
-        class: PicoFeed\Reader\Reader
-        arguments: []
-
     app.manager.activity:
         class: AppBundle\Manager\ActivityManager
         arguments: [@doctrine.orm.entity_manager, @app.slugger]
 
     app.manager.importer:
         class: AppBundle\Manager\ImporterManager
-        arguments: [[@app.importer.git, @app.importer.mail, @app.importer.feed, @app.importer.icalendar, @app.importer.caldav]]
+        arguments: [[@app.importer.git, @app.importer.mail, @app.importer.icalendar, @app.importer.caldav]]
 
     app.manager.filter:
         class: AppBundle\Manager\FilterManager
@@ -57,10 +53,6 @@ services:
     app.importer.mail:
         class: AppBundle\Importer\Mail\MailImporter
         arguments: [@app.manager.activity, @doctrine.orm.entity_manager, @app.mail.parser]
-
-    app.importer.feed:
-        class: AppBundle\Importer\Feed\FeedImporter
-        arguments: [@app.manager.activity, @doctrine.orm.entity_manager, @app.feed.parser]
 
     app.importer.icalendar:
         class: AppBundle\Importer\ICalendar\ICalendarImporter
