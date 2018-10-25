@@ -269,4 +269,20 @@ class Activity
 
         return $date->modify('-4 hours')->format('Y-m-d');
     }
+
+    public function toCSV() {
+        $attributes = array();
+
+        foreach($this->getAttributes() as $att) {
+            $attributes[] = $att->getName().":".$att->getValue();
+        }
+
+        $tags = array();
+
+        foreach($this->getTags() as $tag) {
+            $tags[] = $tag->getName();
+        }
+
+        return $this->getExecutedAt()->format('Y-m-d H:i:s').";".implode(",", $tags).";\"".str_replace("\n", '\n', $this->getTitle())."\";".implode(",", $attributes).";\"".str_replace("\n", '\n', $this->getContent())."\"";
+    }
 }

@@ -27,10 +27,11 @@ class ActivityRepository extends EntityRepository
 
         $query = $this->getEntityManager()
                     ->createQuery('
-                          SELECT DATE(a.executedAt) as date, COUNT(a) as total
+                          SELECT DATE(a.executedAt) as date, at.name, COUNT(a) as total
                           FROM AppBundle:Activity a
+                          LEFT JOIN a.tags at
                           WHERE a.executedAt >= :date_to AND a.executedAt <= :date_from'.$querySearchDQL.'
-                          GROUP BY date
+                          GROUP BY date, at.name
                           ORDER BY a.executedAt ASC
                       ')
                     ->setParameter('date_from', $dateFrom)
@@ -45,7 +46,7 @@ class ActivityRepository extends EntityRepository
         return $query->getScalarResult();
     }
 
-    public function findByDatesInterval($dateFrom, $dateTo, $nbDaysMax, $queryString = null) {
+    public function findByDatesIntervalByDays($dateFrom, $dateTo, $queryString = null, $nbDaysMax = null) {
         $querySearchDQL = null;
         $querySearch = null;
         if($queryString) {
@@ -64,8 +65,11 @@ class ActivityRepository extends EntityRepository
                           ORDER BY a.executedAt DESC
                       ')
                     ->setParameter('date_from', $dateFrom)
-                    ->setParameter('date_to', $dateTo)
-                    ->setMaxResults($nbDaysMax);
+                    ->setParameter('date_to', $dateTo);
+
+        if($nbDaysMax) {
+            $query->setMaxResults($nbDaysMax);
+        }
 
         if($querySearch) {
             foreach($querySearch->getParameters() as $p) {
@@ -91,30 +95,23 @@ class ActivityRepository extends EntityRepository
 
         $query = $this->getEntityManager()
                     ->createQuery('
-                          SELECT a, aa, at
-                          FROM AppBundle:Activity a
-                          LEFT JOIN a.attributes aa
-                          LEFT JOIN a.tags at
-                          WHERE a.executedAt >= :date_to AND a.executedAt <= :date_from'.$querySearchDQL.'
-                          ORDER BY a.executedAt DESC
+                    SELECT a, aa, at
+                    FROM AppBundle:Activity a
+                    LEFT JOIN a.attributes aa
+                    LEFT JOIN a.tags at
+                    WHERE a.executedAt >= :date_to AND a.executedAt <= :date_from'.$querySearchDQL.'
+                    ORDER BY a.executedAt DESC
                       ')
                     ->setParameter('date_from', $dateFrom)
                     ->setParameter('date_to', $dateTo);
 
         if($querySearch) {
-          foreach($querySearch->getParameters() as $p) {
-              $query->setParameter($p->getName(), $p->getValue());
-          }
+            foreach($querySearch->getParameters() as $p) {
+                $query->setParameter($p->getName(), $p->getValue());
+            }
         }
 
         return $query->getResult();
-    }
-
-    public function findByDate($date) {
-        $dateTo = clone $date;
-        $dateTo->modify("+1 day");
-
-        return $this->findByDateInterval($date, $dateTo);
     }
 
     public function findByFilter($filter) {

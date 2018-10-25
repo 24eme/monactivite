@@ -38,7 +38,7 @@ class ActivityController extends Controller
         }
         $query = $request->get('q');
 
-        $activities = $repo->findByDatesInterval($dateFromQuery, $dateTo, $nbDays, $query);
+        $activities = $repo->findByDatesIntervalByDays($dateFromQuery, $dateTo, $query, $nbDays);
         $activitiesByDates = $am->createView($activities);
 
         $dateNext = null;
