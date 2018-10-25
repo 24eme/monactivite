@@ -22,7 +22,6 @@
         "incenteev/composer-parameter-handler": "~2.0",
         "lasso/mail-parser-bundle": "dev-master",
         "html2text/html2text": "dev-master",
-        "fguillot/picofeed": "0.1.3",
         "doctrine/doctrine-fixtures-bundle": "^2.2",
         "luxifer/doctrine-functions": "dev-master",
         "sabre/vobject": "^4.1",
