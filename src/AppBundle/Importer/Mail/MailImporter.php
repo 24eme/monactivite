@@ -255,7 +255,7 @@ class MailImporter extends Importer
 
         $line = "";
         $handle = fopen($path, "r");
-        for($i=1; $i<20; $i++) { $line .= fgets($handle); }
+        for($i=1; $i<200; $i++) { $line .= fgets($handle); }
         fclose($handle);
 
         if(!preg_match("/Message-ID/i", $line)) {
