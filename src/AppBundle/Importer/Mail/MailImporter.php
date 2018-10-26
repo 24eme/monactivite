@@ -62,7 +62,7 @@ class MailImporter extends Importer
             if($nbLigne <= $lineToStart) {
                 continue;
             }
-            if(preg_match('/^(From .?$|From - )/', $line)) {
+            if(preg_match('/^(From .?$|From - |From [^@ ]+@[^@ ]+ )/', $line)) {
                 if($mail && $start) {
                     if($this->importMail($mail, $source, $output, $dryrun, $checkExist)) {
                         $nb++;
@@ -75,8 +75,9 @@ class MailImporter extends Importer
                 $start = true;
                 continue;
             }
-
-            $mail .= $line;
+            if (!preg_match('/^>From /', $line)) {
+              $mail .= $line;
+            }
         }
         if($mail && $start) {
             if($this->importMail($mail, $source, $output, $dryrun, $checkExist)) { $nb++; }
