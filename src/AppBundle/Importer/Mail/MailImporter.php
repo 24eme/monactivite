@@ -248,8 +248,8 @@ class MailImporter extends Importer
 
         $path = ($source->getParameter("path")) ? $source->getParameter("path") : $source->getSource();
 
-        if(!file_exists($path)) {
-            throw new \Exception(sprintf("File %s doesn't exist", $path));
+        if(!is_readable($path)) {
+            throw new \Exception(sprintf("File %s doesn't exist or is not readable", $path));
         }
 
         $line = "";
