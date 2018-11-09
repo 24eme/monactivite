@@ -171,23 +171,25 @@ class ActivityRepository extends EntityRepository
                 $query
                     ->setParameter('q'.$key.'value', $value);
             } elseif($name == 'tag') {
-                $queriesFilter[] = $query->expr()->like('aqt.'.$name, ':q'.$key.'value');
                 $query
                     ->leftJoin('aq.tags', 'aqt'.$key)
                     ->setParameter('q'.$key.'value', $value);
+
+                $queriesFilter[] = $query->expr()->like('aqt'.$key.'.name', ':q'.$key.'value');
             } elseif($name == "*") {
                 $keyJoin = uniqid();
-                $queriesFilter[] = $query->expr()->orX(
-                    $query->expr()->like('aq.title', ':value'),
-                    $query->expr()->like('aq.content', ':value'),
-                    $query->expr()->like("aqa".$keyJoin.'.value', ':value'),
-                    $query->expr()->like("aqt".$keyJoin.'.name', ':value')
-                );
 
                 $query
                     ->leftJoin('aq.attributes', "aqa".$keyJoin)
                     ->leftJoin('aq.tags', 'aqt'.$keyJoin)
                     ->setParameter(':value', "%".$value."%");
+
+                $queriesFilter[] = $query->expr()->orX(
+                        $query->expr()->like('aq.title', ':value'),
+                        $query->expr()->like('aq.content', ':value'),
+                        $query->expr()->like("aqa".$keyJoin.'.value', ':value'),
+                        $query->expr()->like("aqt".$keyJoin.'.name', ':value')
+                    );
             } else {
                 $queriesFilter[] = $query->expr()->andX(
                     $query->expr()->like('aqa'.$key.'.value', ':q'.$key.'value'),
