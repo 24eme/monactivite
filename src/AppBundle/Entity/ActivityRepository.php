@@ -137,7 +137,12 @@ class ActivityRepository extends EntityRepository
     public function searchQueryToQueryDoctrine($searchQuery, $dateFrom = null, $dateTo = null) {
         $terms = explode(" ", $searchQuery);
         $params = array();
+        $operateur = "and";
         foreach($terms as $term) {
+            if($term == "OR") {
+                $operateur = "or";
+                continue;
+            }
             $param = explode(":", $term);
             if(count($param) < 2) {
               $param[1] = $param[0];
@@ -156,38 +161,45 @@ class ActivityRepository extends EntityRepository
                   ->setParameter('date_to', $dateTo);
         }
 
+        $queriesFilter = array();
         foreach($params as $key => $param) {
             $name = $param[0];
             $value = str_replace('*', '%', $param[1]);
 
             if($name == 'title' || $name == 'content') {
+                $queriesFilter[] = $query->expr()->like('aq.'.$name, ':q'.$key.'value');
                 $query
-                    ->andwhere('aq.'.$name.' LIKE :q'.$key.'value')
                     ->setParameter('q'.$key.'value', $value);
             } elseif($name == 'tag') {
+                $queriesFilter[] = $query->expr()->like('aqt.'.$name, ':q'.$key.'value');
                 $query
                     ->leftJoin('aq.tags', 'aqt'.$key)
-                    ->andWhere('aqt'.$key.'.name LIKE :q'.$key.'value')
                     ->setParameter('q'.$key.'value', $value);
             } elseif($name == "*") {
                 $keyJoin = uniqid();
+                $queriesFilter[] = $query->expr()->orX(
+                    $query->expr()->like('aq.title', ':value'),
+                    $query->expr()->like('aq.content', ':value'),
+                    $query->expr()->like("aqa".$keyJoin.'.value', ':value'),
+                    $query->expr()->like("aqt".$keyJoin.'.name', ':value')
+                );
+
                 $query
                     ->leftJoin('aq.attributes', "aqa".$keyJoin)
                     ->leftJoin('aq.tags', 'aqt'.$keyJoin)
-                    ->andWhere($query->expr()->orX(
-                        $query->expr()->like('aq.title', ':value'),
-                        $query->expr()->like('aq.content', ':value'),
-                        $query->expr()->like("aqa".$keyJoin.'.value', ':value'),
-                        $query->expr()->like("aqt".$keyJoin.'.name', ':value')
-                    ))->setParameter(':value', "%".$value."%");
+                    ->setParameter(':value', "%".$value."%");
             } else {
+                $queriesFilter[] = $query->expr()->andX(
+                    $query->expr()->like('aqa'.$key.'.value', ':q'.$key.'value'),
+                    $query->expr()->like('aqa'.$key.'.name', ':q'.$key.'name')
+                );
                 $query->leftJoin('aq.attributes', 'aqa'.$key)
-                  ->andwhere('aqa'.$key.'.value LIKE :q'.$key.'value')
-                  ->andWhere('aqa'.$key.'.name LIKE :q'.$key.'name')
                   ->setParameter('q'.$key.'name', $name)
                   ->setParameter('q'.$key.'value', $value);
             }
         }
+
+        $query->andWhere(call_user_func_array(array($query->expr(), $operateur."X"), $queriesFilter));
 
         return $query;
     }
