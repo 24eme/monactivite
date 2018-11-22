@@ -46,6 +46,28 @@ class ActivityTest extends KernelTestCase
 
 
         $this->assertSame($activity->toCSV(), '2018-01-24 08:09:10;Commit,Project;"Test titre";Author:Moi,Type:Commit;"Test contenu\nTest contenu"');
+
+        $repo = $this->container->get('doctrine.orm.entity_manager')->getRepository('AppBundle:Activity');
+
+        $this->assertSame($repo->normalizeQuery("Vincent Laurent"), "Vincent AND Laurent");
+        $this->assertSame($repo->normalizeQuery("\"Vincent Laurent\""), "Vincent Laurent");
+        $this->assertSame($repo->normalizeQuery("Sender:\"V. LAURENT\""), "Sender:V. LAURENT");
+        $this->assertSame($repo->normalizeQuery("Sender:V. LAURENT"), "Sender:V. AND LAURENT");
+        $this->assertSame($repo->normalizeQuery("Vincent OR LAURENT"), "Vincent OR LAURENT");
+
+        $this->assertSame($repo->normalizeQuery("Vincent Laurent OR winy Receiver:vlaurent@24eme.fr \"Laurent Vincent\" AND vince Sender:\"V. LAURENT\" Type:Commit"), "Vincent AND Laurent OR winy AND Receiver:vlaurent@24eme.fr AND Laurent Vincent AND vince AND Sender:V. LAURENT AND Type:Commit");
+
+
+        $this->assertSame($repo->queryToArray("Vincent"), array(array('*', 'Vincent')));
+        $this->assertSame($repo->queryToArray("Vincent LAURENT"), array(array('*', 'Vincent'), array('*', 'LAURENT')));
+        $this->assertSame($repo->queryToArray("\"Vincent LAURENT\""), array(array('*', 'Vincent LAURENT')));
+        $this->assertSame($repo->queryToArray("Sender:Vincent LAURENT"), array(array('Sender', 'Vincent'), array('*', 'LAURENT')));
+        $this->assertSame($repo->queryToArray("Sender:\"Vincent LAURENT\""), array(array('Sender', 'Vincent LAURENT')));
+        $this->assertSame($repo->queryToArray("Sender:\"Vincent LAURENT\""), array(array('Sender', 'Vincent LAURENT')));
+        $this->assertSame($repo->queryToArray("Vincent OR LAURENT"), array(array('*', 'Vincent'), array('*', 'LAURENT')));
+        $this->assertSame($repo->queryToHierarchy("Vincent LAURENT"), "and");
+        $this->assertSame($repo->queryToHierarchy("Vincent AND LAURENT"), "and");
+        $this->assertSame($repo->queryToHierarchy("Vincent OR LAURENT"), "or");
     }
 
 }

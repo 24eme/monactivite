@@ -134,22 +134,61 @@ class ActivityRepository extends EntityRepository
         return $query->getResult();
     }
 
-    public function searchQueryToQueryDoctrine($searchQuery, $dateFrom = null, $dateTo = null) {
-        $terms = explode(" ", $searchQuery);
+    public function normalizeQuery($query) {
+        $queryNormalized = null;
+        $defaultOperator = " AND ";
+        $operator = $defaultOperator;
+
+        $mainParts = preg_split("/:/", $query);
+        foreach($mainParts as $mainPart) {
+            $parts = str_getcsv($mainPart, " ", '"');
+            foreach($parts as $part) {
+                if(!$part) {
+                    continue;
+                }
+                if(in_array($part, array("OR", "AND"))) {
+                    $operator = " ".$part." ";
+                    continue;
+                }
+
+                if($queryNormalized) {
+                    $queryNormalized .= $operator;
+                    $operator = $defaultOperator;
+                }
+
+                $queryNormalized .= $part;
+            }
+            $operator = ":";
+        }
+
+        return $queryNormalized;
+    }
+
+    public function queryToArray($searchQuery) {
+        $queryNormalized = $this->normalizeQuery($searchQuery);
+        $terms = preg_split("/ (AND|OR) /", $queryNormalized);
         $params = array();
         $operateur = "and";
         foreach($terms as $term) {
-            if($term == "OR") {
-                $operateur = "or";
-                continue;
-            }
-            $param = explode(":", $term);
+            $param = explode(":", trim($term));
             if(count($param) < 2) {
               $param[1] = $param[0];
               $param[0] = '*';
             }
             array_push($params, $param);
         }
+
+        return $params;
+    }
+
+    public function queryToHierarchy($searchQuery) {
+
+        return (preg_match('/ OR /', $searchQuery)) ? "or" : "and";
+    }
+
+    public function searchQueryToQueryDoctrine($searchQuery, $dateFrom = null, $dateTo = null) {
+        $params = $this->queryToArray($searchQuery);
+        $operateur = $this->queryToHierarchy($searchQuery);
 
         $query = $this->getEntityManager()->createQueryBuilder()
                                  ->select('aq')
