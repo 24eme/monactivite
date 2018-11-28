@@ -63,4 +63,4 @@ Contribuer
 
 Lancer les tests unitaires
 
-> phpunit -c app/
+> phpunit
