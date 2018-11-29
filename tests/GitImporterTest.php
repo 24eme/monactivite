@@ -123,6 +123,7 @@ class GitImporterTest extends KernelTestCase
         $repoDir = "git_repo.git";
         $gitUri = "file://".$testTmpDir."/".$repoDir;
 
+        shell_exec("rm -rf ".$importer->getVarDir()."/".$slugger->slugify($gitUri));
         shell_exec("mkdir ".$testTmpDir." 2> /dev/null; cd ".$testTmpDir."; rm -rf git_repo*; mkdir ".$repoDir." 2> /dev/null; cd ".$repoDir."; git init --bare; cd -; git clone ".$gitUri." git_repo_clone > /dev/null 2>&1; cd git_repo_clone; echo \"coucou\" > test; git add test; git commit -m \"test\" > /dev/null 2>&1; git push > /dev/null 2>&1");
 
         $source = new Source();
@@ -150,11 +151,12 @@ class GitImporterTest extends KernelTestCase
 
         shell_exec("cd ".$testTmpDir."/git_repo_clone; echo \"coucou2\" > test2; git add test2; git commit -m \"test2\" > /dev/null 2>&1; git push > /dev/null 2>&1");
 
+        $em->getUnitOfWork()->clear();
         $importer->run($source, new NullOutput(), true, false);
 
         $activities = $this->getActivitiesInsertions($em);
 
-        $this->assertCount(1, $activities);
+        $this->assertCount(2, $activities);
     }
 
     public function getActivitiesInsertions($em) {
