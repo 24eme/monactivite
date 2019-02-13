@@ -181,7 +181,7 @@ class GitImporter extends Importer
             shell_exec(sprintf("cd %s; git clone %s %s --bare > /dev/null 2>&1", $this->getVarDir(), $uri, $dirName));
         }
 
-        shell_exec(sprintf("cd %s; git fetch origin *:* > /dev/null 2>&1", $path));
+        shell_exec(sprintf("cd %s; git fetch origin *:* -f > /dev/null 2>&1", $path));
     }
 
     protected function getPath($source) {
