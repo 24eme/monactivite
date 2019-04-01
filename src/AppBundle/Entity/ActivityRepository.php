@@ -168,7 +168,6 @@ class ActivityRepository extends EntityRepository
         $queryNormalized = $this->normalizeQuery($searchQuery);
         $terms = preg_split("/ (AND|OR) /", $queryNormalized);
         $params = array();
-        $operateur = "and";
         foreach($terms as $term) {
             $param = explode(":", trim($term));
             if(count($param) < 2) {
@@ -182,23 +181,25 @@ class ActivityRepository extends EntityRepository
     }
 
     public function queryToHierarchy($searchQuery) {
+        $queryNormalized = $this->normalizeQuery($searchQuery);
+        $operators = preg_match_all("/ (AND|OR) /", $queryNormalized, $matches);
 
-        return (preg_match('/ OR /', $searchQuery)) ? "or" : "and";
+        $operators = array();
+
+        foreach($matches[1] as $operator) {
+            $operators[] = strtolower($operator);
+        }
+
+        return $operators;
     }
 
     public function searchQueryToQueryDoctrine($searchQuery, $dateFrom = null, $dateTo = null) {
         $params = $this->queryToArray($searchQuery);
-        $operateur = $this->queryToHierarchy($searchQuery);
+        $operators = $this->queryToHierarchy($searchQuery);
 
         $query = $this->getEntityManager()->createQueryBuilder()
                                  ->select('aq')
                                  ->from('AppBundle:Activity', 'aq');
-
-        if($dateTo && $dateFrom) {
-            $query->andWhere("aq.executedAt >= :date_to AND aq.executedAt <= :date_from")
-                  ->setParameter('date_from', $dateFrom)
-                  ->setParameter('date_to', $dateTo);
-        }
 
         $queriesFilter = array();
         foreach($params as $key => $param) {
@@ -206,28 +207,27 @@ class ActivityRepository extends EntityRepository
             $value = str_replace('*', '%', $param[1]);
 
             if($name == 'title' || $name == 'content') {
-                $queriesFilter[] = $query->expr()->like('aq.'.$name, ':q'.$key.'value');
-                $query
-                    ->setParameter('q'.$key.'value', $value);
+                $queriesFilter[] = $query->expr()->like('(aq.'.$name, ':q'.$key.'value)');
+                $query->setParameter('q'.$key.'value', $value);
             } elseif($name == 'tag') {
                 $query
                     ->leftJoin('aq.tags', 'aqt'.$key)
                     ->setParameter('q'.$key.'value', $value);
 
-                $queriesFilter[] = $query->expr()->like('aqt'.$key.'.name', ':q'.$key.'value');
+                $queriesFilter[] = $query->expr()->like('(aqt'.$key.'.name', ':q'.$key.'value)');
             } elseif($name == "*") {
                 $keyJoin = uniqid();
 
                 $query
                     ->leftJoin('aq.attributes', "aqa".$keyJoin)
                     ->leftJoin('aq.tags', 'aqt'.$keyJoin)
-                    ->setParameter(':value', "%".$value."%");
+                    ->setParameter(':q'.$key.'value', "%".$value."%");
 
                 $queriesFilter[] = $query->expr()->orX(
-                        $query->expr()->like('aq.title', ':value'),
-                        $query->expr()->like('aq.content', ':value'),
-                        $query->expr()->like("aqa".$keyJoin.'.value', ':value'),
-                        $query->expr()->like("aqt".$keyJoin.'.name', ':value')
+                        $query->expr()->like('aq.title', ':q'.$key.'value'),
+                        $query->expr()->like('aq.content', ':q'.$key.'value'),
+                        $query->expr()->like("aqa".$keyJoin.'.value', ':q'.$key.'value'),
+                        $query->expr()->like("aqt".$keyJoin.'.name', ':q'.$key.'value')
                     );
             } else {
                 $queriesFilter[] = $query->expr()->andX(
@@ -240,7 +240,31 @@ class ActivityRepository extends EntityRepository
             }
         }
 
-        $query->andWhere(call_user_func_array(array($query->expr(), $operateur."X"), $queriesFilter));
+        $query->andWhere(call_user_func_array(array($query->expr(), "andX"), $queriesFilter));
+        $whereDQLOrigin = $query->getDQLPart("where");
+
+        $whereDQLOrigin = preg_replace("/(^\(|\)$)/", "", $whereDQLOrigin);
+        $whereParts = preg_split("/\) AND \(/", $whereDQLOrigin);
+
+        $whereDQL = "";
+        foreach($whereParts as $index => $wherePart) {
+            $whereDQL .= "(".trim($wherePart).")";
+            if(isset($operators[$index])) {
+                $whereDQL .= " ".trim(strtoupper($operators[$index]))." ";
+            }
+        }
+        if($dateTo && $dateFrom) {
+            $whereDQLDate = "aq.executedAt >= :date_to AND aq.executedAt <= :date_from";
+            $query->setParameter('date_from', $dateFrom)
+                  ->setParameter('date_to', $dateTo);
+        }
+
+        if($whereDQLDate && $whereDQL) {
+            $whereDQL = "(".$whereDQLDate .") AND (". $whereDQL.")";
+        } else {
+            $whereDQL = $whereDQLDate;
+        }
+        $query->add("where", $whereDQL);
 
         return $query;
     }
