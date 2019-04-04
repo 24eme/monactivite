@@ -155,7 +155,6 @@ class ActivityRepository extends EntityRepository
                     $queryNormalized .= $operator;
                     $operator = $defaultOperator;
                 }
-
                 $queryNormalized .= $part;
             }
             $operator = ":";
@@ -169,7 +168,8 @@ class ActivityRepository extends EntityRepository
         $terms = preg_split("/ (AND|OR) /", $queryNormalized);
         $params = array();
         foreach($terms as $term) {
-            $param = explode(":", trim($term));
+            $term = preg_replace("/(^\(+|\)+$)/", "", trim($term));
+            $param = explode(":", $term);
             if(count($param) < 2) {
               $param[1] = $param[0];
               $param[0] = '*';
@@ -182,12 +182,31 @@ class ActivityRepository extends EntityRepository
 
     public function queryToHierarchy($searchQuery) {
         $queryNormalized = $this->normalizeQuery($searchQuery);
-        $operators = preg_match_all("/ (AND|OR) /", $queryNormalized, $matches);
+        preg_match_all("/( AND | OR |\(|\))/", $queryNormalized, $matches);
 
         $operators = array();
 
+        $bufferPrev = null;
+        $bufferNext = null;
         foreach($matches[1] as $operator) {
-            $operators[] = strtolower($operator);
+            if($operator == "(") {
+                $bufferPrev .= $operator;
+                continue;
+            }
+            if($operator == ")") {
+                $bufferNext .= $operator;
+                continue;
+            }
+            if(count($operators)) {
+                $operators[count($operators) - 1] .= $bufferNext;
+            }
+            $operators[] = $bufferPrev.strtolower(trim($operator));
+            $bufferPrev = null;
+            $bufferNext = null;
+        }
+
+        if(count($operators)) {
+            $operators[count($operators) - 1] .= $bufferNext;
         }
 
         return $operators;
@@ -247,10 +266,21 @@ class ActivityRepository extends EntityRepository
         $whereParts = preg_split("/\) AND \(/", $whereDQLOrigin);
 
         $whereDQL = "";
+        $startPrefix = null;
+        $endPrefix = null;
+
         foreach($whereParts as $index => $wherePart) {
-            $whereDQL .= "(".trim($wherePart).")";
             if(isset($operators[$index])) {
-                $whereDQL .= " ".trim(strtoupper($operators[$index]))." ";
+                $startPrefix = preg_replace("/(or|and).*$/", "", $operators[$index]);
+            }
+            $whereDQL .= $startPrefix."(".trim($wherePart).")".$endPrefix;
+            $startPrefix = null;
+            $endPrefix = null;
+            if(isset($operators[$index])) {
+                $whereDQL .= " ".trim(strtoupper(preg_replace("/[()]+/", "", $operators[$index])))." ";
+            }
+            if(isset($operators[$index])) {
+                $endPrefix = preg_replace("/^.*(or|and)/", "", $operators[$index]);
             }
         }
         if($dateTo && $dateFrom) {

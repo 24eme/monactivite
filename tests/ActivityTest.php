@@ -67,11 +67,16 @@ class ActivityTest extends KernelTestCase
         $this->assertSame($repo->queryToArray("Sender:\"Vincent LAURENT\""), array(array('Sender', 'Vincent LAURENT')));
         $this->assertSame($repo->queryToArray("Sender:\"Vincent LAURENT\""), array(array('Sender', 'Vincent LAURENT')));
         $this->assertSame($repo->queryToArray("Vincent OR LAURENT"), array(array('*', 'Vincent'), array('*', 'LAURENT')));
+        $this->assertSame($repo->queryToArray("(Vincent OR LAURENT) AND Paris"), array(array('*', 'Vincent'), array('*', 'LAURENT'), array('*', 'Paris')));
+
         $this->assertSame($repo->queryToHierarchy(""), array());
         $this->assertSame($repo->queryToHierarchy("Vincent LAURENT Paris"), array("and", "and"));
         $this->assertSame($repo->queryToHierarchy("Vincent AND LAURENT"), array("and"));
         $this->assertSame($repo->queryToHierarchy("Vincent OR LAURENT"), array("or"));
         $this->assertSame($repo->queryToHierarchy("Vincent LAURENT OR Paris AND 10"), array("and", "or", "and"));
+        $this->assertSame($repo->queryToHierarchy("(Vincent LAURENT)"), array("(and)"));
+        $this->assertSame($repo->queryToHierarchy("(Vincent OR LAURENT) AND Paris"), array("(or)", "and"));
+        $this->assertSame($repo->queryToHierarchy("((Vincent OR LAURENT) AND (Paris AND Commmit))"), array("((or)", "and", "(and))"));
 
         $queryDateQDL = "\(aq\.executedAt >= :date_to AND aq\.executedAt <= :date_from\)";
         $queryPartGenericDQL="\(aq\.title LIKE :q[0-9]+value OR aq\.content LIKE :q[0-9]+value OR [a-z0-9]+\.value LIKE :q[0-9]+value OR [a-z0-9]+\.name LIKE :q[0-9]+value\)";
@@ -80,9 +85,6 @@ class ActivityTest extends KernelTestCase
         $queryPartTagDQL="\(aqt[0-9]+.name LIKE :q[0-9]+value\)";
 
         $queryResult = $repo->searchQueryToQueryDoctrine("Vincent LAURENT OR Paris", "2018-01-01", "2019-01-01");
-
-        $this->count($queryResult->getParameters(), 2+3);
-
         $this->assertRegExp('/'.$queryDateQDL.' AND \('.$queryPartGenericDQL.' AND '.$queryPartGenericDQL.' OR '.$queryPartGenericDQL.'\)/', $queryResult->getDQLPart("where"));
 
         $queryResult = $repo->searchQueryToQueryDoctrine("Sender:test@mail.org OR Author:\"Vincent LAURENT\"", "2018-01-01", "2019-01-01");
@@ -93,6 +95,9 @@ class ActivityTest extends KernelTestCase
 
         $queryResult = $repo->searchQueryToQueryDoctrine("title:Bonjour content:Cordialement", "2018-01-01", "2019-01-01");
         $this->assertRegExp('/'.$queryDateQDL.' AND \('.$queryPartContentDQL.' AND '.$queryPartContentDQL.'\)/', $queryResult->getDQLPart("where"));
+
+        $queryResult = $repo->searchQueryToQueryDoctrine("(title:Bonjour OR content:Cordialement) AND (Type:Commit OR Type:Mail)", "2018-01-01", "2019-01-01");
+        $this->assertRegExp('/'.$queryDateQDL.' AND \(\('.$queryPartContentDQL.' OR '.$queryPartContentDQL.'\) AND \('.$queryPartAttributeDQL.' OR '.$queryPartAttributeDQL.'\)\)/', $queryResult->getDQLPart("where"));
     }
 
 }
