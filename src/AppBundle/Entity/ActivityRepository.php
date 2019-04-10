@@ -137,7 +137,7 @@ class ActivityRepository extends EntityRepository
     public function normalizeQuery($query) {
         $queryNormalized = null;
         $defaultOperator = " AND ";
-        $operator = $defaultOperator;
+        $operator = null;
 
         $mainParts = preg_split("/:/", $query);
         foreach($mainParts as $mainPart) {
@@ -151,10 +151,14 @@ class ActivityRepository extends EntityRepository
                     continue;
                 }
 
-                if($queryNormalized) {
-                    $queryNormalized .= $operator;
-                    $operator = $defaultOperator;
+                if((in_array($operator, array(" OR ", " AND ")) || is_null($queryNormalized)) && in_array($part, array("NOT"))) {
+                    $operator .= $part." ";
+                    continue;
                 }
+
+                $queryNormalized .= $operator;
+                $operator = $defaultOperator;
+
                 $queryNormalized .= $part;
             }
             $operator = ":";
@@ -168,12 +172,18 @@ class ActivityRepository extends EntityRepository
         $terms = preg_split("/ (AND|OR) /", $queryNormalized);
         $params = array();
         foreach($terms as $term) {
-            $term = preg_replace("/(^\(+|\)+$)/", "", trim($term));
-            $param = explode(":", $term);
+            $termCleaned = preg_replace("/(^\(+|\)+$)/", "", trim($term));
+            $termCleaned = preg_replace("/^NOT /", "", $termCleaned);
+            $param = explode(":", $termCleaned);
             if(count($param) < 2) {
               $param[1] = $param[0];
               $param[0] = '*';
             }
+
+            if(preg_match("/^[\(\)]*NOT /", $term)) {
+                $param[2] = "not";
+            }
+
             array_push($params, $param);
         }
 
@@ -212,58 +222,75 @@ class ActivityRepository extends EntityRepository
         return $operators;
     }
 
-    public function searchQueryToQueryDoctrine($searchQuery, $dateFrom = null, $dateTo = null) {
+    public function searchQueryToQueryDoctrine($searchQuery, $dateFrom = null, $dateTo = null, $prefix = 'aq') {
         $params = $this->queryToArray($searchQuery);
         $operators = $this->queryToHierarchy($searchQuery);
-
         $query = $this->getEntityManager()->createQueryBuilder()
-                                 ->select('aq')
-                                 ->from('AppBundle:Activity', 'aq');
+                                 ->select($prefix)
+                                 ->from('AppBundle:Activity', $prefix);
 
         $queriesFilter = array();
+        $subqueriesFilter = array();
         foreach($params as $key => $param) {
             $name = $param[0];
             $value = str_replace('*', '%', $param[1]);
+            $not = (isset($param[2]) && $param[2] == "not");
+
+            if($not) {
+                $subquery = $this->searchQueryToQueryDoctrine($name.":".$value, $dateFrom, $dateTo, $prefix.$key);
+                $subqueriesFilter[] = $query->expr()->notIn($prefix.'.id', $subquery->getDQL());
+                foreach($subquery->getParameters() as $p) {
+                    $query->setParameter($p->getName(), $p->getValue());
+                }
+                $queriesFilter[] = "(%subquery".(count($subqueriesFilter)-1)."%)";
+                continue;
+            }
+
+            $queryToAdd = null;
 
             if($name == 'title' || $name == 'content') {
-                $queriesFilter[] = $query->expr()->like('(aq.'.$name, ':q'.$key.'value)');
-                $query->setParameter('q'.$key.'value', $value);
+                $queryToAdd = $query->expr()->like('('.$prefix.'.'.$name, ':'.$prefix.$key.'value)');
+                $query->setParameter($prefix.$key.'value', $value);
             } elseif($name == 'tag') {
                 $query
-                    ->leftJoin('aq.tags', 'aqt'.$key)
-                    ->setParameter('q'.$key.'value', $value);
+                    ->leftJoin($prefix.'.tags', $prefix.'t'.$key)
+                    ->setParameter($prefix.$key.'value', $value);
 
-                $queriesFilter[] = $query->expr()->like('(aqt'.$key.'.name', ':q'.$key.'value)');
+                $queryToAdd = $query->expr()->like('('.$prefix.'t'.$key.'.name', ':'.$prefix.$key.'value)');
             } elseif($name == "*") {
                 $keyJoin = uniqid();
 
                 $query
-                    ->leftJoin('aq.attributes', "aqa".$keyJoin)
-                    ->leftJoin('aq.tags', 'aqt'.$keyJoin)
-                    ->setParameter(':q'.$key.'value', "%".$value."%");
+                    ->leftJoin($prefix.'.attributes', $prefix.'a'.$keyJoin)
+                    ->leftJoin($prefix.'.tags', $prefix.'t'.$keyJoin)
+                    ->setParameter($prefix.$key.'value', "%".$value."%");
 
-                $queriesFilter[] = $query->expr()->orX(
-                        $query->expr()->like('aq.title', ':q'.$key.'value'),
-                        $query->expr()->like('aq.content', ':q'.$key.'value'),
-                        $query->expr()->like("aqa".$keyJoin.'.value', ':q'.$key.'value'),
-                        $query->expr()->like("aqt".$keyJoin.'.name', ':q'.$key.'value')
+                $queryToAdd = $query->expr()->orX(
+                        $query->expr()->like($prefix.'.title', ':'.$prefix.$key.'value'),
+                        $query->expr()->like($prefix.'.content', ':'.$prefix.$key.'value'),
+                        $query->expr()->like($prefix.'a'.$keyJoin.'.value', ':'.$prefix.$key.'value'),
+                        $query->expr()->like($prefix.'t'.$keyJoin.'.name', ':'.$prefix.$key.'value')
                     );
             } else {
-                $queriesFilter[] = $query->expr()->andX(
-                    $query->expr()->like('aqa'.$key.'.value', ':q'.$key.'value'),
-                    $query->expr()->like('aqa'.$key.'.name', ':q'.$key.'name')
+                $queryToAdd = $query->expr()->andX(
+                    $query->expr()->like($prefix.'a'.$key.'.value', ':'.$prefix.$key.'value'),
+                    $query->expr()->like($prefix.'a'.$key.'.name', ':'.$prefix.$key.'name')
                 );
-                $query->leftJoin('aq.attributes', 'aqa'.$key)
-                  ->setParameter('q'.$key.'name', $name)
-                  ->setParameter('q'.$key.'value', $value);
+                $query->leftJoin($prefix.'.attributes', $prefix.'a'.$key)
+                  ->setParameter($prefix.$key.'name', $name)
+                  ->setParameter($prefix.$key.'value', $value);
             }
+
+            $queriesFilter[] = $queryToAdd;
         }
 
         $query->andWhere(call_user_func_array(array($query->expr(), "andX"), $queriesFilter));
         $whereDQLOrigin = $query->getDQLPart("where");
 
         $whereDQLOrigin = preg_replace("/(^\(|\)$)/", "", $whereDQLOrigin);
+
         $whereParts = preg_split("/\) AND \(/", $whereDQLOrigin);
+
 
         $whereDQL = "";
         $startPrefix = null;
@@ -284,16 +311,22 @@ class ActivityRepository extends EntityRepository
             }
         }
         if($dateTo && $dateFrom) {
-            $whereDQLDate = "aq.executedAt >= :date_to AND aq.executedAt <= :date_from";
+            $whereDQLDate = $prefix.".executedAt >= :date_to AND ".$prefix.".executedAt <= :date_from";
             $query->setParameter('date_from', $dateFrom)
                   ->setParameter('date_to', $dateTo);
         }
 
         if($whereDQLDate && $whereDQL) {
             $whereDQL = "(".$whereDQLDate .") AND (". $whereDQL.")";
-        } else {
+        } elseif($whereDQLDate) {
             $whereDQL = $whereDQLDate;
         }
+
+        foreach($subqueriesFilter as $key => $subquery) {
+            $whereDQL = str_replace("%subquery".$key."%", $subquery, $whereDQL);
+
+        }
+
         $query->add("where", $whereDQL);
 
         return $query;
