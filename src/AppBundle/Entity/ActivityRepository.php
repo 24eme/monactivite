@@ -310,10 +310,14 @@ class ActivityRepository extends EntityRepository
                 $endPrefix = preg_replace("/^.*(or|and)/", "", $operators[$index]);
             }
         }
-        if($dateTo && $dateFrom) {
+
+	    if($dateTo && $dateFrom) {
             $whereDQLDate = $prefix.".executedAt >= :date_to AND ".$prefix.".executedAt <= :date_from";
+
             $query->setParameter('date_from', $dateFrom)
                   ->setParameter('date_to', $dateTo);
+        } else {
+            $whereDQLDate = "1 = 1";
         }
 
         if($whereDQLDate && $whereDQL) {
