@@ -50,9 +50,14 @@ class Tag
     private $icon;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Activity", mappedBy="tags")
-     **/
-    private $activities;
+     * @var string
+     *
+     * @ORM\Column(name="special", type="string", length=255, nullable=true)
+     */
+    private $special;
+
+    const SPECIAL_DELETED = 'DELETED';
+    const SPECIAL_TYPE = 'TYPE';
 
     /**
      * Get id
@@ -137,40 +142,6 @@ class Tag
      */
     public function __construct()
     {
-        $this->activities = new \Doctrine\Common\Collections\ArrayCollection();
-    }
-
-    /**
-     * Add activities
-     *
-     * @param \AppBundle\Entity\Activity $activities
-     * @return Tag
-     */
-    public function addActivity(\AppBundle\Entity\Activity $activities)
-    {
-        $this->activities[] = $activities;
-
-        return $this;
-    }
-
-    /**
-     * Remove activities
-     *
-     * @param \AppBundle\Entity\Activity $activities
-     */
-    public function removeActivity(\AppBundle\Entity\Activity $activities)
-    {
-        $this->activities->removeElement($activities);
-    }
-
-    /**
-     * Get activities
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getActivities()
-    {
-        return $this->activities;
     }
 
     public function __toString() {
@@ -204,6 +175,18 @@ class Tag
         }
 
         return $this->colorText;
+    }
+
+    public function setSpecial($special)
+    {
+        $this->special = $special;
+
+        return $this;
+    }
+
+    public function getSpecial() {
+
+        return $this->special;
     }
 
     public function toConfig() {

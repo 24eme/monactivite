@@ -60,12 +60,13 @@ class ActivityRepository extends EntityRepository
                     ->createQuery('
                           SELECT DATE(a.executedAt) as date
                           FROM AppBundle:Activity a
-                          WHERE a.executedAt >= :date_to AND a.executedAt <= :date_from'.$querySearchDQL.'
+                          WHERE a.executedAt >= :date_to AND a.executedAt <= :date_from'.$querySearchDQL.' AND a.deleted = :deleted
                           GROUP BY date
                           ORDER BY a.executedAt DESC
                       ')
                     ->setParameter('date_from', $dateFrom)
-                    ->setParameter('date_to', $dateTo);
+                    ->setParameter('date_to', $dateTo)
+                    ->setParameter('deleted', false);
 
         if($nbDaysMax) {
             $query->setMaxResults($nbDaysMax);
@@ -99,11 +100,12 @@ class ActivityRepository extends EntityRepository
                     FROM AppBundle:Activity a
                     LEFT JOIN a.attributes aa
                     LEFT JOIN a.tags at
-                    WHERE a.executedAt >= :date_to AND a.executedAt <= :date_from'.$querySearchDQL.'
+                    WHERE a.executedAt >= :date_to AND a.executedAt <= :date_from AND a.deleted = :deleted'.$querySearchDQL.'
                     ORDER BY a.executedAt DESC
                       ')
                     ->setParameter('date_from', $dateFrom)
-                    ->setParameter('date_to', $dateTo);
+                    ->setParameter('date_to', $dateTo)
+                    ->setParameter('deleted', false);
 
         if($querySearch) {
             foreach($querySearch->getParameters() as $p) {
@@ -124,8 +126,9 @@ class ActivityRepository extends EntityRepository
                           WHERE a NOT IN (SELECT asub FROM AppBundle:Activity asub JOIN asub.tags tsub WITH tsub = :tag)
                             AND a IN('.$querySearch->getDQL().')
                           ORDER BY a.executedAt DESC
-                     ')
-                    ->setParameter('tag', $filter->getTag());
+                     ');
+
+        $query->setParameter('tag', $filter->getTag());
 
         foreach($querySearch->getParameters() as $p) {
             $query->setParameter($p->getName(), $p->getValue());
@@ -311,14 +314,21 @@ class ActivityRepository extends EntityRepository
             }
         }
 
+        $whereDQLDate = null;
 	    if($dateTo && $dateFrom) {
             $whereDQLDate = $prefix.".executedAt >= :date_to AND ".$prefix.".executedAt <= :date_from";
 
             $query->setParameter('date_from', $dateFrom)
                   ->setParameter('date_to', $dateTo);
-        } else {
-            $whereDQLDate = "1 = 1";
         }
+
+        if($whereDQLDate) {
+            $whereDQLDate .= " AND ";
+        }
+
+        $whereDQLDate .= $prefix.".deleted = :deleted";
+
+        $query->setParameter('deleted', false);
 
         if($whereDQLDate && $whereDQL) {
             $whereDQL = "(".$whereDQLDate .") AND (". $whereDQL.")";

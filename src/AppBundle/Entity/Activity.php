@@ -51,16 +51,23 @@ class Activity
     private $slug;
 
     /**
+     * @var boolean
+     *
+     * @ORM\Column(name="deleted", type="boolean")
+     */
+    private $deleted;
+
+    /**
      * @ORM\OneToMany(targetEntity="ActivityAttribute", mappedBy="activity")
      */
     protected $attributes;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Tag", inversedBy="activities")
+     * @ORM\ManyToMany(targetEntity="Tag")
      * @ORM\JoinTable(name="activities_tags")
      **/
     private $tags;
-    
+
     /**
      * Constructor
      */
@@ -68,6 +75,7 @@ class Activity
     {
         $this->attributes = new \Doctrine\Common\Collections\ArrayCollection();
         $this->tags = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->deleted = false;
     }
 
     /**
@@ -221,10 +229,13 @@ class Activity
      * @param \AppBundle\Entity\Tag $tags
      * @return Activity
      */
-    public function addTag(\AppBundle\Entity\Tag $tags)
+    public function addTag(\AppBundle\Entity\Tag $tag)
     {
-        $tags->addActivity($this);
-        $this->tags[] = $tags;
+        $this->tags[] = $tag;
+
+        if($tag->getSpecial() == Tag::SPECIAL_DELETED) {
+            $this->deleted = true;
+        }
 
         return $this;
     }
@@ -234,9 +245,13 @@ class Activity
      *
      * @param \AppBundle\Entity\Tag $tags
      */
-    public function removeTag(\AppBundle\Entity\Tag $tags)
+    public function removeTag(\AppBundle\Entity\Tag $tag)
     {
-        $this->tags->removeElement($tags);
+        $this->tags->removeElement($tag);
+
+        if($tag->getSpecial() == Tag::SPECIAL_DELETED) {
+            $this->deleted = false;
+        }
     }
 
     /**

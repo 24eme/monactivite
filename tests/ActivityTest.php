@@ -83,7 +83,7 @@ class ActivityTest extends KernelTestCase
         $this->assertSame($repo->queryToHierarchy("(Vincent OR LAURENT) AND Paris"), array("(or)", "and"));
         $this->assertSame($repo->queryToHierarchy("((Vincent OR LAURENT) AND (Paris AND Commmit))"), array("((or)", "and", "(and))"));
 
-        $queryDateQDL = "\(aq[0-9]*\.executedAt >= :date_to AND aq[0-9]*\.executedAt <= :date_from\)";
+        $queryDateQDL = "\(aq[0-9]*\.executedAt >= :date_to AND aq[0-9]*\.executedAt <= :date_from AND aq[0-9]*\.deleted = :deleted\)";
         $queryPartGenericDQL="\(aq[0-9]*\.title LIKE :aq[0-9]+value OR aq[0-9]*\.content LIKE :aq[0-9]+value OR [a-z0-9]+\.value LIKE :aq[0-9]+value OR [a-z0-9]+\.name LIKE :aq[0-9]+value\)";
         $queryPartContentDQL="\(aq[0-9]*\.(title|content) LIKE :aq[0-9]+value\)";
         $queryPartAttributeDQL="\(aqa[0-9]+.value LIKE :aq[0-9]+value AND aqa[0-9]+.name LIKE :aq[0-9]+name\)";

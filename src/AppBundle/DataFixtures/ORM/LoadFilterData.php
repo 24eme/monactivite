@@ -14,20 +14,26 @@ class LoadFilterData extends AbstractFixture implements OrderedFixtureInterface
      */
     public function load(ObjectManager $manager)
     {
-        $filterCommit = new Filter();
-        $filterCommit->setQuery('Type:Commit');
-        $filterCommit->setTag($this->getReference('tag-commit'));
-        $manager->persist($filterCommit);
+        if($this->hasReference('tag-commit')) {
+            $filterCommit = new Filter();
+            $filterCommit->setQuery('Type:Commit');
+            $filterCommit->setTag($this->getReference('tag-commit'));
+            $manager->persist($filterCommit);
+        }
 
-        $filterMail = new Filter();
-        $filterMail->setQuery('Type:Mail');
-        $filterMail->setTag($this->getReference('tag-mail'));
-        $manager->persist($filterMail);
+        if($this->hasReference('tag-mail')) {
+            $filterMail = new Filter();
+            $filterMail->setQuery('Type:Mail');
+            $filterMail->setTag($this->getReference('tag-mail'));
+            $manager->persist($filterMail);
+        }
 
-        $filterEvent = new Filter();
-        $filterEvent->setQuery('Type:Event');
-        $filterEvent->setTag($this->getReference('tag-event'));
-        $manager->persist($filterEvent);
+        if($this->hasReference('tag-event')) {
+            $filterEvent = new Filter();
+            $filterEvent->setQuery('Type:Event');
+            $filterEvent->setTag($this->getReference('tag-event'));
+            $manager->persist($filterEvent);
+        }
 
         $manager->flush();
     }
