@@ -5,9 +5,11 @@
 {% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
 
 {% block body %}
-    {{ form_start(form) }}
-        <h2 style="margin-bottom: 20px; margin-top: 0;">{% if isCreation %}Ajout d'une source de données {{ importer.name }}{% else %}Modification de la source données {{ importer.name }}{% endif %}</h2>
+        <h2 style="margin-bottom: 20px; margin-top: 0;">{% if delete_form is defined and delete_form %}{{ form_start(delete_form) }}
+            <button type="submit" class="btn btn-link pull-right" onclick="return confirm('Êtes-vous sûr(e) de vouloir supprimer cette source ?')" title="Supprimer"><span class="glyphicon glyphicon-trash"></span> Supprimer cette source</button>
+            {{ form_errors(delete_form) }}{{ form_end(delete_form) }}{% endif %}{% if isCreation %}Ajout d'une source de données {{ importer.name }}{% else %}Modification de la source données {{ importer.name }}{% endif %}</h2>
 
+        {{ form_start(form) }}
         {% if not importer %}
         <div class="alert alert-danger">Le type de source n'a pas pu être trouvé, merci de le définir à la main</div>
         {% endif %}
@@ -22,7 +24,11 @@
                 {% endif %}
             </div>
             <div class="col-xs-6 text-right">
-                <button type="submit" class="btn btn-default btn-lg" value="test">Lancer le test</button>
+                {% if activitiesByDates is not defined %}
+                <button type="submit" class="btn btn-primary btn-lg" value="test">Lancer le test</button>
+                {% else %}
+                <button type="submit" class="btn btn-default btn-md" value="test">Relancer le test</button>
+                {% endif %}
             </div>
         </div>
         <div class="row" style="margin-top: 20px;">

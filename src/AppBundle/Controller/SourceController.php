@@ -67,6 +67,7 @@ class SourceController extends Controller
         if(!$request->isMethod(Request::METHOD_POST)) {
             return array(
                 'form'   => $form->createView(),
+                'delete_form' => ($source->getId()) ? $this->createDeleteForm($source->getId())->createView(): null,
                 'importer' => $importer,
                 'isCreation' => $isCreation,
             );
@@ -162,7 +163,6 @@ class SourceController extends Controller
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('source_delete', array('id' => $id)))
             ->setMethod('DELETE')
-            ->add('submit', 'submit', array('label' => 'Delete'))
             ->getForm()
         ;
     }
