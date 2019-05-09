@@ -100,17 +100,23 @@ $(document).ready( function() {
     $('#activities_container').on('click', 'button.btn-tag-empty', function() {
         $('#modal-tag-add #activity_tag_add_activity_id').val($(this).parents('.ligne').data('id'));
         $('#modal-tag-add #activity_tag_add_tag_id').val("");
+        $('#modal-tag-add').data('fromview', null);
         $('#modal-tag-add').modal();
     });
 
-    $('#activities_container').on('click', 'button.btn-tag-small', function() {
+    $('#modal-default').on('click', 'button.btn-tag-empty', function() {
+        $('#modal-default').modal('hide');
+        $('#modal-tag-add #activity_tag_add_activity_id').val($('#modal_activity_view').data('id'));
+        $('#modal-tag-add #activity_tag_add_tag_id').val("");
+        $('#modal-tag-add').data('fromview', 1);
+        $('#modal-tag-add').modal();
+    });
+
+    var suppressionTag = function(button, ligne) {
         if(!confirm("Voulez vous supprimer ce tag ?")) {
 
             return;
         }
-
-        var button = $(this);
-        var ligne = button.parents('.ligne');
         $('#activity_tag_delete_activity_id').val(ligne.data('id'));
         $('#activity_tag_delete_tag_id').val(button.data('id'));
         var buttonTarget = ligne.find('.itemTags .btn').first();
@@ -119,9 +125,21 @@ $(document).ready( function() {
 
         var form = $('#form_tag_remove_container form');
         $.post(form.attr('action'), form.serialize(), function() {
-            buttonEmpty.insertBefore(buttonTarget);
+            if(ligne.find('.itemTags .btn[data-id='+button.data('id')+']').remove().length > 0) {
+                buttonEmpty.insertBefore(buttonTarget);
+            }
             button.remove();
         });
+    };
+
+    $('#modal-default').on('click', 'button.btn-tag', function() {
+
+        return suppressionTag($(this), $('.ligne[data-id='+$('#modal_activity_view').data('id')+']'));
+    });
+
+    $('#activities_container').on('click', 'button.btn-tag-small', function() {
+
+        return suppressionTag($(this), $(this).parents('.ligne'));
     });
 
     $('#activities_container').on('click', '.btn-activity-view', function() {
@@ -133,14 +151,21 @@ $(document).ready( function() {
 
     $('#modal-tag-add .btn-tag').on('click', function(e) {
         $('#modal-tag-add #activity_tag_add_tag_id').val($(this).parents('.tag').data('id'));
-        var buttonTarget = $('.ligne[data-id='+$('#modal-tag-add #activity_tag_add_activity_id').val()+'] .btn-tag-empty').last();
+        var ligne = $('.ligne[data-id='+$('#modal-tag-add #activity_tag_add_activity_id').val()+']');
+        var buttonTarget = ligne.find('.btn-tag-empty').last();
         var button = $(this).parents('.tag').find('.btn-tag-small').clone();
         var form = $('#modal-tag-add form');
         $.post(form.attr('action'), form.serialize(), function() {
             button.insertBefore(buttonTarget);
             buttonTarget.remove();
         });
+
         $('#modal-tag-add').modal("hide");
+
+        if($('#modal-tag-add').data('fromview')) {
+            ligne.find('.btn-activity-view').click();
+        }
+
         e.preventDefault();
     });
 

@@ -1,4 +1,4 @@
-<div class="modal-dialog">
+<div id="modal_activity_view" data-id="{{ activity.id }}" class="modal-dialog">
     <div class="modal-content">
         <div class="modal-header" style="padding-bottom: 0;">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -6,8 +6,9 @@
             <div class="row">
                 <div class="col-xs-12" style="margin-top: 7px;">
                     {% for tag in activity.tags %}
-                        {% include 'Tag/button.html.twig' with {'tag': tag } %}
+                        {% include 'Tag/button.html.twig' with {'type': 'button', 'tag': tag, 'attr':{ 'data-id': tag.id }} %}
                     {% endfor %}
+                    <button type="button" class="btn btn-default btn-tag-empty"><span class="glyphicon glyphicon-plus"></span></button>
                 </div>
                 <div class="col-xs-12" style="margin-top: 5px;">
                     <ul class="list-inline">
