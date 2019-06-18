@@ -10,7 +10,7 @@ php:
   - 7.2
 
 before_install:
-  - if [[ ${TRAVIS_PHP_VERSION:0:2} == "5." ]]; then echo "memory_limit=3G" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini; fi
+  - echo "memory_limit=-1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - composer self-update
 
 install:
