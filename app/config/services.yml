@@ -20,48 +20,48 @@ services:
 
     app.mail.parser:
         class: AppBundle\Utils\MailParser
-        arguments: [@lasso_mail_parser.part_factory]
+        arguments: ['@lasso_mail_parser.part_factory']
 
     app.manager.activity:
         class: AppBundle\Manager\ActivityManager
-        arguments: [@doctrine.orm.entity_manager, @app.slugger]
+        arguments: ['@doctrine.orm.entity_manager', '@app.slugger']
 
     app.manager.importer:
         class: AppBundle\Manager\ImporterManager
-        arguments: [[@app.importer.git, @app.importer.mail, @app.importer.icalendar, @app.importer.caldav]]
+        arguments: [['@app.importer.git', '@app.importer.mail', '@app.importer.icalendar', '@app.importer.caldav']]
 
     app.manager.filter:
         class: AppBundle\Manager\FilterManager
-        arguments: [@doctrine.orm.entity_manager, @app.slugger]
+        arguments: ['@doctrine.orm.entity_manager', '@app.slugger']
 
     app.manager.source:
         class: AppBundle\Manager\SourceManager
-        arguments: [@doctrine.orm.entity_manager, @app.slugger, @app.manager.importer]
+        arguments: ['@doctrine.orm.entity_manager', '@app.slugger', '@app.manager.importer']
 
     app.manager.main:
         class: AppBundle\Manager\MainManager
-        arguments: [@doctrine.orm.entity_manager, @app.manager.activity, @app.manager.importer, @app.manager.filter, @app.manager.source]
+        arguments: ['@doctrine.orm.entity_manager', '@app.manager.activity', '@app.manager.importer', '@app.manager.filter', @app.manager.source]
 
     app.config.exporter:
         class: AppBundle\Config\ConfigExporter
-        arguments: [@doctrine.orm.entity_manager]
+        arguments: ['@doctrine.orm.entity_manager']
 
     app.importer.git:
         class: AppBundle\Importer\Git\GitImporter
-        arguments: [@app.manager.activity, @doctrine.orm.entity_manager, @app.slugger]
+        arguments: ['@app.manager.activity', '@doctrine.orm.entity_manager', '@app.slugger']
 
     app.importer.mail:
         class: AppBundle\Importer\Mail\MailImporter
-        arguments: [@app.manager.activity, @doctrine.orm.entity_manager, @app.mail.parser]
+        arguments: ['@app.manager.activity', '@doctrine.orm.entity_manager', '@app.mail.parser']
 
     app.importer.icalendar:
         class: AppBundle\Importer\ICalendar\ICalendarImporter
-        arguments: [@app.manager.activity, @doctrine.orm.entity_manager]
+        arguments: ['@app.manager.activity', '@doctrine.orm.entity_manager']
 
     app.importer.caldav:
         class: AppBundle\Importer\Caldav\CaldavImporter
-        arguments: [@app.manager.activity, @doctrine.orm.entity_manager]
+        arguments: ['@app.manager.activity', '@doctrine.orm.entity_manager']
 
     app.importer.imap:
         class: AppBundle\Importer\Imap\ImapImporter
-        arguments: [@app.manager.activity, @doctrine.orm.entity_manager]
+        arguments: ['@app.manager.activity', '@doctrine.orm.entity_manager']
