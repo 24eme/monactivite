@@ -40,7 +40,7 @@ services:
 
     app.manager.main:
         class: AppBundle\Manager\MainManager
-        arguments: ['@doctrine.orm.entity_manager', '@app.manager.activity', '@app.manager.importer', '@app.manager.filter', @app.manager.source]
+        arguments: ['@doctrine.orm.entity_manager', '@app.manager.activity', '@app.manager.importer', '@app.manager.filter', '@app.manager.source']
 
     app.config.exporter:
         class: AppBundle\Config\ConfigExporter
