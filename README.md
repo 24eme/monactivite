@@ -1,4 +1,4 @@
-Mon Activité
+Mon Activité [![Build Status](https://travis-ci.org/24eme/monactivite.svg?branch=master)](https://travis-ci.org/24eme/monactivite)
 ============
 
 Mon activité est un outil pour récupérer son activité quotidienne à partir de mail, commit, flux RSS etc...
