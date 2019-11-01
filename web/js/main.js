@@ -97,8 +97,15 @@ $(document).ready( function() {
         $('#form-search').submit();
     });
 
-    $('#activities_container').on('click', 'button.btn-tag-empty', function() {
+    var lastTag = null;
+
+    $('#activities_container').on('click', 'button.btn-tag-empty', function(e) {
         $('#modal-tag-add #activity_tag_add_activity_id').val($(this).parents('.ligne').data('id'));
+        if(lastTag) {
+            lastTag.click();
+
+            return e.preventDefault();
+        }
         $('#modal-tag-add #activity_tag_add_tag_id').val("");
         $('#modal-tag-add').data('fromview', null);
         $('#modal-tag-add').modal();
@@ -117,6 +124,9 @@ $(document).ready( function() {
 
             return;
         }
+
+        lastTag = null;
+
         $('#activity_tag_delete_activity_id').val(ligne.data('id'));
         $('#activity_tag_delete_tag_id').val(button.data('id'));
         var buttonTarget = ligne.find('.itemTags .btn').first();
@@ -150,6 +160,8 @@ $(document).ready( function() {
     });
 
     $('#modal-tag-add .btn-tag').on('click', function(e) {
+        lastTag = null;
+        var buttonClicked = $(this);
         $('#modal-tag-add #activity_tag_add_tag_id').val($(this).parents('.tag').data('id'));
         var ligne = $('.ligne[data-id='+$('#modal-tag-add #activity_tag_add_activity_id').val()+']');
         var buttonTarget = ligne.find('.btn-tag-empty').last();
@@ -158,6 +170,7 @@ $(document).ready( function() {
         $.post(form.attr('action'), form.serialize(), function() {
             button.insertBefore(buttonTarget);
             buttonTarget.remove();
+            lastTag = buttonClicked;
         });
 
         $('#modal-tag-add').modal("hide");
