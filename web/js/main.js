@@ -99,6 +99,10 @@ $(document).ready( function() {
 
     var lastTag = null;
 
+    $('body').on('click', function() {
+        lastTag = null;
+    });
+
     $('#activities_container').on('click', 'button.btn-tag-empty', function(e) {
         $('#modal-tag-add #activity_tag_add_activity_id').val($(this).parents('.ligne').data('id'));
         if(lastTag) {
