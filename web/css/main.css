@@ -88,6 +88,10 @@ body {
     width: 32px; opacity: 0.1; border: 0;
 }
 
+.btn-tag-duplicate{
+    cursor: copy;
+}
+
 .ligneContainer {
     border-top: 1px solid #e8e8e8;
 }
