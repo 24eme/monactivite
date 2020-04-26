@@ -17,10 +17,15 @@ Récupérer le projet
 
 Sous debian, voici les dépendances de librairies PHP7 :
 
- - php7.0-dom
- - php7.0-curl
- - php7.0-imap
- - php7.0-mbstring
+ - php-dom
+ - php-curl
+ - php-imap
+ - php-mbstring
+
+ainsi que la librairie de la base de données choisie :
+ - php-mysql
+ - php-sqlite3
+ - php-pgsql
 
 ### Installation simplifiée
 
