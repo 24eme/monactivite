@@ -101,6 +101,7 @@ $(document).ready( function() {
 
     $('body').on('click', function() {
         lastTag = null;
+        $('.btn-tag-empty').removeClass('btn-tag-duplicate');
     });
 
     $('#activities_container').on('click', 'button.btn-tag-empty', function(e) {
@@ -130,6 +131,7 @@ $(document).ready( function() {
         }
 
         lastTag = null;
+        $('.btn-tag-empty').removeClass('btn-tag-duplicate');
 
         $('#activity_tag_delete_activity_id').val(ligne.data('id'));
         $('#activity_tag_delete_tag_id').val(button.data('id'));
@@ -163,8 +165,19 @@ $(document).ready( function() {
         return false;
     });
 
+    $(".btn-tag-empty").hover(function(){
+        if (lastTag) {
+            $(this).css("background-color", lastTag.css('background-color'));
+        }
+    }, function(){
+        if (lastTag) {
+            $(this).css("background-color", "#e6e6e6");
+        }
+    });
+
     $('#modal-tag-add .btn-tag').on('click', function(e) {
         lastTag = null;
+        $('.btn-tag-empty').removeClass('btn-tag-duplicate');
         var buttonClicked = $(this);
         $('#modal-tag-add #activity_tag_add_tag_id').val($(this).parents('.tag').data('id'));
         var ligne = $('.ligne[data-id='+$('#modal-tag-add #activity_tag_add_activity_id').val()+']');
@@ -175,6 +188,7 @@ $(document).ready( function() {
             button.insertBefore(buttonTarget);
             buttonTarget.remove();
             lastTag = buttonClicked;
+            $('.btn-tag-empty').addClass('btn-tag-duplicate');
         });
 
         $('#modal-tag-add').modal("hide");
