@@ -6,12 +6,12 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>{% block title %}Mon activité{% endblock %}</title>
         {% block stylesheets %}
-            <link href="{{ asset('bower_components/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet" />
-            <link href="{{ asset('bower_components/jquery-minicolors/jquery.minicolors.css') }}" rel="stylesheet" />
-            <link href="{{ asset('bower_components/bootstrap-iconpicker/bootstrap-iconpicker/css/bootstrap-iconpicker.min.css') }}" rel="stylesheet" />
-            <link href="{{ asset('bower_components/select2/dist/css/select2.min.css') }}" rel="stylesheet" />
-            <link href="{{ asset('bower_components/select2-bootstrap-theme/dist/select2-bootstrap.min.css') }}" rel="stylesheet" />
-            <link href="{{ asset('bower_components/daterangepicker/daterangepicker.css') }}" rel="stylesheet" />
+            <link href="{{ asset('lib/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" />
+            <link href="{{ asset('lib/jquery-minicolors/jquery.minicolors.css') }}" rel="stylesheet" />
+            <link href="{{ asset('lib/bootstrap-iconpicker/css/bootstrap-iconpicker.min.css') }}" rel="stylesheet" />
+            <link href="{{ asset('lib/select2/css/select2.min.css') }}" rel="stylesheet" />
+            <link href="{{ asset('lib/select2-bootstrap-theme/select2-bootstrap.min.css') }}" rel="stylesheet" />
+            <link href="{{ asset('lib/daterangepicker/daterangepicker.css') }}" rel="stylesheet" />
             <link href="{{ asset('css/main.css?201708011009') }}" rel="stylesheet" />
         {% endblock %}
         <link rel="icon" type="image/x-icon" href="{{ asset('images/favicon.ico') }}" />
@@ -79,14 +79,14 @@
         </div>
         <div id="modal-default" class="modal" tabindex="-1" role="dialog"></div>
         {% block javascripts %}
-            <script src="{{ asset('bower_components/jquery/dist/jquery.min.js') }}"></script>
-            <script src="{{ asset('bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
-            <script src="{{ asset('bower_components/moment/moment-with-locales.js') }}"></script>
-            <script src="{{ asset('bower_components/jquery-minicolors/jquery.minicolors.min.js') }}"></script>
-            <script src="{{ asset('bower_components/select2/dist/js/select2.min.js') }}"></script>
-            <script src="{{ asset('bower_components/bootstrap-iconpicker/bootstrap-iconpicker/js/iconset/iconset-glyphicon.min.js') }}"></script>
-            <script src="{{ asset('bower_components/bootstrap-iconpicker/bootstrap-iconpicker/js/bootstrap-iconpicker.min.js') }}"></script>
-            <script src="{{ asset('bower_components/daterangepicker/daterangepicker.js') }}"></script>
+            <script src="{{ asset('lib/jquery/jquery.min.js') }}"></script>
+            <script src="{{ asset('lib/bootstrap/js/bootstrap.min.js') }}"></script>
+            <script src="{{ asset('lib/moment/moment-with-locales.js') }}"></script>
+            <script src="{{ asset('lib/jquery-minicolors/jquery.minicolors.min.js') }}"></script>
+            <script src="{{ asset('lib/select2/js/select2.min.js') }}"></script>
+            <script src="{{ asset('lib/bootstrap-iconpicker/js/iconset/iconset-glyphicon.min.js') }}"></script>
+            <script src="{{ asset('lib/bootstrap-iconpicker/js/bootstrap-iconpicker.min.js') }}"></script>
+            <script src="{{ asset('lib/daterangepicker/daterangepicker.js') }}"></script>
             <script src="{{ asset('js/main.js?201911032323') }}"></script>
         {% endblock %}
     </body>
