@@ -9,7 +9,7 @@ class ICalendarTest extends KernelTestCase
 {
     private $container;
 
-    public function setUp()
+    public function setUp() : void
     {
         self::bootKernel();
 
