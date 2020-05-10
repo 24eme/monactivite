@@ -12,7 +12,7 @@ class ConfigExporterTest extends KernelTestCase
 {
     private $container;
 
-    public function setUp() : void
+    public function setUp()
     {
         self::bootKernel();
 
