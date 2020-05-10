@@ -141,9 +141,8 @@ class FeedImporter extends Importer
 
     public function check(Source $source) {
         parent::check($source);
-
         try {
-            $resource = $this->feedParser->download($source->getSource());
+            $resource = $this->feedParser->download($source->getParameter('path'));
             $parser = $this->feedParser->getParser($resource->getUrl(), $resource->getContent(), $resource->getEncoding());
         } catch(\Exception $e) {
 
