@@ -60,7 +60,7 @@ services:
 
     app.importer.feed:
         class: AppBundle\Importer\Feed\FeedImporter
-        arguments: [@app.manager.activity, @doctrine.orm.entity_manager, @app.feed.parser]
+        arguments: ['@app.manager.activity', '@doctrine.orm.entity_manager', '@app.feed.parser']
 
     app.importer.icalendar:
         class: AppBundle\Importer\ICalendar\ICalendarImporter
