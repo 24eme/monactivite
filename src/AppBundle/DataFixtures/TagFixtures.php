@@ -1,13 +1,13 @@
 <?php
 
-namespace AppBundle\DataFixtures\ORM;
+namespace AppBundle\DataFixtures;
 
-use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use AppBundle\Entity\Tag;
 
-class LoadTagData extends AbstractFixture implements OrderedFixtureInterface
+class TagFixtures extends Fixture implements OrderedFixtureInterface
 {
     /**
      * {@inheritDoc}
