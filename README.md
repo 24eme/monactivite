@@ -3,7 +3,12 @@ Mon Activité [![Build Status](https://travis-ci.org/24eme/monactivite.svg?branc
 
 Mon activité est un outil pour récupérer son activité quotidienne à partir de mail, commit, flux RSS, calendrier etc...
 
+Aperçu de l'interface de gestion des activités :
+
 ![Page d'acceuil](docs/interface_home.jpg "Page d'acceuil")
+
+Sources de données :
+
 ![Liste des sources](docs/interface_source.jpg "Liste des sources")
 
 Installation
