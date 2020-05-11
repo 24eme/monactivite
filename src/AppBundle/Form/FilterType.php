@@ -15,7 +15,7 @@ class FilterType extends AbstractType
 {
     protected $em;
 
-    public function __construct($em) {
+    public function __construct(\Doctrine\ORM\EntityManagerInterface $em) {
          $this->em = $em;
     }
 
@@ -34,17 +34,16 @@ class FilterType extends AbstractType
         $builder->get('tag')
             ->addViewTransformer(new CallbackTransformer(
                 function ($choice) use ($builder) {
-                    $choiceList = $builder->get('tag')->getOption('choice_list');
-
-                    return (string) current($choiceList->getValuesForChoices(array($choice)));
+                    $choiceList = $builder->get('tag')->getOption('choice_loader');
+                    return (string) current($choiceList->loadValuesForChoices(array($choice)));
                 },
                 function ($value) use ($builder) {
-                    $choiceList = $builder->get('tag')->getOption('choice_list');
+                    $choiceList = $builder->get('tag')->getOption('choice_loader');
                     if ((null === $value || '' === $value) || !is_string($value)) {
                         throw new TransformationFailedException('Expected a string not null.');
                     }
 
-                    $choices = $choiceList->getChoicesForValues(array((string) $value));
+                    $choices = $choiceList->loadChoicesForValues(array($value));
 
                     if (1 !== count($choices)) {
                         $tag = new Tag();

@@ -82,7 +82,7 @@ class FilterController extends Controller
      */
     private function createCreateForm(Filter $entity)
     {
-        $form = $this->createForm(new FilterType($this->getDoctrine()->getManager()), $entity, array(
+        $form = $this->createForm(FilterType::class, $entity, array(
             'action' => $this->generateUrl('filter_create'),
             'method' => 'POST',
         ));
@@ -132,7 +132,7 @@ class FilterController extends Controller
     */
     private function createEditForm(Filter $entity)
     {
-        $form = $this->createForm(new FilterType($this->getDoctrine()->getManager()), $entity, array(
+        $form = $this->createForm(FilterType::class, $entity, array(
             'action' => $this->generateUrl('filter_update', array('id' => $entity->getId())),
             'method' => 'PUT',
         ));
