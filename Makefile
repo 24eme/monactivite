@@ -1,28 +1,17 @@
-all: .make composer.phar app/config/parameters.yml app/bootstrap.php.cache composer.json .make/db .make/schema .make/fixtures
+all:
 
-.make:
-	mkdir .make
-
-composer.phar:
-	php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-	php -r "if (hash_file('SHA384', 'composer-setup.php').\"\n\" === file_get_contents('https://composer.github.io/installer.sig')) { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
-	php composer-setup.php
-	php -r "unlink('composer-setup.php');"
+install: app/config/parameters.yml vendor/autoload.php data/monactivite.db3
 
 app/config/parameters.yml:
 	cp app/config/parameters.yml.dist app/config/parameters.yml
 
-app/bootstrap.php.cache:
-	php composer.phar install
+vendor/autoload.php:
+	composer install
 
-.make/db:
-	php app/console doctrine:database:create && echo "1" > .make/db
+data/monactivite.db3:
+	php bin/console doctrine:database:create
+	php bin/console doctrine:schema:update --force
+	php bin/console doctrine:fixtures:load --append
 
-.make/schema:
-	php app/console doctrine:schema:update --force && echo "1" > .make/schema
-
-.make/fixtures:
-	php app/console doctrine:fixtures:load --append && echo "1" > .make/fixtures
-
-clean:
-	rm -rf .make
+test:
+	php bin/simple-phpunit
