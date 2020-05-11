@@ -4,8 +4,33 @@ parameters:
 #    parameter_name: value
 
 services:
+    # default configuration for services in *this* file
+    _defaults:
+        # automatically injects dependencies in your services
+        autowire: true
+        # automatically registers your services as commands, event subscribers, etc.
+        autoconfigure: true
+        # this means you cannot fetch services directly from the container via $container->get()
+        # if you need to do this, you can override this setting on individual services
+        public: false
+
+    AppBundle\:
+        resource: '../../src/AppBundle/*'
+        # you can exclude directories or files
+        # but if a service is unused, it's removed anyway
+        exclude: '../../src/AppBundle/{Entity,Repository,Tests}'
+
+    # controllers are imported separately to make sure they're public
+    # and have a tag that allows actions to type-hint services
+    AppBundle\Controller\:
+        resource: '../../src/AppBundle/Controller'
+        public: true
+        tags: ['controller.service_arguments']
+
+    # add more services, or override services that need manual wiring
     app.slugger:
         class: AppBundle\Utils\Slugger
+        public: true
         arguments: []
 
     twig.extension.intl:
@@ -20,56 +45,70 @@ services:
 
     app.mail.parser:
         class: AppBundle\Utils\MailParser
+        public: true
         arguments: ['@lasso_mail_parser.part_factory']
 
     app.feed.parser:
         class: PicoFeed\Reader\Reader
+        public: true
         arguments: []
 
     app.manager.activity:
         class: AppBundle\Manager\ActivityManager
+        public: true
         arguments: ['@doctrine.orm.entity_manager', '@app.slugger']
 
     app.manager.importer:
         class: AppBundle\Manager\ImporterManager
+        public: true
         arguments: [['@app.importer.git', '@app.importer.mail', '@app.importer.feed', '@app.importer.icalendar', '@app.importer.caldav']]
 
     app.manager.filter:
         class: AppBundle\Manager\FilterManager
+        public: true
         arguments: ['@doctrine.orm.entity_manager', '@app.slugger']
 
     app.manager.source:
         class: AppBundle\Manager\SourceManager
+        public: true
         arguments: ['@doctrine.orm.entity_manager', '@app.slugger', '@app.manager.importer']
 
     app.manager.main:
         class: AppBundle\Manager\MainManager
+        public: true
         arguments: ['@doctrine.orm.entity_manager', '@app.manager.activity', '@app.manager.importer', '@app.manager.filter', '@app.manager.source']
 
     app.config.exporter:
         class: AppBundle\Config\ConfigExporter
+        public: true
         arguments: ['@doctrine.orm.entity_manager']
 
     app.importer.git:
         class: AppBundle\Importer\Git\GitImporter
+        public: true
         arguments: ['@app.manager.activity', '@doctrine.orm.entity_manager', '@app.slugger']
 
     app.importer.mail:
         class: AppBundle\Importer\Mail\MailImporter
+        public: true
         arguments: ['@app.manager.activity', '@doctrine.orm.entity_manager', '@app.mail.parser']
 
     app.importer.feed:
         class: AppBundle\Importer\Feed\FeedImporter
+        public: true
         arguments: ['@app.manager.activity', '@doctrine.orm.entity_manager', '@app.feed.parser']
 
     app.importer.icalendar:
         class: AppBundle\Importer\ICalendar\ICalendarImporter
+        public: true
         arguments: ['@app.manager.activity', '@doctrine.orm.entity_manager']
 
     app.importer.caldav:
         class: AppBundle\Importer\Caldav\CaldavImporter
+        public: true
         arguments: ['@app.manager.activity', '@doctrine.orm.entity_manager']
 
     app.importer.imap:
         class: AppBundle\Importer\Imap\ImapImporter
+        public: true
         arguments: ['@app.manager.activity', '@doctrine.orm.entity_manager']
