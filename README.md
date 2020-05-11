@@ -13,25 +13,28 @@ Récupérer le projet
 
 > git clone https://github.com/24eme/monactivite.git
 
-### Dependances
+### Dépendances
 
-Sous debian, voici les dépendances de librairies PHP7 :
+Sous debian, voici les dépendances de librairies php :
 
- - php-dom
  - php-curl
+ - php-dom
  - php-imap
  - php-mbstring
 
-ainsi que la librairie de la base de données choisie :
+Ainsi que la librairie de la base de données choisie :
+
+ - php-sqlite3 (par défaut)
  - php-mysql
- - php-sqlite3
  - php-pgsql
 
-### Installation simplifiée
+### Installation automatisé
 
-Via la commande make, lancer simplement la commande
+Lancer simplement la commande :
 
-> make
+> make install
+
+L'installation se fera avec sqlite, la bdd est stockée dans le fichier data/monactivite.db3
 
 ### Installation pas à pas
 
@@ -45,21 +48,22 @@ Copier le fichier de configuration
 
 Récupération des libairies externes via composer
 
-> php composer.phar install
+> composer install
 
 Création et construction de la base de données
 
-> php app/console doctrine:database:create
+> php bin/console doctrine:database:create
 
-> php app/console doctrine:schema:update --force
+> php bin/console doctrine:schema:update --force
 
 Chargement des données initiales
 
-> php app/console doctrine:fixtures:load
+> php bin/console doctrine:fixtures:load --append
 
 ### Lancer l'application
 
-> php app/console server:start
+> php bin/console server:start
+
 
 Contribuer
 ----------
@@ -68,4 +72,4 @@ Contribuer
 
 Lancer les tests unitaires
 
-> phpunit
+> make test
