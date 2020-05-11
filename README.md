@@ -13,6 +13,14 @@ Récupérer le projet
 
 > git clone https://github.com/24eme/monactivite.git
 
+### Compatibilité
+
+ - php 5.6
+ - php 7.0
+ - php 7.1
+ - php 7.2
+ - php 7.3
+
 ### Dépendances
 
 Sous debian, voici les dépendances de librairies php :
@@ -28,7 +36,7 @@ Ainsi que la librairie de la base de données choisie :
  - php-mysql
  - php-pgsql
 
-### Installation automatisé
+### Installation automatisée
 
 Lancer simplement la commande :
 
