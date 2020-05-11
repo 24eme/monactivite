@@ -18,6 +18,7 @@
 *.php~
 /src/AppBundle/Importer/*/var/*
 /data/*
+!data/.gitkeep
 /tests/tmp
 .make
 composer.phar
