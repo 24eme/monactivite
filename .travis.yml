@@ -13,21 +13,9 @@ php:
 
 before_install:
   - echo "memory_limit=-1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
-  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.0" ]]; then wget -O ~/.phpenv/versions/$(phpenv version-name)/bin/phpunit https://phar.phpunit.de/phpunit-5.4.6.phar; fi
-  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.3" ]]; then wget -O ~/.phpenv/versions/$(phpenv version-name)/bin/phpunit https://phar.phpunit.de/phpunit-7.5.6.phar; fi
-  - composer self-update
 
 install:
   - composer install
   - cp app/config/parameters.yml.dist app/config/parameters.yml
 
-cache:
-  directories:
-    - $HOME/.composer/cache
-
-notifications:
-  irc:
-    channels:
-      - "irc.freenode.net#le24eme"
-    on_success: change
-    on_failure: always
+script: bin/simple-phpunit
