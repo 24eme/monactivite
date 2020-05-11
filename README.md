@@ -80,3 +80,17 @@ Contribuer
 Lancer les tests unitaires
 
     make test
+
+### Librairies et projets utilisés :
+
+| Nom | Description | License |
+|-----|-------------|---------|
+| [Symfony 3](https://github.com/symfony/symfony/tree/3.4)| Framework PHP | MIT |
+| [Doctrine](https://github.com/doctrine/orm)| ORM | MIT |
+| [Twig](https://github.com/twigphp/Twig)| Moteur de template PHP | BSD-3-Clause |
+| [Lasso Mail Parser](https://github.com/lassodatasystems/LassoMailParserBundle) | Parser de mail | LGPL-3.0 |
+| [Html2Text](https://github.com/mtibben/html2text) | Convertisseur html vers texte | GPL-2.0-or-later |
+| [VObject](https://github.com/sabre-io/vobject) | Parser et manipuler iCalendar | BSD-3-Clause |
+| [simpleCalDAV](https://github.com/thecsea/simpleCalDAV) | Client caldav | GPL-2.0 |
+| [PHP IMAP](https://github.com/barbushin/php-imap) | Manipuler des boîtes mails en IMAP | MIT |
+| [PicoFeed](https://github.com/aaronpk/picofeed) | Lecteur de flux RSS/Atom | MIT |
