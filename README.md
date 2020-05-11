@@ -1,7 +1,7 @@
 Mon Activité [![Build Status](https://travis-ci.org/24eme/monactivite.svg?branch=master)](https://travis-ci.org/24eme/monactivite)
 ============
 
-Mon activité est un outil pour récupérer son activité quotidienne à partir de mail, commit, flux RSS etc...
+Mon activité est un outil pour récupérer son activité quotidienne à partir de mail, commit, flux RSS, calendrier etc...
 
 ![Page d'acceuil](docs/interface_home.jpg "Page d'acceuil")
 ![Liste des sources](docs/interface_source.jpg "Liste des sources")
@@ -11,7 +11,7 @@ Installation
 
 Récupérer le projet
 
-> git clone https://github.com/24eme/monactivite.git
+    git clone https://github.com/24eme/monactivite.git
 
 ### Compatibilité
 
@@ -40,7 +40,7 @@ Ainsi que la librairie de la base de données choisie :
 
 Lancer simplement la commande :
 
-> make install
+    make install
 
 L'installation se fera avec sqlite, la bdd est stockée dans le fichier data/monactivite.db3
 
@@ -48,29 +48,28 @@ L'installation se fera avec sqlite, la bdd est stockée dans le fichier data/mon
 
 Installation de composer (optionnelle si vous l'avez déjà installé en global)
 
-> https://getcomposer.org/download/
+    https://getcomposer.org/download/
 
 Copier le fichier de configuration
 
-> cp app/config/parameters.yml{.dump,}
+    cp app/config/parameters.yml{.dump,}
 
 Récupération des libairies externes via composer
 
-> composer install
+    composer install
 
 Création et construction de la base de données
 
-> php bin/console doctrine:database:create
-
-> php bin/console doctrine:schema:update --force
+    php bin/console doctrine:database:create
+    php bin/console doctrine:schema:update --force
 
 Chargement des données initiales
 
-> php bin/console doctrine:fixtures:load --append
+    php bin/console doctrine:fixtures:load --append
 
 ### Lancer l'application
 
-> php bin/console server:start
+    php bin/console server:start
 
 
 Contribuer
@@ -80,4 +79,4 @@ Contribuer
 
 Lancer les tests unitaires
 
-> make test
+    make test
