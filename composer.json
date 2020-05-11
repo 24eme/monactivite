@@ -1,6 +1,6 @@
 {
-    "name": "vince/monactivite",
-    "license": "MIT",
+    "name": "24eme/monactivite",
+    "license": "AGPL-3.0",
     "type": "project",
     "autoload": {
         "psr-4": {
