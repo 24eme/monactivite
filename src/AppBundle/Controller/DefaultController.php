@@ -94,6 +94,8 @@ class DefaultController extends Controller
      */
     public function executeUpdateAction()
     {
+        set_time_limit(180);
+
         $mm = $this->get('app.manager.main');
 
         $output = new \Symfony\Component\Console\Output\BufferedOutput();
