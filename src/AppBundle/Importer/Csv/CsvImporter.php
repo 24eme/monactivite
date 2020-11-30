@@ -28,8 +28,8 @@ class CsvImporter extends Importer
             'name' => array("required" => false, "label" => "Nom", "help" => "Nom (optionnelle)"),
             'date' => array("required" => true, "label" => "Colonne date", "help" => "Index ou nom de la colonne utilisée pour la date"),
             'title' => array("required" => true, "label" => "Colonne titre", "help" => "Index ou nom de la colonne utilisée pour le titre"),
-            'content' => array("required" => false, "label" => "Colonne contenu", "help" => "Index ou nom de la colonne utilisée pour le contenu"),
-            'attributes' => array("required" => false, "label" => "Colonnes attributs", "help" => "Liste des colonnes à utiliser comme attribut"),
+            'content' => array("required" => false, "label" => "Colonne contenu", "help" => "Index ou nom de la colonne utilisée pour le contenu (optionnelle)"),
+            'attributes' => array("required" => false, "label" => "Colonnes attributs", "help" => "Liste des colonnes à utiliser comme attribut (optionnelle)"),
         );
     }
 
@@ -51,30 +51,35 @@ class CsvImporter extends Importer
                 }
                 $dateExecutedAt = new \DateTime($data[$source->getParameter('date')]);
                 $title = $data[$source->getParameter('title')];
+                if($source->getParameter('content')) {
                 $content = $data[$source->getParameter('content')];
+                }
 
                 $activity = new Activity();
                 $activity->setExecutedAt($dateExecutedAt);
                 $activity->setTitle($title);
-                $activity->setContent($content);
-
+                if(isset($content)) {
+                    $activity->setContent($content);
+                }
                 if($source->getParameter('name')) {
                     $name = new ActivityAttribute();
                     $name->setName("Name");
                     $name->setValue($source->getParameter('name'));
                 }
-
-                foreach($source->getParameter('attributes') as $attributeName => $dataIndex)
-                $attribut = new ActivityAttribute();
-                $attribut->setName($attributeName);
-                $attribut->setValue($data[$dataIndex]);
+                $attributes = array();
+                foreach($source->getParameter('attributes', array()) as $attributeName => $dataIndex) {
+                    $attribute = new ActivityAttribute();
+                    $attribute->setName($attributeName);
+                    $attribute->setValue($data[$dataIndex]);
+                    $attributes[] = $attribute;
+                }
 
                 if(isset($name)) {
                     $activity->addAttribute($name);
                 }
 
-                if(isset($attribut)) {
-                    $activity->addAttribute($attribut);
+                foreach($attributes as $attribute) {
+                    $activity->addAttribute($attribute);
                 }
 
                 $this->am->addFromEntity($activity, $checkExist);
@@ -82,8 +87,8 @@ class CsvImporter extends Importer
                 if(isset($name)) {
                     $this->em->persist($name);
                 }
-                if(isset($attribut)) {
-                    $this->em->persist($attribut);
+                foreach($attributes as $attribute) {
+                    $this->em->persist($attribute);
                 }
 
                 $this->em->persist($activity);
