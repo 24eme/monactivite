@@ -61,7 +61,7 @@ services:
     app.manager.importer:
         class: AppBundle\Manager\ImporterManager
         public: true
-        arguments: [['@app.importer.git', '@app.importer.mail', '@app.importer.feed', '@app.importer.icalendar', '@app.importer.caldav']]
+        arguments: [['@app.importer.git', '@app.importer.mail', '@app.importer.feed', '@app.importer.icalendar', '@app.importer.caldav', '@app.importer.csv']]
 
     app.manager.filter:
         class: AppBundle\Manager\FilterManager
@@ -110,5 +110,10 @@ services:
 
     app.importer.imap:
         class: AppBundle\Importer\Imap\ImapImporter
+        public: true
+        arguments: ['@app.manager.activity', '@doctrine.orm.entity_manager']
+
+    app.importer.csv:
+        class: AppBundle\Importer\Csv\CsvImporter
         public: true
         arguments: ['@app.manager.activity', '@doctrine.orm.entity_manager']
