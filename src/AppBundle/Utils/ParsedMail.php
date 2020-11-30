@@ -334,7 +334,11 @@ class ParsedMail extends \Lasso\MailParserBundle\ParseHelper {
             return true;
         }, E_ALL);
 
-        $convertedContent = mb_convert_encoding($content, 'UTF-8', $contentCharset);
+        if($contentCharset == "auto" && $newContentCharset) {
+            $convertedContent = iconv($newContentCharset, "UTF-8", $content);
+        } else {
+            $convertedContent = mb_convert_encoding($content, 'UTF-8', $contentCharset);
+        }
 
         restore_error_handler();
 

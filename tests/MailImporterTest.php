@@ -93,4 +93,33 @@ class MailImporterTest extends KernelTestCase
         $this->assertSame($source->getUpdateParam()['line'], (int) shell_exec("cat ".$mailFile." | wc -l"));
 
     }
+
+    public function testWindows1256()
+    {
+        $em = $this->container->get('doctrine.orm.entity_manager');
+        $importer = $this->container->get('app.importer.mail');
+        $mailFile = dirname(__FILE__)."/data/windows1256.eml";
+
+        $source = new Source();
+        $source->setImporter($importer->getName());
+        $importer->updateParameters($source, array(
+            "path" => $mailFile,
+        ));
+
+        $importer->run($source, new \Symfony\Component\Console\Output\NullOutput(), true, false);
+
+        $em->getUnitOfWork()->computeChangeSets();
+        $entities = $em->getUnitOfWork()->getScheduledEntityInsertions();
+
+        $activities = array();
+        foreach($entities as $activity) {
+            if(!$activity instanceof \AppBundle\Entity\Activity) {
+                continue;
+            }
+            $activities[] = $activity;
+        }
+
+        $this->assertCount(1, $activities);
+        $this->assertRegExp("/à/", $activities[0]->getContent());
+    }
 }
