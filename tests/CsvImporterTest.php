@@ -3,6 +3,7 @@
 namespace Tests;
 
 use AppBundle\Entity\Source;
+use AppBundle\Importer\Csv\CsvImporter;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class CsvImporterTest extends KernelTestCase
@@ -14,6 +15,11 @@ class CsvImporterTest extends KernelTestCase
         self::bootKernel();
 
         $this->container = self::$kernel->getContainer();
+    }
+
+    public function testSeparatorDetection() {
+        $this->assertSame(CsvImporter::detectSeparator(dirname(__FILE__)."/data/activites.csv"), ";");
+        $this->assertSame(CsvImporter::detectSeparator(dirname(__FILE__)."/data/activites.en.csv"), ",");
     }
 
     public function testCsv()

@@ -37,13 +37,33 @@ class CsvImporter extends Importer
         $source->setTitle($source->getParameter('path'));
     }
 
+    public static function detectSeparator($file) {
+        $handle = fopen($file, 'r');
+        $buffer = fread($handle, 500);
+        fclose($handle);
+
+        $separator = ";";
+        $virgule = explode(',', $buffer);
+        $ptvirgule = explode(';', $buffer);
+        $tabulation = explode('\t', $buffer);
+        if (count($virgule) > count($ptvirgule) && count($virgule) > count($tabulation)) {
+          $separator = ',';
+        } else if (count($tabulation) > count($ptvirgule)) {
+          $separator = '\t';
+        }
+
+        return $separator;
+    }
+
     public function run(Source $source, OutputInterface $output, $dryrun = false, $checkExist = true, $limit = false) {
         $output->writeln(sprintf("<comment>Started import csv in %s</comment>", $source->getTitle()));
+
+        $separator = self::detectSeparator($source->getParameter('path'));
 
         $nb = 0;
         $firstLine = true;
         $handle = fopen($source->getParameter('path'), "r");
-        while (($data = fgetcsv($handle, 0, ";")) !== false) {
+        while (($data = fgetcsv($handle, 0, $separator)) !== false) {
             try {
                 if($firstLine) {
                     $firstLine = false;
