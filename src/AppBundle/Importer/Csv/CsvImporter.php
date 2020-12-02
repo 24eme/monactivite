@@ -87,11 +87,13 @@ class CsvImporter extends Importer
                     $name->setValue($source->getParameter('name'));
                 }
                 $attributes = array();
-                foreach($source->getParameter('attributes', array()) as $attributeName => $dataIndex) {
-                    $attribute = new ActivityAttribute();
-                    $attribute->setName($attributeName);
-                    $attribute->setValue($data[$dataIndex]);
-                    $attributes[] = $attribute;
+                if($source->getParameter('attributes')) {
+                    foreach($source->getParameter('attributes') as $attributeName => $dataIndex) {
+                        $attribute = new ActivityAttribute();
+                        $attribute->setName($attributeName);
+                        $attribute->setValue($data[$dataIndex]);
+                        $attributes[] = $attribute;
+                    }
                 }
 
                 if(isset($name)) {
@@ -123,7 +125,6 @@ class CsvImporter extends Importer
                     break;
                 }
             } catch (\Exception $e) {
-                echo $e->getMessage();
                 if($output->isVerbose()) {
                     $output->writeln(sprintf("<error>%s</error>", $e->getMessage()));
                 }
