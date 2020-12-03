@@ -148,6 +148,11 @@ class CsvImporter extends Importer
     public function check(Source $source) {
         parent::check($source);
 
+        try {
+            fopen($source->getParameter('path'), "r");
+        } catch(\Exception $e) {
+            throw new \Exception(sprintf("Le fichier csv %s n'a pas pu être lu : %s", $source->getParameter('path'), $e->getMessage()));
+        }
     }
 
 }

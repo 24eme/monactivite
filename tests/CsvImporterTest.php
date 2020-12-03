@@ -45,6 +45,7 @@ class CsvImporterTest extends KernelTestCase
         $this->assertSame($source->getParameter("name"), "ActiviteCSV");
         $this->assertSame($source->getTitle(), $csvFile);
         $this->assertSame($source->getUpdateParam(), null);
+        $this->assertNull($importer->check($source));
 
         $importer->run($source, new \Symfony\Component\Console\Output\NullOutput(), true, false);
 
@@ -76,4 +77,49 @@ class CsvImporterTest extends KernelTestCase
         $this->assertSame($activity->getAttributes()[1]->getName(), "Attribut1");
         $this->assertSame($activity->getAttributes()[1]->getValue(), "Valeur1");
     }
+
+    public function testCsvCheck()
+    {
+        $em = $this->container->get('doctrine.orm.entity_manager');
+        $importer = $this->container->get('app.importer.csv');
+        $csvFile = "https://raw.githubusercontent.com/24eme/monactivite/master/tests/data/activites.csv";
+
+        $source = new Source();
+        $source->setImporter($importer->getName());
+        $importer->updateParameters($source, array(
+            "path" => $csvFile
+        ));
+
+        $this->assertNull($importer->check($source));
+
+        $importer->updateParameters($source, array(
+            "path" => "https://raw.githubusercontent.com/24eme/monactivite/master/tests/data/activites_qui_nexiste_pas.csv"
+        ));
+
+        $check = true;
+        try {
+            $importer->check($source);
+        } catch (\Exception $e) {
+            $check = false;
+        }
+        if($check) {
+            $this->fail();
+        }
+
+        $importer->updateParameters($source, array(
+            "path" => "/path_qui_nexiste_pas.csv"
+        ));
+
+        $check = true;
+        try {
+            $importer->check($source);
+        } catch (\Exception $e) {
+            $check = false;
+        }
+        if($check) {
+            $this->fail();
+        }
+
+    }
+
 }
