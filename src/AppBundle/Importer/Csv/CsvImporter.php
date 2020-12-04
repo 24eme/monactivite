@@ -24,12 +24,13 @@ class CsvImporter extends Importer
     public function getParameters() {
 
         return array(
-            'path' => array("required" => true, "label" => "Url ou chemin", "help" => "Url ou chemin du fichier csv"),
+            'path' => array("required" => true, "label" => "Chemin ou url", "help" => "Chemin ou url du fichier csv"),
             'name' => array("required" => false, "label" => "Nom", "help" => "Nom (optionnelle)"),
-            'date' => array("required" => true, "label" => "Colonne date", "help" => "Index ou nom de la colonne utilisée pour la date"),
-            'title' => array("required" => true, "label" => "Colonne titre", "help" => "Index ou nom de la colonne utilisée pour le titre"),
-            'content' => array("required" => false, "label" => "Colonne contenu", "help" => "Index ou nom de la colonne utilisée pour le contenu (optionnelle)"),
-            'attributes' => array("required" => false, "label" => "Colonnes attributs", "help" => "Liste des colonnes à utiliser comme attribut (optionnelle)"),
+            'type' => array("required" => false, "label" => "Type", "help" => "Type (optionnelle)"),
+            'date' => array("required" => true, "label" => "Colonne date", "help" => "Numéro de la colonne a utiliser pour la date"),
+            'title' => array("required" => true, "label" => "Colonne titre", "help" => "Numéro de la colonne a utiliser pour le titre"),
+            'content' => array("required" => false, "label" => "Colonne contenu", "help" => "Numéro de la colonne a utiliser pour le contenu (optionnelle)"),
+            'attributes' => array("required" => false, "label" => "Colonnes attributs", "help" => "Liste de numéros de colonnes à utiliser comme attribut (optionnelle)"),
         );
     }
 
@@ -55,6 +56,29 @@ class CsvImporter extends Importer
         return $separator;
     }
 
+    public function getColumnIndex($source, $key) {
+        if(!$source->getParameter($key)) {
+
+            return null;
+        }
+
+        if($key == 'attributes') {
+            $indexes = array();
+            foreach(preg_split("/[^0-9]+/", $source->getParameter($key)) as $number) {
+                $indexes[] = intval($number) - 1;
+            }
+
+            return $indexes;
+        }
+
+        return intval($source->getParameter($key)) - 1;
+    }
+
+    public function hasColumnIndex($source, $key) {
+
+        return $this->getColumnIndex($source, $key) !== null;
+    }
+
     public function run(Source $source, OutputInterface $output, $dryrun = false, $checkExist = true, $limit = false) {
         $output->writeln(sprintf("<comment>Started import csv in %s</comment>", $source->getTitle()));
 
@@ -62,52 +86,63 @@ class CsvImporter extends Importer
 
         $nb = 0;
         $firstLine = true;
+        $header = null;
         $handle = fopen($source->getParameter('path'), "r");
         while (($data = fgetcsv($handle, 0, $separator)) !== false) {
+            if($firstLine) {
+                $firstLine = false;
+                $header = $data;
+                continue;
+            }
+
+            $activity = new Activity();
+            $activity->setExecutedAt(new \DateTime($data[$this->getColumnIndex($source, 'date')]));
+            $activity->setTitle($data[$this->getColumnIndex($source, 'title')]);
+            if($this->hasColumnIndex($source, 'content')) {
+                $activity->setContent($data[$this->getColumnIndex($source, 'content')]);
+            }
+
+            if($source->getParameter('name')) {
+                $name = new ActivityAttribute();
+                $name->setName("Name");
+                $name->setValue($source->getParameter('name'));
+            }
+
+            if($source->getParameter('type')) {
+                $type = new ActivityAttribute();
+                $type->setName("Type");
+                $type->setValue($source->getParameter('type'));
+            }
+            $attributes = array();
+            if($this->hasColumnIndex($source, 'attributes')) {
+                foreach($this->getColumnIndex($source, 'attributes') as $index) {
+                    $attribute = new ActivityAttribute();
+                    $attribute->setName($header[$index]);
+                    $attribute->setValue($data[$index]);
+                    $attributes[] = $attribute;
+                }
+            }
+
+            if(isset($name)) {
+                $activity->addAttribute($name);
+            }
+
+            if(isset($type)) {
+                $activity->addAttribute($type);
+            }
+
+            foreach($attributes as $attribute) {
+                $activity->addAttribute($attribute);
+            }
+
             try {
-                if($firstLine) {
-                    $firstLine = false;
-                    continue;
-                }
-                $dateExecutedAt = new \DateTime($data[$source->getParameter('date')]);
-                $title = $data[$source->getParameter('title')];
-                if($source->getParameter('content')) {
-                $content = $data[$source->getParameter('content')];
-                }
-
-                $activity = new Activity();
-                $activity->setExecutedAt($dateExecutedAt);
-                $activity->setTitle($title);
-                if(isset($content)) {
-                    $activity->setContent($content);
-                }
-                if($source->getParameter('name')) {
-                    $name = new ActivityAttribute();
-                    $name->setName("Name");
-                    $name->setValue($source->getParameter('name'));
-                }
-                $attributes = array();
-                if($source->getParameter('attributes')) {
-                    foreach($source->getParameter('attributes') as $attributeName => $dataIndex) {
-                        $attribute = new ActivityAttribute();
-                        $attribute->setName($attributeName);
-                        $attribute->setValue($data[$dataIndex]);
-                        $attributes[] = $attribute;
-                    }
-                }
-
-                if(isset($name)) {
-                    $activity->addAttribute($name);
-                }
-
-                foreach($attributes as $attribute) {
-                    $activity->addAttribute($attribute);
-                }
-
                 $this->am->addFromEntity($activity, $checkExist);
 
                 if(isset($name)) {
                     $this->em->persist($name);
+                }
+                if(isset($type)) {
+                    $this->em->persist($type);
                 }
                 foreach($attributes as $attribute) {
                     $this->em->persist($attribute);

@@ -34,16 +34,22 @@ class CsvImporterTest extends KernelTestCase
         $importer->updateParameters($source, array(
             "path" => $csvFile,
             "name" => "ActiviteCSV",
-            "date" => 0,
-            "title" => 1,
-            "content" => 2,
-            "attributes" => array("Attribut1" => 3)
+            "type" => "CSV",
+            "date" => 1,
+            "title" => 2,
+            "content" => 3,
+            "attributes" => "4,5"
         ));
 
         $this->assertSame($source->getImporter(), "Csv");
         $this->assertSame($source->getParameter("path"), $csvFile);
         $this->assertSame($source->getParameter("name"), "ActiviteCSV");
+        $this->assertSame($source->getParameter("type"), "CSV");
         $this->assertSame($source->getTitle(), $csvFile);
+        $this->assertSame($importer->getColumnIndex($source, 'date'), 0);
+        $this->assertSame($importer->getColumnIndex($source, 'title'), 1);
+        $this->assertSame($importer->getColumnIndex($source, 'content'), 2);
+        $this->assertSame($importer->getColumnIndex($source, 'attributes'), array(3,4));
         $this->assertSame($source->getUpdateParam(), null);
         $this->assertNull($importer->check($source));
 
@@ -69,13 +75,19 @@ class CsvImporterTest extends KernelTestCase
         $this->assertSame($activity->getContent(), "Contenu de l'activité");
         $this->assertSame($activity->getSlug(), "6200228a8ebcbc2ef3e05b1cbf6b526a");
 
-        $this->assertCount(2, $activity->getAttributes());
+        $this->assertCount(4, $activity->getAttributes());
 
         $this->assertSame($activity->getAttributes()[0]->getName(), "Name");
         $this->assertSame($activity->getAttributes()[0]->getValue(), "ActiviteCSV");
 
-        $this->assertSame($activity->getAttributes()[1]->getName(), "Attribut1");
-        $this->assertSame($activity->getAttributes()[1]->getValue(), "Valeur1");
+        $this->assertSame($activity->getAttributes()[1]->getName(), "Type");
+        $this->assertSame($activity->getAttributes()[1]->getValue(), "CSV");
+
+        $this->assertSame($activity->getAttributes()[2]->getName(), "Attribut1");
+        $this->assertSame($activity->getAttributes()[2]->getValue(), "Valeur1");
+
+        $this->assertSame($activity->getAttributes()[3]->getName(), "Attribut2");
+        $this->assertSame($activity->getAttributes()[3]->getValue(), "Valeur2");
     }
 
     public function testCsvCheck()
