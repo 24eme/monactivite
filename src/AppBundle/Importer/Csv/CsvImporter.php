@@ -56,6 +56,22 @@ class CsvImporter extends Importer
         return $separator;
     }
 
+    public function getDataValue($source, $data, $key) {
+        if(!$this->hasColumnIndex($source, $key)) {
+            return null;
+        }
+
+        $index = $this->getColumnIndex($source, $key);
+
+        if(!isset($data[$index])) {
+
+            return null;
+        }
+
+        return $data[$index];
+    }
+
+
     public function getColumnIndex($source, $key) {
         if(!$source->getParameter($key)) {
 
@@ -96,11 +112,12 @@ class CsvImporter extends Importer
             }
 
             $activity = new Activity();
-            $activity->setExecutedAt(new \DateTime($data[$this->getColumnIndex($source, 'date')]));
-            $activity->setTitle($data[$this->getColumnIndex($source, 'title')]);
-            if($this->hasColumnIndex($source, 'content')) {
-                $activity->setContent($data[$this->getColumnIndex($source, 'content')]);
+            $date = $this->getDataValue($source, $data, 'date');
+            if($date) {
+                $activity->setExecutedAt(new \DateTime($date));
             }
+            $activity->setTitle($this->getDataValue($source, $data, 'title'));
+            $activity->setContent($this->getDataValue($source, $data, 'content'));
 
             if($source->getParameter('name')) {
                 $name = new ActivityAttribute();
@@ -116,6 +133,12 @@ class CsvImporter extends Importer
             $attributes = array();
             if($this->hasColumnIndex($source, 'attributes')) {
                 foreach($this->getColumnIndex($source, 'attributes') as $index) {
+                    if(!isset($header[$index])) {
+                        continue;
+                    }
+                    if(!isset($data[$index])) {
+                        continue;
+                    }
                     $attribute = new ActivityAttribute();
                     $attribute->setName($header[$index]);
                     $attribute->setValue($data[$index]);
