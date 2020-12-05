@@ -27,10 +27,10 @@ class CsvImporter extends Importer
             'path' => array("required" => true, "label" => "Chemin ou url", "help" => "Chemin ou url du fichier csv"),
             'name' => array("required" => false, "label" => "Nom", "help" => "Nom (optionnelle)"),
             'type' => array("required" => false, "label" => "Type", "help" => "Type (optionnelle)"),
-            'date' => array("required" => true, "label" => "Colonne date", "help" => "Numéro de la colonne a utiliser pour la date"),
-            'title' => array("required" => true, "label" => "Colonne titre", "help" => "Numéro de la colonne a utiliser pour le titre"),
-            'content' => array("required" => false, "label" => "Colonne contenu", "help" => "Numéro de la colonne a utiliser pour le contenu (optionnelle)"),
-            'attributes' => array("required" => false, "label" => "Colonnes attributs", "help" => "Liste de numéros de colonnes à utiliser comme attribut (optionnelle)"),
+            'date' => array("required" => true, "label" => "Colonne date", "help" => "Numéro ou nom de la colonne a utiliser pour la date"),
+            'title' => array("required" => true, "label" => "Colonne titre", "help" => "Numéro ou nom de la colonne a utiliser pour le titre"),
+            'content' => array("required" => false, "label" => "Colonne contenu", "help" => "Numéro ou nom de la colonne a utiliser pour le contenu (optionnelle)"),
+            'attributes' => array("required" => false, "label" => "Colonnes attributs", "help" => "Liste de numéros ou noms de colonnes séparés par une \",\" des attributs (optionnelle)"),
         );
     }
 
@@ -56,12 +56,12 @@ class CsvImporter extends Importer
         return $separator;
     }
 
-    public function getDataValue($source, $data, $key) {
-        if(!$this->hasColumnIndex($source, $key)) {
+    public function getDataValue($source, $data, $key, $header = array()) {
+        if(!$this->hasColumnIndex($source, $key, $header)) {
             return null;
         }
 
-        $index = $this->getColumnIndex($source, $key);
+        $index = $this->getColumnIndex($source, $key, $header);
 
         if(!isset($data[$index])) {
 
@@ -72,27 +72,38 @@ class CsvImporter extends Importer
     }
 
 
-    public function getColumnIndex($source, $key) {
+    public function getColumnIndex($source, $key, $header = array()) {
         if(!$source->getParameter($key)) {
 
             return null;
         }
 
+        $header = array_flip($header);
+
         if($key == 'attributes') {
             $indexes = array();
-            foreach(preg_split("/[^0-9]+/", $source->getParameter($key)) as $number) {
-                $indexes[] = intval($number) - 1;
+            foreach(preg_split("/[,;|]+/", $source->getParameter($key)) as $number) {
+                if(isset($header[$number])) {
+                    $indexes[] = $header[$number];
+                } else {
+                    $indexes[] = intval($number) - 1;
+                }
             }
 
             return $indexes;
         }
 
+        if(isset($header[$source->getParameter($key)])) {
+
+            return $header[$source->getParameter($key)];
+        }
+
         return intval($source->getParameter($key)) - 1;
     }
 
-    public function hasColumnIndex($source, $key) {
+    public function hasColumnIndex($source, $key, $header) {
 
-        return $this->getColumnIndex($source, $key) !== null;
+        return $this->getColumnIndex($source, $key, $header) !== null;
     }
 
     public function run(Source $source, OutputInterface $output, $dryrun = false, $checkExist = true, $limit = false) {
@@ -112,12 +123,12 @@ class CsvImporter extends Importer
             }
 
             $activity = new Activity();
-            $date = $this->getDataValue($source, $data, 'date');
+            $date = $this->getDataValue($source, $data, 'date', $header);
             if($date) {
                 $activity->setExecutedAt(new \DateTime($date));
             }
-            $activity->setTitle($this->getDataValue($source, $data, 'title'));
-            $activity->setContent($this->getDataValue($source, $data, 'content'));
+            $activity->setTitle($this->getDataValue($source, $data, 'title', $header));
+            $activity->setContent($this->getDataValue($source, $data, 'content', $header));
 
             if($source->getParameter('name')) {
                 $name = new ActivityAttribute();
@@ -131,8 +142,8 @@ class CsvImporter extends Importer
                 $type->setValue($source->getParameter('type'));
             }
             $attributes = array();
-            if($this->hasColumnIndex($source, 'attributes')) {
-                foreach($this->getColumnIndex($source, 'attributes') as $index) {
+            if($this->hasColumnIndex($source, 'attributes', $header)) {
+                foreach($this->getColumnIndex($source, 'attributes', $header) as $index) {
                     if(!isset($header[$index])) {
                         continue;
                     }

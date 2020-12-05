@@ -28,6 +28,7 @@ class CsvImporterTest extends KernelTestCase
         $importer = $this->container->get('app.importer.csv');
         $csvFile = dirname(__FILE__)."/data/activites.csv";
         $nbLines = 1;
+        $header = array("Date", "Titre", "Contenu", "Attribut1", "Attribut2");
 
         $source = new Source();
         $source->setImporter($importer->getName());
@@ -36,9 +37,9 @@ class CsvImporterTest extends KernelTestCase
             "name" => "ActiviteCSV",
             "type" => "CSV",
             "date" => 1,
-            "title" => 2,
+            "title" => "Titre",
             "content" => 3,
-            "attributes" => "4,5"
+            "attributes" => "4,Attribut2"
         ));
 
         $this->assertSame($source->getImporter(), "Csv");
@@ -46,10 +47,10 @@ class CsvImporterTest extends KernelTestCase
         $this->assertSame($source->getParameter("name"), "ActiviteCSV");
         $this->assertSame($source->getParameter("type"), "CSV");
         $this->assertSame($source->getTitle(), $csvFile);
-        $this->assertSame($importer->getColumnIndex($source, 'date'), 0);
-        $this->assertSame($importer->getColumnIndex($source, 'title'), 1);
-        $this->assertSame($importer->getColumnIndex($source, 'content'), 2);
-        $this->assertSame($importer->getColumnIndex($source, 'attributes'), array(3,4));
+        $this->assertSame($importer->getColumnIndex($source, 'date', $header), 0);
+        $this->assertSame($importer->getColumnIndex($source, 'title', $header), 1);
+        $this->assertSame($importer->getColumnIndex($source, 'content', $header), 2);
+        $this->assertSame($importer->getColumnIndex($source, 'attributes', $header), array(3,4));
         $this->assertSame($source->getUpdateParam(), null);
         $this->assertNull($importer->check($source));
 
