@@ -44,8 +44,29 @@ class ActivityTest extends KernelTestCase
         $activity->addAttribute($att1);
         $activity->addAttribute($att2);
 
+        $this->assertSame($activity->toCSV(), '2018-01-24 08:09:10;Commit,Project;"Test titre";Author:Moi,Type:Commit;"Test contenu\nTest contenu";');
 
-        $this->assertSame($activity->toCSV(), '2018-01-24 08:09:10;Commit,Project;"Test titre";Author:Moi,Type:Commit;"Test contenu\nTest contenu"');
+        $activity = new Activity();
+        $activity->setTitle("Test titre");
+        $activity->setContent("Test contenu\nTest contenu");
+        $activity->setExecutedAt(new \DateTime("2018-01-24 08:09:10"));
+        $activity->addTag($tag1);
+        $activity->addTag($tag2);
+        $activity->addAttribute($att1);
+        $activity->addAttribute($att2);
+        $this->assertSame($activity->getValue(), null);
+        $activity->setValue("");
+        $this->assertSame($activity->getValue(), null);
+        $activity->setValue(null);
+        $this->assertSame($activity->getValue(), null);
+        $activity->setValue("897.32");
+        $this->assertSame($activity->getValue(), 897.32);
+        $activity->setValue("toto");
+        $this->assertSame($activity->getValue(), null);
+        $activity->setValue(1000.24);
+        $this->assertSame($activity->getValue(), 1000.24);
+
+        $this->assertSame($activity->toCSV(), '2018-01-24 08:09:10;Commit,Project;"Test titre";Author:Moi,Type:Commit;"Test contenu\nTest contenu";1000.24');
     }
 
     public function testQuery()

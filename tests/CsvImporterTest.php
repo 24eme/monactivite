@@ -39,6 +39,7 @@ class CsvImporterTest extends KernelTestCase
             "date" => 1,
             "title" => "Titre",
             "content" => 3,
+            "value" => 6,
             "attributes" => "4,Attribut2"
         ));
 
@@ -51,6 +52,7 @@ class CsvImporterTest extends KernelTestCase
         $this->assertSame($importer->getColumnIndex($source, 'title', $header), 1);
         $this->assertSame($importer->getColumnIndex($source, 'content', $header), 2);
         $this->assertSame($importer->getColumnIndex($source, 'attributes', $header), array(3,4));
+        $this->assertSame($importer->getColumnIndex($source, 'value', $header), 5);
         $this->assertSame($source->getUpdateParam(), null);
         $this->assertNull($importer->check($source));
 
@@ -74,6 +76,7 @@ class CsvImporterTest extends KernelTestCase
         $this->assertSame($activity->getExecutedAt()->format('YmdHis'), "20200202020202");
         $this->assertSame($activity->getTitle(), "Titre de l'activité");
         $this->assertSame($activity->getContent(), "Contenu de l'activité");
+        $this->assertSame($activity->getValue(), 1000.24);
         $this->assertSame($activity->getSlug(), "6200228a8ebcbc2ef3e05b1cbf6b526a");
 
         $this->assertCount(4, $activity->getAttributes());

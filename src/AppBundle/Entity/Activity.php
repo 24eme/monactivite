@@ -37,6 +37,13 @@ class Activity
     private $content;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="value", type="float", nullable=true)
+     */
+    private $value;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="executed_at", type="datetime")
@@ -127,11 +134,44 @@ class Activity
     /**
      * Get content
      *
-     * @return string 
+     * @return string
      */
     public function getContent()
     {
         return $this->content;
+    }
+
+    /**
+     * Set value
+     *
+     * @param string $value
+     * @return Activity
+     */
+    public function setValue($value)
+    {
+        if(is_null($value) || $value === "" || !preg_match("/[0-9]+/", $value)) {
+
+            $value = null;
+        }
+
+        if(!is_null($value)) {
+            $value = (float) $value;
+        }
+
+        $this->value = $value;
+
+        return $this;
+    }
+
+    /**
+     * Get value
+     *
+     * @return float
+     */
+    public function getValue()
+    {
+
+        return $this->value;
     }
 
     /**
@@ -298,6 +338,6 @@ class Activity
             $tags[] = $tag->getName();
         }
 
-        return $this->getExecutedAt()->format('Y-m-d H:i:s').";".implode(",", $tags).";\"".str_replace("\n", '\n', $this->getTitle())."\";".implode(",", $attributes).";\"".str_replace("\n", '\n', $this->getContent())."\"";
+        return $this->getExecutedAt()->format('Y-m-d H:i:s').";".implode(",", $tags).";\"".str_replace("\n", '\n', $this->getTitle())."\";".implode(",", $attributes).";\"".str_replace("\n", '\n', $this->getContent())."\";".$this->getValue();
     }
 }

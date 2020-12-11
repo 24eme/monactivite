@@ -30,6 +30,7 @@ class CsvImporter extends Importer
             'date' => array("required" => true, "label" => "Colonne date", "help" => "Numéro ou nom de la colonne a utiliser pour la date"),
             'title' => array("required" => true, "label" => "Colonne titre", "help" => "Numéro ou nom de la colonne a utiliser pour le titre"),
             'content' => array("required" => false, "label" => "Colonne contenu", "help" => "Numéro ou nom de la colonne a utiliser pour le contenu (optionnelle)"),
+            'value' => array("required" => false, "label" => "Colonne valeur", "help" => "Numéro ou nom de la colonne a utiliser pour une valeur (optionnelle)"),
             'attributes' => array("required" => false, "label" => "Colonnes attributs", "help" => "Liste de numéros ou noms de colonnes séparés par une \",\" des attributs (optionnelle)"),
         );
     }
@@ -129,6 +130,7 @@ class CsvImporter extends Importer
             }
             $activity->setTitle($this->getDataValue($source, $data, 'title', $header));
             $activity->setContent($this->getDataValue($source, $data, 'content', $header));
+            $activity->setValue($this->getDataValue($source, $data, 'value', $header));
 
             if($source->getParameter('name')) {
                 $name = new ActivityAttribute();
