@@ -36,15 +36,20 @@
                                     {% set j = j + 1 %}
                                 {% endfor %}
                                 {% if activity.attributes | length < 3 %}
-                                    {% for j in 0..(2 - (activity.attributes | length)) if activity.tags | length < 3 %}
+                                    {% for j in 0..(2 - (activity.attributes | length)) if activity.tags | length < 2 %}
                                         <button class="btn btn-sm btn-default btn-attribute-small-empty text-left">&nbsp;</button>
                                     {% endfor %}
                                 {% endif %}
                             </div>
                         </div>
-                        <div class="col-xs-8 itemContent">
+                        <div class="col-xs-7 itemContent {% if activity.value %}itemContentWithValue{% endif %}">
                             <span>{{ activity.title }}</span>&nbsp;<small style="opacity: 0.7;"  class="text-muted">{{ activity.content | slice(0, 200) }}</small>
                         </div>
+                        {% if activity.value is not null %}
+                        <div class="col-xs-1 text-right itemValue">
+                            {{ activity.value | number_format(2) }} €
+                        </div>
+                        {% endif %}
                         <div class="col-xs-1 text-right itemAction">
                             <a href="{% if activity.id %}{{ path('activity_view', { 'id': activity.id, 'query': query, 'dateFrom': dateFrom, 'dateTo': dateTo, 'nbDays': nbDays })}}{% endif %}" title="{{ activity.content | truncate(350, true, '...') | nl2br }}" class="btn-activity-view" data-toggle="tooltipHtml"><span class="glyphicon glyphicon-eye-open"></span></a>
                         </div>

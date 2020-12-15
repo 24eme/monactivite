@@ -120,14 +120,27 @@ body {
 }
 
 .itemContent {
-    padding-top: 2px;
+    padding-top: 4px;
     padding-left: 0;
     padding-right: 0px;
     width: 776px;
 }
 
+.itemContentWithValue {
+    width: 676px;
+}
+
+.itemValue {
+    padding-top: 4px;
+    padding-left: 0;
+    width: 100px;
+    font-size: 14px;
+    opacity: 0.7;
+    padding-right: 6px;
+}
+
 .itemAction {
-    padding-top: 3px;
+    padding-top: 4px;
     padding-left: 0;
     padding-right: 0px;
     width: 24px;
