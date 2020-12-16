@@ -37,6 +37,7 @@ class ActivityManager
 
     public function createView($activities) {
         $activitiesByDates = array();
+        $withValue = false;
         foreach($activities as $activity) {
             $keyDate = $activity->getKeyDate();
             if(!array_key_exists($keyDate, $activitiesByDates)) {
@@ -44,15 +45,18 @@ class ActivityManager
             }
             $activitiesByDates[$keyDate]['activities'][] = $activity;
             foreach($activity->getTags() as $tag) {
-                if(!array_key_exists($tag->getId(), $activitiesByDates[$keyDate]['tags'])) {
-                    $activitiesByDates[$keyDate]['tags'][$tag->getId()] = array('nb' => 0, 'entity' => $tag);
+                if(!array_key_exists($tag->getKey(), $activitiesByDates[$keyDate]['tags'])) {
+                    $activitiesByDates[$keyDate]['tags'][$tag->getKey()] = array('nb' => 0, 'entity' => $tag);
                 }
-                $activitiesByDates[$keyDate]['tags'][$tag->getId()]['nb'] += 1;
+                if($activity->getValue()) {
+                    $withValue = true;
+                }
+                $activitiesByDates[$keyDate]['tags'][$tag->getKey()]['nb'] += ($withValue) ? $activity->getValue() : 1;
             }
         }
 
         foreach($activitiesByDates as $key => $activitiesByDate) {
-            usort($activitiesByDates[$key]['tags'], "\AppBundle\Manager\ActivityManager::sortTagByNb");
+            uasort($activitiesByDates[$key]['tags'], "\AppBundle\Manager\ActivityManager::sortTagByNb");
         }
 
         return $activitiesByDates;

@@ -69,6 +69,11 @@ class Tag
         return $this->id;
     }
 
+    public function getKey() {
+
+        return $this->getId()."-".$this->getName();
+    }
+
     /**
      * Set name
      *

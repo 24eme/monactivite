@@ -69,6 +69,47 @@ class ActivityTest extends KernelTestCase
         $this->assertSame($activity->toCSV(), '2018-01-24 08:09:10;Commit,Project;"Test titre";Author:Moi,Type:Commit;"Test contenu\nTest contenu";1000.24');
     }
 
+    public function testList()
+    {
+        $am = $this->container->get('app.manager.activity');
+
+        $tag1 = new Tag();
+        $tag1->setName("Commit");
+
+        $tag2 = new Tag();
+        $tag2->setName("Project");
+
+        $activity1 = new Activity();
+        $activity1->setTitle("Test titre");
+        $activity1->setContent("Test contenu\nTest contenu");
+        $activity1->setExecutedAt(new \DateTime("2018-01-24 08:09:10"));
+        $activity1->addTag($tag1);
+        $activity1->addTag($tag2);
+
+        $activity2 = new Activity();
+        $activity2->setTitle("Test titre");
+        $activity2->setContent("Test contenu\nTest contenu");
+        $activity2->setExecutedAt(new \DateTime("2018-01-24 10:09:10"));
+        $activity2->addTag($tag1);
+
+        $this->assertSame($activity1->getKeyDate(), '2018-01-24');
+        $this->assertSame($activity2->getKeyDate(), '2018-01-24');
+
+        $activitiesByDates = $am->createView(array($activity1, $activity2));
+
+        $this->assertCount(2, $activitiesByDates[$activity1->getKeyDate()]['activities']);
+        $this->assertCount(2, $activitiesByDates[$activity1->getKeyDate()]['tags']);
+        $this->assertSame(2, $activitiesByDates[$activity1->getKeyDate()]['tags'][$tag1->getKey()]['nb']);
+        $this->assertSame(1, $activitiesByDates[$activity1->getKeyDate()]['tags'][$tag2->getKey()]['nb']);
+
+        $activity1->setValue(1000.24);
+        $activity2->setValue(500);
+
+        $activitiesByDates = $am->createView(array($activity1, $activity2));
+        $this->assertSame(1500.24, $activitiesByDates[$activity1->getKeyDate()]['tags'][$tag1->getKey()]['nb']);
+        $this->assertSame(1000.24, $activitiesByDates[$activity1->getKeyDate()]['tags'][$tag2->getKey()]['nb']);
+    }
+
     public function testQuery()
     {
         $repo = $this->container->get('doctrine.orm.entity_manager')->getRepository('AppBundle:Activity');
