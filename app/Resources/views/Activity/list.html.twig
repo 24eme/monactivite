@@ -47,7 +47,7 @@
                         </div>
                         {% if activity.value is not null %}
                         <div class="col-xs-1 text-right itemValue">
-                            {{ activity.value | number_format(2) }}
+                            <a href="{{ path('timeline', { 'q': (query~' value = '~activity.value) | trim, 'dateFrom': dateFrom, 'dateTo': dateTo, 'nbDays': nbDays}) }}">{{ activity.value | number_format(2) }}</a>
                         </div>
                         {% endif %}
                         <div class="col-xs-1 text-right itemAction">
