@@ -3,7 +3,7 @@
         <span class="pull-right">{{ date | localizeddate("none", "none", null, null, "E d MMM yyyy") | capitalize }}</span>
         <div class="btn-group">
             {% for tag in activities.tags %}
-                {% include 'Tag/button.html.twig' with {'tag': tag.entity, url: path('timeline', { 'q': (query~' tag:'~tag.entity.name) | trim, 'dateFrom': dateFrom, 'dateTo': dateTo, 'nbDays': nbDays}), 'badge': tag.nb | number_format(2) } %}
+                {% include 'Tag/button.html.twig' with {'tag': tag.entity, url: path('timeline', { 'q': (query~' tag:'~tag.entity.name) | trim, 'dateFrom': dateFrom, 'dateTo': dateTo, 'nbDays': nbDays}), 'badge': tag.nb | number_format(2, '.', '') } %}
             {% endfor %}
         </div>
     </h3>
@@ -47,7 +47,7 @@
                         </div>
                         {% if activity.value is not null %}
                         <div class="col-xs-1 text-right itemValue">
-                            <a href="{{ path('timeline', { 'q': (query~' value = '~activity.value) | trim, 'dateFrom': dateFrom, 'dateTo': dateTo, 'nbDays': nbDays}) }}">{{ activity.value | number_format(2) }}</a>
+                            <a href="{{ path('timeline', { 'q': (query~' value = '~activity.value) | trim, 'dateFrom': dateFrom, 'dateTo': dateTo, 'nbDays': nbDays}) }}">{{ activity.value | number_format(2, '.', '') }}</a>
                         </div>
                         {% endif %}
                         <div class="col-xs-1 text-right itemAction">
