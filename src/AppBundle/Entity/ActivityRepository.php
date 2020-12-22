@@ -54,7 +54,7 @@ class ActivityRepository extends EntityRepository
             $querySearchDQL = ' AND a IN('.$querySearch->getDQL().')';
         }
 
-        $dateFrom = $dateFrom->modify("+ 1 day");
+        $dateFrom = $dateFrom->modify("+1 day");
 
         $query = $this->getEntityManager()
                     ->createQuery('
@@ -86,7 +86,7 @@ class ActivityRepository extends EntityRepository
         }
 
         $dateTo = new \DateTime($dates[count($dates) - 1]['date']);
-        $dateTo = $dateTo->modify("+4 hours");
+        $dateTo = $dateTo->modify("-1 day +4 hours");
         $dateFrom = $dateFrom->modify("+4 hours");
 
         if($queryString) {
