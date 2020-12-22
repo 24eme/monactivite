@@ -123,17 +123,34 @@ class ActivityTest extends KernelTestCase
         $this->assertSame($repo->normalizeQuery("NOT Vincent OR NOT LAURENT"), "NOT Vincent OR NOT LAURENT");
         $this->assertSame($repo->normalizeQuery("NOT Sender:\"V. LAURENT\" NOT Receiver:vlaurent@24eme.fr"), "NOT Sender:V. LAURENT AND NOT Receiver:vlaurent@24eme.fr");
         $this->assertSame($repo->normalizeQuery("Vincent Laurent OR winy Receiver:vlaurent@24eme.fr \"Laurent Vincent\" AND vince Sender:\"V. LAURENT\" Type:Commit"), "Vincent AND Laurent OR winy AND Receiver:vlaurent@24eme.fr AND Laurent Vincent AND vince AND Sender:V. LAURENT AND Type:Commit");
+        $this->assertSame($repo->normalizeQuery("value > 15.24"), "value>15.24");
+        $this->assertSame($repo->normalizeQuery("value < 15"), "value<15");
+        $this->assertSame($repo->normalizeQuery("value = 15.24"), "value=15.24");
+        $this->assertSame($repo->normalizeQuery("value = 1848"), "value=1848");
+        $this->assertSame($repo->normalizeQuery("value >= 15.24 value <= 100"), "value>=15.24 AND value<=100");
+        $this->assertSame($repo->normalizeQuery("value > 0"), "value>0");
+
+        $this->assertSame($repo->operatorToDoctrineExpr("="), "eq");
+        $this->assertSame($repo->operatorToDoctrineExpr(">"), "gt");
+        $this->assertSame($repo->operatorToDoctrineExpr("<"), "lt");
+        $this->assertSame($repo->operatorToDoctrineExpr(">="), "gte");
+        $this->assertSame($repo->operatorToDoctrineExpr("<="), "lte");
 
         $this->assertSame($repo->queryToArray("Vincent"), array(array('*', 'Vincent')));
         $this->assertSame($repo->queryToArray("Vincent LAURENT"), array(array('*', 'Vincent'), array('*', 'LAURENT')));
         $this->assertSame($repo->queryToArray("\"Vincent LAURENT\""), array(array('*', 'Vincent LAURENT')));
         $this->assertSame($repo->queryToArray("Sender:Vincent LAURENT"), array(array('Sender', 'Vincent'), array('*', 'LAURENT')));
         $this->assertSame($repo->queryToArray("Sender:\"Vincent LAURENT\""), array(array('Sender', 'Vincent LAURENT')));
-        $this->assertSame($repo->queryToArray("Sender:\"Vincent LAURENT\""), array(array('Sender', 'Vincent LAURENT')));
         $this->assertSame($repo->queryToArray("Vincent OR LAURENT"), array(array('*', 'Vincent'), array('*', 'LAURENT')));
         $this->assertSame($repo->queryToArray("(Vincent OR LAURENT) AND Paris"), array(array('*', 'Vincent'), array('*', 'LAURENT'), array('*', 'Paris')));
         $this->assertSame($repo->queryToArray("NOT Vincent"), array(array('*', 'Vincent', "not")));
         $this->assertSame($repo->queryToArray("NOT Vincent OR NOT Test"), array(array('*', 'Vincent', 'not'), array('*', 'Test', 'not')));
+        $this->assertSame($repo->queryToArray("value > 15.24"), array(array('value', 15.24, '>')));
+        $this->assertSame($repo->queryToArray("value < 15"), array(array('value', 15, '<')));
+        $this->assertSame($repo->queryToArray("value = 1848"), array(array('value', 1848, '=')));
+        $this->assertSame($repo->queryToArray("value = 15.24"), array(array('value', 15.24, '=')));
+        $this->assertSame($repo->queryToArray("value >= 15.24 value <= 100"), array(array('value', 15.24, '>='), array('value', 100, '<=')));
+        $this->assertSame($repo->queryToArray("value > 0"), array(array('value', 0, '>')));
 
         $this->assertSame($repo->queryToHierarchy(""), array());
         $this->assertSame($repo->queryToHierarchy("Vincent"), array());
@@ -152,6 +169,7 @@ class ActivityTest extends KernelTestCase
         $queryPartTagDQL="\(aq[0-9]*t[0-9]+.name LIKE :aq[0-9]+value\)";
         $queryNotPartGenericDQL =  $queryDateQDL.' AND \(\(aq\.id NOT IN\(SELECT aq[0-9]* FROM AppBundle:Activity aq[0-9]* LEFT JOIN aq[0-9]*\.attributes aq[0-9]*a[0-9a-z]* LEFT JOIN aq[0-9]*\.tags aq[0-9]*t[0-9a-z]* WHERE '.$queryDateQDL.' AND \('.$queryPartGenericDQL.'\)\)\)\)';
         $queryNotPartTagDQL = '\(aq\.id NOT IN\(SELECT aq[0-9]* FROM AppBundle:Activity aq[0-9]* LEFT JOIN aq[0-9]*\.tags aq[0-9]*t[0-9]* WHERE '.$queryDateQDL.' AND \('.$queryPartTagDQL.'\)\)\)';
+        $queryPartValueDQL="\(aq[0-9]*\.value %s :aq[0-9]+value\)";
 
         $queryResult = $repo->searchQueryToQueryDoctrine("Vincent LAURENT OR Paris", "2018-01-01", "2019-01-01");
         $this->assertRegExp('/'.$queryDateQDL.' AND \('.$queryPartGenericDQL.' AND '.$queryPartGenericDQL.' OR '.$queryPartGenericDQL.'\)/', $queryResult->getDQLPart("where"));
@@ -173,6 +191,12 @@ class ActivityTest extends KernelTestCase
 
         $queryResult = $repo->searchQueryToQueryDoctrine("(title:Bonjour OR content:Cordialement) AND (Type:Commit OR Type:Mail)", "2018-01-01", "2019-01-01");
         $this->assertRegExp('/'.$queryDateQDL.' AND \(\('.$queryPartContentDQL.' OR '.$queryPartContentDQL.'\) AND \('.$queryPartAttributeDQL.' OR '.$queryPartAttributeDQL.'\)\)/', $queryResult->getDQLPart("where"));
+
+        $queryResult = $repo->searchQueryToQueryDoctrine("value = 10.24", "2018-01-01", "2019-01-01");
+        $this->assertRegExp('/'.$queryDateQDL.' AND \('.sprintf($queryPartValueDQL, "=").'\)/', $queryResult->getDQLPart("where"));
+        $queryResult = $repo->searchQueryToQueryDoctrine("value >= 10", "2018-01-01", "2019-01-01");
+        $this->assertRegExp('/'.$queryDateQDL.' AND \('.sprintf($queryPartValueDQL, ">=").'\)/', $queryResult->getDQLPart("where"));
+
     }
 
 }

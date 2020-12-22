@@ -142,11 +142,12 @@ class ActivityRepository extends EntityRepository
         $defaultOperator = " AND ";
         $operator = null;
 
-        $mainParts = preg_split("/:/", $query);
+        $operators = array_reverse(preg_split("/[^<:=>]+/", $query, -1, PREG_SPLIT_NO_EMPTY));
+        $mainParts = preg_split("/[<:=>]+/", $query);
         foreach($mainParts as $mainPart) {
             $parts = str_getcsv($mainPart, " ", '"');
             foreach($parts as $part) {
-                if(!$part) {
+                if(!$part && $part !== "0") {
                     continue;
                 }
                 if(in_array($part, array("OR", "AND"))) {
@@ -164,7 +165,7 @@ class ActivityRepository extends EntityRepository
 
                 $queryNormalized .= $part;
             }
-            $operator = ":";
+            $operator = array_pop($operators);
         }
 
         return $queryNormalized;
@@ -177,10 +178,15 @@ class ActivityRepository extends EntityRepository
         foreach($terms as $term) {
             $termCleaned = preg_replace("/(^\(+|\)+$)/", "", trim($term));
             $termCleaned = preg_replace("/^NOT /", "", $termCleaned);
-            $param = explode(":", $termCleaned);
+            $param = preg_split("/[<:=>]+/", $termCleaned);
             if(count($param) < 2) {
               $param[1] = $param[0];
               $param[0] = '*';
+            }
+
+            if(preg_match("/[<=>]+/", $termCleaned, $matches)) {
+                $param[1] = $param[1]*1;
+                $param[2] = $matches[0];
             }
 
             if(preg_match("/^[\(\)]*NOT /", $term)) {
@@ -225,6 +231,12 @@ class ActivityRepository extends EntityRepository
         return $operators;
     }
 
+    public function operatorToDoctrineExpr($operator) {
+        $funcs = array("=" => "eq", ">" => "gt", "<" => "lt", ">=" => "gte", "<=" => "lte");
+
+        return $funcs[$operator];
+    }
+
     public function searchQueryToQueryDoctrine($searchQuery, $dateFrom = null, $dateTo = null, $prefix = 'aq') {
         $params = $this->queryToArray($searchQuery);
         $operators = $this->queryToHierarchy($searchQuery);
@@ -236,7 +248,10 @@ class ActivityRepository extends EntityRepository
         $subqueriesFilter = array();
         foreach($params as $key => $param) {
             $name = $param[0];
-            $value = str_replace('*', '%', $param[1]);
+            $value = $param[1];
+            if(is_string($value)) {
+                $value = str_replace('*', '%', $param[1]);
+            }
             $not = (isset($param[2]) && $param[2] == "not");
 
             if($not) {
@@ -253,6 +268,10 @@ class ActivityRepository extends EntityRepository
 
             if($name == 'title' || $name == 'content') {
                 $queryToAdd = $query->expr()->like('('.$prefix.'.'.$name, ':'.$prefix.$key.'value)');
+                $query->setParameter($prefix.$key.'value', $value);
+            } elseif($name == 'value') {
+                $exprFunc = $this->operatorToDoctrineExpr($param[2]);
+                $queryToAdd = $query->expr()->$exprFunc('('.$prefix.'.'.$name, ':'.$prefix.$key.'value)');
                 $query->setParameter($prefix.$key.'value', $value);
             } elseif($name == 'tag') {
                 $query
