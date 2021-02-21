@@ -50,6 +50,7 @@ class DefaultController extends Controller
                   'tags' => $tags,
                   'tagAddForm' => $tagAddForm->createView(),
                   'tagRemoveForm' => $tagRemoveForm->createView(),
+                  'viewMode' => \AppBundle\Config\ConfigApp::getInstance()->getViewMode(),
             )
         );
     }

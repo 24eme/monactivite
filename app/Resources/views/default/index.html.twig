@@ -10,7 +10,7 @@
     <a href="{{ path('export', {'q': query, 'dateTo': dateTo, 'dateFrom': dateFrom }) }}" class="pull-right">csv</a>
     <div class="row">
         <div id="activities_container" class="col-lg-12" style="margin-top: -10px;">
-            {{ render(path('activity_list', { 'q': query, 'dateTo': dateTo, 'dateFrom': dateFrom, 'nbDays': nbDays })) }}
+            {{ render(path('activity_list', { 'q': query, 'dateTo': dateTo, 'dateFrom': dateFrom, 'nbDays': nbDays, 'viewMode': viewMode })) }}
         </div>
     </div>
 

@@ -29,6 +29,7 @@ class ActivityController extends Controller
         $repo = $em->getRepository('AppBundle:Activity');
 
         $nbDays = $request->get('nbDays');
+        $viewMode = $request->get('viewMode');
         $dateFrom = new \DateTime($request->get('dateFrom'));
         $dateTo = new \DateTime($request->get('dateTo'));
         if($request->get('dateFromQuery')) {
@@ -38,8 +39,8 @@ class ActivityController extends Controller
         }
         $query = $request->get('q');
 
-        $activities = $repo->findByDatesIntervalByDays($dateFromQuery, $dateTo, $query, $nbDays);
-        $activitiesByDates = $am->createView($activities, \AppBundle\Config\ConfigApp::getInstance()->getViewMode());
+        $activities = $repo->findByDatesIntervalByDays($dateFromQuery, $dateTo, $query, $nbDays,$viewMode);
+        $activitiesByDates = $am->createView($activities, $viewMode);
 
         $dateNext = null;
         if(count($activitiesByDates) > 0) {
@@ -51,7 +52,7 @@ class ActivityController extends Controller
 
         return $this->render('Activity/list.html.twig',
             array(
-                'activitiesByDates' => $am->createView($activities),
+                'activitiesByDates' => $activitiesByDates,
                 'dateNext' => $dateNext,
                 'query' => $query,
                 'dateTo' => $dateTo->format('Y-m-d'),

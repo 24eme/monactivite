@@ -16,4 +16,4 @@ parameters:
     # A secret key that's used to generate certain security-related tokens
     secret:            ThisTokenIsNotSoSecretChangeIt
 
-#    view_mode: 'daily' # daily, monthly
+#    viewmode: 'daily' # daily, monthly

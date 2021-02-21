@@ -46,7 +46,7 @@ class ActivityRepository extends EntityRepository
         return $query->getScalarResult();
     }
 
-    public function findByDatesIntervalByDays($dateFrom, $dateTo, $queryString = null, $nbDaysMax = null) {
+    public function findByDatesIntervalByDays($dateFrom, $dateTo, $queryString = null, $nbDaysMax = null, $viewMode = 'daily') {
         $querySearchDQL = null;
         $querySearch = null;
         if($queryString) {
@@ -87,7 +87,7 @@ class ActivityRepository extends EntityRepository
 
         $dateTo = new \DateTime($dates[count($dates) - 1]['date']);
         $dateTo = $dateTo->modify("-1 day");
-        if(\AppBundle\Config\ConfigApp::getInstance()->getViewMode() == 'daily') {
+        if($viewMode == 'daily') {
             $dateTo = $dateTo->modify("+4 hours");
             $dateFrom = $dateFrom->modify("+4 hours");
         }
