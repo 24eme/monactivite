@@ -319,8 +319,13 @@ class Activity
         return $this->getTitle();
     }
 
-    public function getKeyDate() {
+    public function getKeyDate($viewMode = 'daily') {
         $date = clone $this->getExecutedAt();
+
+        if($viewMode == "monthly") {
+
+            return $date->format('Y-m');
+        }
 
         return $date->modify('-4 hours')->format('Y-m-d');
     }

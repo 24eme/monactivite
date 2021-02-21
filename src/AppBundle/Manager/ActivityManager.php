@@ -35,11 +35,11 @@ class ActivityManager
         return $activity;
     }
 
-    public function createView($activities) {
+    public function createView($activities, $viewMode = 'daily') {
         $activitiesByDates = array();
         $withValue = false;
         foreach($activities as $activity) {
-            $keyDate = $activity->getKeyDate();
+            $keyDate = $activity->getKeyDate($viewMode);
             if(!array_key_exists($keyDate, $activitiesByDates)) {
                 $activitiesByDates[$keyDate] = array('activites' => array(), 'tags' => array());
             }

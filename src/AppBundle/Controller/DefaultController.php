@@ -19,7 +19,7 @@ class DefaultController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $nbDays = $request->get('nbDays', 10);
+        $nbDays = $request->get('nbDays', 31);
         $dateFrom = new \DateTime($request->get('dateFrom', $request->get('dateFrom', date('Y-m-d'))));
         $query = $request->get('q', null);
         $dateTo = null;

@@ -39,7 +39,7 @@ class ActivityController extends Controller
         $query = $request->get('q');
 
         $activities = $repo->findByDatesIntervalByDays($dateFromQuery, $dateTo, $query, $nbDays);
-        $activitiesByDates = $am->createView($activities);
+        $activitiesByDates = $am->createView($activities, \AppBundle\Config\ConfigApp::getInstance()->getViewMode());
 
         $dateNext = null;
         if(count($activitiesByDates) > 0) {
@@ -57,6 +57,7 @@ class ActivityController extends Controller
                 'dateTo' => $dateTo->format('Y-m-d'),
                 'dateFrom' => $dateFrom->format('Y-m-d'),
                 'nbDays' => $nbDays,
+                'viewMode' => \AppBundle\Config\ConfigApp::getInstance()->getViewMode(),
             )
         );
     }
