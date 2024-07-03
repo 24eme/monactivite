@@ -15,7 +15,7 @@
                     {% for attribute in activity.attributes %}
                         <li>
                             <small><span class="text-muted">{{ attribute.name }}: </span><a href="{{ path('timeline', { 'q': (query~' '~attribute.name~':'~attribute.value) | trim, 'dateFrom': dateFrom, 'dateTo': dateTo, 'nbDays': nbDays }) }}">{{ attribute.value }}</a></small>
-                            {% if attribute.name === 'Type' and attribute.value ==='Commit' %}
+                            {% if attribute.name is same as('Type') and attribute.value is same as ('Commit') %}
                                 <a href="https://github.com/search?{{ {'type': 'commits', 'q': activity.title ~ " org:24eme"} | url_encode }}">
                                     <span class="glyphicon glyphicon-new-window"></span>
                                 </a>
