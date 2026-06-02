@@ -26,7 +26,8 @@ class FeedImporter extends Importer
 
         return array(
             'path' => array("required" => true, "label" => "Uri", "help" => "Url ou chemin vers un flux rss"),
-            'name' => array("required" => true, "label" => "Name", "help" => "Nom du flux (optionnelle)"),
+            'name' => array("required" => false, "label" => "Name", "help" => "Nom du flux (optionnelle)"),
+            'type' => array("required" => false, "label" => "Type", "help" => "Type (optionnelle)"),
         );
     }
 
@@ -57,6 +58,12 @@ class FeedImporter extends Importer
             $activity->setExecutedAt($item->getDate());
             $activity->setTitle($item->getTitle());
             $activity->setContent($item->getContent());
+
+            if($source->getParameter('type')) {
+                $name = new ActivityAttribute();
+                $name->setName("Type");
+                $name->setValue($source->getParameter('type'));
+            }
 
             if($source->getParameter('name')) {
                 $name = new ActivityAttribute();
